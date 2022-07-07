@@ -1,3 +1,5 @@
+util.require_natives(1651208000)
+
 local themeRepo_dir = filesystem.resources_dir() .. 'themeRepo themes\\'
 
 local header_file = filesystem.stand_dir() ..'Headers\\Custom Header\\themeRepo.png'
@@ -95,6 +97,12 @@ local function loadThemes(root)
             applyHeader(theme_name)
             applyTheme(theme_name)
             applyProfile(theme_name)
+            for _, file in pairs(filesystem.list_files(theme_path)) do
+                if file:lower():match('.otf') or file:lower():match('.ttf') or file:lower():match('.fnt') then
+                    util.toast('This theme has a custom font you can apply.')
+                    break
+                end
+            end
         end)
     end
 end
@@ -112,27 +120,43 @@ loadThemes(local_themes_root)
 local themeRepo_root themeRepo_root = menu.list(my_root, 'Theme Repository', {}, 'Download popular themes from the theme repository to make them available in your local themes.')
 
 local function downloadFile(webPath, dirPath, fileName)
+    local downloading = true
     async_http.init('raw.githubusercontent.com', '/Jerrrry123/ThemeRepo/main/Themes/'.. webPath .. fileName, function(fileContent)
         local f = assert(io.open(dirPath .. fileName, 'wb'))
         f:write(fileContent)
         f:close()
+        downloading = false
     end, function()
         util.toast('Failed to download.')
+        downloading = false
     end)
     async_http.dispatch()
+    while downloading do util.yield() end
 end
 
 local function count(str, pattern)
     return select(2, string.gsub(str, pattern, ''))
 end
 
+local function startBusySpinner(message)
+    HUD.BEGIN_TEXT_COMMAND_BUSYSPINNER_ON("STRING")
+    HUD.ADD_TEXT_COMPONENT_SUBSTRING_PLAYER_NAME(message)
+    HUD.END_TEXT_COMMAND_BUSYSPINNER_ON(5)
+end
+
 local function downloadTheme(webPath, dirPath)
+    startBusySpinner('Transaction Pending')
     if not filesystem.is_dir(dirPath) then
         filesystem.mkdirs(dirPath)
     end
 
     async_http.init('api.github.com', '/repos/Jerrrry123/ThemeRepo/contents/Themes/'.. string.sub(webPath, 1, #webPath - 1), function(res)
-        util.toast(res)
+        if res:match('API rate limit exceeded') then
+            util.toast('You have been ratelimited by Githubs API, but you can use a vpn to circumvent this.')
+            HUD.BUSYSPINNER_OFF()
+            return
+        end
+
         for match in string.gmatch(res, '"name":".-",') do
             fileName = match:sub(9, #match - 2)
             if count(fileName, '%.') > 0 then
@@ -143,8 +167,10 @@ local function downloadTheme(webPath, dirPath)
                 downloadTheme(new_webPath, new_dirPath)
             end
         end
+        HUD.BUSYSPINNER_OFF()
     end, function()
         util.toast('Failed to download.')
+        HUD.BUSYSPINNER_OFF()
     end)
     async_http.dispatch()
 end
