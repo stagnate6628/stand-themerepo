@@ -98,18 +98,59 @@ local function loadThemes(root)
         end)
     end
 end
-local function reloadThemes(root)
+
+local local_themes_root local_themes_root = menu.list(my_root, 'Local themes', {}, 'Apply themes you have locally.', function()
     for i = 1, #themeReferences do
         menu.delete(themeReferences[i])
         themeReferences[i] = nil
     end
-    loadThemes(root)
-end
-
-local themes_root themes_root = menu.list(my_root, 'Themes', {}, '', function()
-    reloadThemes(themes_root)
+    loadThemes(local_themes_root)
 end)
 
-loadThemes(themes_root)
+loadThemes(local_themes_root)
+
+local themeRepo_root themeRepo_root = menu.list(my_root, 'Theme Repository', {}, 'Download popular themes from the theme repository to make them available in your local themes.')
+
+local function downloadFile(webPath, dirPath, fileName)
+    async_http.init('raw.githubusercontent.com', '/Jerrrry123/ThemeRepo/main/Themes/'.. webPath .. fileName, function(fileContent)
+        local f = assert(io.open(dirPath .. fileName, 'wb'))
+        f:write(fileContent)
+        f:close()
+    end, function()
+        util.toast('Failed to download.')
+    end)
+    async_http.dispatch()
+end
+
+local function count(str, pattern)
+    return select(2, string.gsub(str, pattern, ''))
+end
+
+local function downloadTheme(webPath, dirPath)
+    if not filesystem.is_dir(dirPath) then
+        filesystem.mkdirs(dirPath)
+    end
+
+    async_http.init('api.github.com', '/repos/Jerrrry123/ThemeRepo/contents/Themes/'.. string.sub(webPath, 1, #webPath - 1), function(res)
+        util.toast(res)
+        for match in string.gmatch(res, '"name":".-",') do
+            fileName = match:sub(9, #match - 2)
+            if count(fileName, '%.') > 0 then
+                downloadFile(webPath, dirPath, fileName)
+            else
+                local new_dirPath = dirPath .. fileName ..'\\'
+                local new_webPath = webPath .. fileName ..'/'
+                downloadTheme(new_webPath, new_dirPath)
+            end
+        end
+    end, function()
+        util.toast('Failed to download.')
+    end)
+    async_http.dispatch()
+end
+
+menu.action(themeRepo_root, 'Discord', {}, 'Made by lev', function()
+    downloadTheme('Discord/', themeRepo_dir ..'Discord\\')
+end)
 
 util.keep_running()
