@@ -6,7 +6,7 @@ if not filesystem.is_dir(themeRepo_dir) then
     filesystem.mkdirs(themeRepo_dir)
 end
 
-local preview_dir = themeRepo_dir ..'Preview\\'
+local preview_dir = themeRepo_dir ..'Previews\\'
 
 if not filesystem.is_dir(preview_dir) then
     filesystem.mkdirs(preview_dir)
@@ -219,32 +219,33 @@ themeRepo_root = menu.list(my_root, 'Theme Repository', {}, 'Download popular th
         if is_key_just_down(0x10) then
             preview_toggle = not preview_toggle
         end
-        if not preview_toggle or not preview_on then return end
-
-        local index = tonumber(menu.get_active_list_cursor_text(true, false):sub(1, 1))
-        if theme_options[index] == nil then return true end
-        local name = menu.get_menu_name(theme_options[index])
-        if theme_options[index + 1000] == nil then
-            local preview_file = name ..'.png'
-            local preview_path = preview_dir.. preview_file
-            if not filesystem.exists(preview_dir .. preview_file) then
-                local downloading = true
-                async_http.init('raw.githubusercontent.com', '/Jerrrry123/ThemeRepo/main/Previews/'.. preview_file, function(fileContent)
-                    local f = assert(io.open(preview_path, 'wb'))
-                    f:write(fileContent)
-                    f:close()
-                    downloading = false
-                end, function()
-                    util.toast('Failed to download.')
-                    downloading = false
-                end)
-                async_http.dispatch()
-                while downloading do util.yield() end
+        if preview_toggle and preview_on then
+            local index = tonumber(menu.get_active_list_cursor_text(true, false):sub(1, 1))
+            if theme_options[index] == nil then return true end
+            local name = menu.get_menu_name(theme_options[index])
+            if theme_options[index + 1000] == nil then
+                local preview_file = name ..'.PNG'
+                local preview_path = preview_dir.. preview_file
+                if not filesystem.exists(preview_path) then
+                    local downloading = true
+                    async_http.init('raw.githubusercontent.com', '/Jerrrry123/ThemeRepo/main/Previews/'.. preview_file, function(fileContent)
+                        util.toast(fileContent)
+                        local f = assert(io.open(preview_path, 'wb'))
+                        f:write(fileContent)
+                        f:close()
+                        downloading = false
+                    end, function()
+                        util.toast('Failed to download.')
+                        downloading = false
+                    end)
+                    async_http.dispatch()
+                    while downloading do util.yield() end
+                end
+                theme_options[index + 1000] = directx.create_texture(preview_path)
             end
-            theme_options[index + 1000] = directx.create_texture(preview_path)
-        end
 
-        directx.draw_texture(theme_options[index + 1000], 0.15, 0.15, 0.5, 0.5, 0.5, 0.2, 0, white)
+            directx.draw_texture(theme_options[index + 1000], 0.15, 0.15, 0.5, 0.5, 0.5, 0.2, 0, white)
+        end
         return preview_on
     end)
 end, function()
