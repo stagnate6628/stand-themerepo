@@ -253,12 +253,57 @@ end, function()
     preview_on = false
 end)
 
-theme_options[#theme_options + 1] = menu.action(themeRepo_root, 'Discord', {}, 'Made by lev', function()
-    downloadTheme('Discord/', themeRepo_dir ..'Discord\\')
-end)
+local function parseMyRes(res)
+    local parsed = {}
 
-theme_options[#theme_options + 1] = menu.action(themeRepo_root, 'Youtube', {}, 'Made by lev', function()
-    downloadTheme('Youtube/', themeRepo_dir ..'Youtube\\')
+    repeat
+        local i = res:find(';')
+        local j = res:find('\n')
+        if j == nil then
+            j = #res
+        end
+
+        parsed[res:sub(0, i -1)] = res:sub(i + 1, j -1)
+        res = res:sub(j + 1, #res)
+        print(res)
+    until res:find('\n') == nil
+
+    local i = res:find(';')
+    parsed[res:sub(0, i -1)] = res:sub(i + 1, #res)
+
+    return parsed
+end
+
+function pairsByKeys(t, f)
+    local a = {}
+    for n in pairs(t) do table.insert(a, n) end
+    table.sort(a, f)
+    local i = 0
+    local iter = function()
+      i += 1
+      if a[i] == nil then return nil
+      else return a[i], t[a[i]]
+      end
+    end
+    return iter
+  end
+
+async_http.init('raw.githubusercontent.com', '/Jerrrry123/ThemeRepo/main/credits.txt', function(res)
+    if res:match('API rate limit exceeded') then
+        util.toast('You have been ratelimited by Githubs API, but you can use a vpn to circumvent this.')
+        return
+    end
+
+    local parsed = parseMyRes(res)
+
+    for name, description in pairsByKeys(parsed) do
+        theme_options[#theme_options + 1] = menu.action(themeRepo_root, name, {}, description, function()
+            downloadTheme(name ..'/', themeRepo_dir .. name ..'\\')
+        end)
+    end
+end, function()
+    util.toast('Failed to download.')
 end)
+async_http.dispatch()
 
 util.keep_running()
