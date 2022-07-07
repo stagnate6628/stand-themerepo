@@ -1,6 +1,16 @@
 util.require_natives(1651208000)
 
-local themeRepo_dir = filesystem.resources_dir() .. 'themeRepo themes\\'
+local themeRepo_dir = filesystem.resources_dir() ..'themeRepo themes\\'
+
+if not filesystem.is_dir(themeRepo_dir) then
+    filesystem.mkdirs(themeRepo_dir)
+end
+
+local preview_dir = themeRepo_dir ..'Preview\\'
+
+if not filesystem.is_dir(preview_dir) then
+    filesystem.mkdirs(preview_dir)
+end
 
 local header_file = filesystem.stand_dir() ..'Headers\\Custom Header\\themeRepo.png'
 
@@ -10,9 +20,7 @@ local theme_dir = filesystem.stand_dir() ..'Theme\\'
 
 local my_root = menu.my_root()
 
-if not filesystem.is_dir(themeRepo_dir) then
-    filesystem.mkdirs(themeRepo_dir)
-end
+
 
 local function getFileName(fullPath, removePath, file_type)
     local path = string.sub(fullPath, #removePath + 1)
@@ -91,19 +99,30 @@ local function loadThemes(root)
     local themes = filesystem.list_files(themeRepo_dir)
     for _, theme_path in pairs(themes) do
         local theme_name = getFileName(theme_path, themeRepo_dir, 'lua')
+        if theme_name == 'Previews' then
+            goto continue
+        end
         themeReferences[#themeReferences + 1] = menu.action(root, theme_name, {'loadTheme'.. theme_name}, '', function()
             if not filesystem.is_dir(theme_path) then util.toast('Theme not found.') end
 
-            applyHeader(theme_name)
-            applyTheme(theme_name)
-            applyProfile(theme_name)
             for _, file in pairs(filesystem.list_files(theme_path)) do
+                if file:lower():match('.png') then
+                    applyHeader(theme_name)
+                end
+                if file:lower():match('theme') then
+                    applyTheme(theme_name)
+                    util.yield(100)
+                end
+                if file:lower():match('.txt') then
+                    applyProfile(theme_name)
+                end
+
                 if file:lower():match('.otf') or file:lower():match('.ttf') or file:lower():match('.fnt') then
                     util.toast('This theme has a custom font you can apply.')
-                    break
                 end
             end
         end)
+        ::continue::
     end
 end
 
@@ -113,11 +132,12 @@ local local_themes_root local_themes_root = menu.list(my_root, 'Local themes', {
         themeReferences[i] = nil
     end
     loadThemes(local_themes_root)
+    util.toast('These options will overwrite your current header and theme icons so if you care about those you should make a backup before touching any options here.')
 end)
 
 loadThemes(local_themes_root)
 
-local themeRepo_root themeRepo_root = menu.list(my_root, 'Theme Repository', {}, 'Download popular themes from the theme repository to make them available in your local themes.')
+local themeRepo_root
 
 local function downloadFile(webPath, dirPath, fileName)
     local downloading = true
@@ -167,19 +187,75 @@ local function downloadTheme(webPath, dirPath)
                 downloadTheme(new_webPath, new_dirPath)
             end
         end
-        HUD.BUSYSPINNER_OFF()
     end, function()
         util.toast('Failed to download.')
-        HUD.BUSYSPINNER_OFF()
     end)
     async_http.dispatch()
+    HUD.BUSYSPINNER_OFF()
 end
 
-menu.action(themeRepo_root, 'Discord', {}, 'Made by lev', function()
+local theme_options = {}
+
+local justPressed = {}
+function is_key_just_down(keyCode)
+    local isDown = util.is_key_down(keyCode)
+
+    if isDown and not justPressed[keyCode] then
+        justPressed[keyCode] = true
+        return true
+    elseif not isDown then
+        justPressed[keyCode] = false
+    end
+    return false
+end
+
+local preview_on = false
+local preview_toggle = false
+local white = {r = 1, g = 1, b = 1, a = 1}
+themeRepo_root = menu.list(my_root, 'Theme Repository', {}, 'Download popular themes from the theme repository to make them available in your local themes.', function()
+    util.toast('Press shift to toggle the theme preview.')
+    preview_on = true
+    util.create_tick_handler(function()
+        if is_key_just_down(0x10) then
+            preview_toggle = not preview_toggle
+        end
+        if not preview_toggle or not preview_on then return end
+
+        local index = tonumber(menu.get_active_list_cursor_text(true, false):sub(1, 1))
+        if theme_options[index] == nil then return true end
+        local name = menu.get_menu_name(theme_options[index])
+        if theme_options[index + 1000] == nil then
+            local preview_file = name ..'.png'
+            local preview_path = preview_dir.. preview_file
+            if not filesystem.exists(preview_dir .. preview_file) then
+                local downloading = true
+                async_http.init('raw.githubusercontent.com', '/Jerrrry123/ThemeRepo/main/Previews/'.. preview_file, function(fileContent)
+                    local f = assert(io.open(preview_path, 'wb'))
+                    f:write(fileContent)
+                    f:close()
+                    downloading = false
+                end, function()
+                    util.toast('Failed to download.')
+                    downloading = false
+                end)
+                async_http.dispatch()
+                while downloading do util.yield() end
+            end
+            theme_options[index + 1000] = directx.create_texture(preview_path)
+        end
+
+        directx.draw_texture(theme_options[index + 1000], 0.15, 0.15, 0.5, 0.5, 0.5, 0.2, 0, white)
+        return preview_on
+    end)
+end, function()
+    preview_on = false
+end)
+
+theme_options[#theme_options + 1] = menu.action(themeRepo_root, 'Discord', {}, 'Made by lev', function()
     downloadTheme('Discord/', themeRepo_dir ..'Discord\\')
 end)
 
-menu.action(themeRepo_root, 'Youtube', {}, 'Made by lev', function()
+theme_options[#theme_options + 1] = menu.action(themeRepo_root, 'Youtube', {}, 'Made by lev', function()
     downloadTheme('Youtube/', themeRepo_dir ..'Youtube\\')
 end)
 
