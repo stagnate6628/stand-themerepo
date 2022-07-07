@@ -222,4 +222,3 @@ Stand
 		Settings
 			Force Silent Start: On
 			Force Silent Stop: Yes
-	Console: On

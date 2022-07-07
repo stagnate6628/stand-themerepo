@@ -398,22 +398,6 @@ Stand
 		Hide Information
 			Hide IP Address: Friends & Me
 	Lua Scripts
-		FairFight_V0.5: On
-			Vehicle Options
-				Vehicle's
-					Special Car's
-						Oppressor MK2: On
-					Plane's
-						P-996 Lazer: On
-						B11-Strikeforce: On
-						Hydra: On
-					Helicopter's
-						Akula: On
-						Hunter: On
-						Savage: On
-				Punishment's
-					Delete: On
-		JerryScript.1.2: On
 		Pulsive: On
 			Primary Colour: 29A2D9FF
 			Background Colour: 28282800

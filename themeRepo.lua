@@ -171,10 +171,10 @@ local function downloadTheme(webPath, dirPath)
     end
 
     if not filesystem.exists(filesystem.scripts_dir() ..'Pulsive.lua') and webPath:match('Pulsive') then
-        downloadFile(filesystem.scripts_dir(), 'Dependencies/' ,'Pulsive.lua')
+        downloadFile('Dependencies/', filesystem.scripts_dir(), 'Pulsive.lua')
     end
 
-    async_http.init('api.github.com', '/repos/Jerrrry123/ThemeRepo/contents/Themes/'.. string.sub(webPath, 1, #webPath - 1), function(res)
+    async_http.init('api.github.com', '/repos/Jerrrry123/ThemeRepo/contents/'.. string.sub(webPath, 1, #webPath - 1), function(res)
         if res:match('API rate limit exceeded') then
             util.toast('You have been ratelimited by Githubs API, but you can use a vpn to circumvent this.')
             HUD.BUSYSPINNER_OFF()
@@ -232,12 +232,12 @@ themeRepo_root = menu.list(my_root, 'Theme Repository', {}, 'Download popular th
                 local preview_file = name ..'.PNG'
                 local preview_path = preview_dir.. preview_file
                 if not filesystem.exists(preview_path) then
-                    downloadFile(preview_path, 'Previews/', preview_file)
+                    downloadFile('Previews/', preview_dir, preview_file)
                 end
                 theme_options[index + 1000] = directx.create_texture(preview_path)
             end
 
-            directx.draw_texture(theme_options[index + 1000], 0.15, 0.15, 0.5, 0.5, 0.5, 0.2, 0, white)
+            directx.draw_texture(theme_options[index + 1000], 0.13, 0.13, 0.5, 0.5, 0.5, 0.35, 0, white)
         end
         return preview_on
     end)
@@ -289,7 +289,7 @@ async_http.init('raw.githubusercontent.com', '/Jerrrry123/ThemeRepo/main/credits
 
     for name, description in pairsByKeys(parsed) do
         theme_options[#theme_options + 1] = menu.action(themeRepo_root, name, {}, description, function()
-            downloadTheme('Theme/'.. name ..'/', themeRepo_dir .. name ..'\\')
+            downloadTheme('Themes/'.. name ..'/', themeRepo_dir .. name ..'\\')
         end)
     end
 end, function()
