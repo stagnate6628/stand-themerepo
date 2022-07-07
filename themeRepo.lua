@@ -173,6 +173,9 @@ local function downloadTheme(webPath, dirPath)
     if not filesystem.exists(filesystem.scripts_dir() ..'Pulsive.lua') and webPath:match('Pulsive') then
         downloadFile('Dependencies/', filesystem.scripts_dir(), 'Pulsive.lua')
     end
+    if not filesystem.exists(filesystem.scripts_dir() ..'so no head.lua') and webPath:match('Kiddions') then
+        downloadFile('Dependencies/', filesystem.scripts_dir(), 'so no head.lua')
+    end
 
     async_http.init('api.github.com', '/repos/Jerrrry123/ThemeRepo/contents/'.. string.sub(webPath, 1, #webPath - 1), function(res)
         if res:match('API rate limit exceeded') then

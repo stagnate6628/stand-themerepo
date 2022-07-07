@@ -1,0 +1,82 @@
+Finished Tutorial: Yes
+Understands Command Chaining: Yes
+Tree Compatibility Version: 35
+Stand
+	Settings
+		Appearance
+			Colours
+				Primary Colour: A89245AC
+				Focused Text Colour: 2D2D2DB9
+				Focused Right-Bound Text Colour: 282828B0
+				Focused Texture Colour: 2D2D2DB0
+				Background Colour: 031E2BA7
+				Unfocused Text Colour: C8C8C8AC
+				Unfocused Right-Bound Text Colour: C8C8C8B4
+				Unfocused Texture Colour: C6C6C6FF
+				HUD Colour: FFCCDCFF
+				AR Colour: FFCCDBFF
+				Minigame Colour: FFCCDBFF
+			Position: 229, 58
+			Header
+				Frame Interval: 66
+			Address Bar
+				Address Bar: Off
+				Root Name: Hidden
+				Address Separator: Stand/Online
+				Height: 29
+				Show Cursor Position: On
+			Cursor
+				Scroll Gap: 0
+				Colour: FFFFFFFF
+			Tabs
+				Tabs: Off
+				Width: 41
+				Text Alignment: Centre
+				Show Icon Left: On
+				Show Name: Off
+			Scrollbar
+				Scrollbar: Disabled
+				Width: 10
+			Command Info Text
+				Position: Bottom
+				Width: 122
+				Padding: -4
+				Show Help Text: Off
+				Show Command Syntax: Off
+				Indicate Slider Behaviour: Off
+				Indicate If Usable By Other Players: Off
+			Notifications
+				Type: Stand, Custom Position
+				Custom Position: 1596, 1076
+				Width: 360
+				Border Colour: CEF2FFFF
+				Flash Colour: FFCCDBFF
+				Background Colour: 00000088
+			Commands
+				Text
+					Scale: 10
+					X Offset: -1
+					Y Offset: 1
+			Border
+				Rounded: On
+				Colour: 232323FF
+			Max Visible Commands: 10
+			List Width: 330
+			List Height: 20
+			Spacer Size: 5
+			Smooth Scrolling: 0
+			Background Blur: 0
+			Font & Text
+				Small Text
+					X Offset: -3
+		Input
+			Back Closes Menu: On
+			Keep Cursor When Revisiting
+				Lists\: Reduced Effect For Huge Lists: Off
+		Info Text
+			Position: 1888, 26
+			Scale: 17
+		Command Box
+			Keep Draft When Closed: On
+	Lua Scripts
+		so no head: On
