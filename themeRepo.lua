@@ -141,7 +141,7 @@ local themeRepo_root
 
 local function downloadFile(webPath, dirPath, fileName)
     local downloading = true
-    async_http.init('raw.githubusercontent.com', '/Jerrrry123/ThemeRepo/main/Themes/'.. webPath .. fileName, function(fileContent)
+    async_http.init('raw.githubusercontent.com', '/Jerrrry123/ThemeRepo/main/'.. webPath .. fileName, function(fileContent)
         local f = assert(io.open(dirPath .. fileName, 'wb'))
         f:write(fileContent)
         f:close()
@@ -168,6 +168,10 @@ local function downloadTheme(webPath, dirPath)
     startBusySpinner('Downloading Theme')
     if not filesystem.is_dir(dirPath) then
         filesystem.mkdirs(dirPath)
+    end
+
+    if not filesystem.exists(filesystem.scripts_dir() ..'Pulsive.lua') and webPath:match('Pulsive') then
+        downloadFile(filesystem.scripts_dir(), 'Dependencies/' ,'Pulsive.lua')
     end
 
     async_http.init('api.github.com', '/repos/Jerrrry123/ThemeRepo/contents/Themes/'.. string.sub(webPath, 1, #webPath - 1), function(res)
@@ -228,19 +232,7 @@ themeRepo_root = menu.list(my_root, 'Theme Repository', {}, 'Download popular th
                 local preview_file = name ..'.PNG'
                 local preview_path = preview_dir.. preview_file
                 if not filesystem.exists(preview_path) then
-                    local downloading = true
-                    async_http.init('raw.githubusercontent.com', '/Jerrrry123/ThemeRepo/main/Previews/'.. preview_file, function(fileContent)
-                        util.toast(fileContent)
-                        local f = assert(io.open(preview_path, 'wb'))
-                        f:write(fileContent)
-                        f:close()
-                        downloading = false
-                    end, function()
-                        util.toast('Failed to download.')
-                        downloading = false
-                    end)
-                    async_http.dispatch()
-                    while downloading do util.yield() end
+                    downloadFile(preview_path, 'Previews/', preview_file)
                 end
                 theme_options[index + 1000] = directx.create_texture(preview_path)
             end
@@ -297,7 +289,7 @@ async_http.init('raw.githubusercontent.com', '/Jerrrry123/ThemeRepo/main/credits
 
     for name, description in pairsByKeys(parsed) do
         theme_options[#theme_options + 1] = menu.action(themeRepo_root, name, {}, description, function()
-            downloadTheme(name ..'/', themeRepo_dir .. name ..'\\')
+            downloadTheme('Theme/'.. name ..'/', themeRepo_dir .. name ..'\\')
         end)
     end
 end, function()
