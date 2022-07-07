@@ -265,7 +265,6 @@ local function parseMyRes(res)
 
         parsed[res:sub(0, i -1)] = res:sub(i + 1, j -1)
         res = res:sub(j + 1, #res)
-        print(res)
     until res:find('\n') == nil
 
     local i = res:find(';')
