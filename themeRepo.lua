@@ -153,4 +153,8 @@ menu.action(themeRepo_root, 'Discord', {}, 'Made by lev', function()
     downloadTheme('Discord/', themeRepo_dir ..'Discord\\')
 end)
 
+menu.action(themeRepo_root, 'Youtube', {}, 'Made by lev', function()
+    downloadTheme('Youtube/', themeRepo_dir ..'Youtube\\')
+end)
+
 util.keep_running()
