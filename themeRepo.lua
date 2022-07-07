@@ -165,7 +165,7 @@ local function startBusySpinner(message)
 end
 
 local function downloadTheme(webPath, dirPath)
-    startBusySpinner('Transaction Pending')
+    startBusySpinner('Downloading Theme')
     if not filesystem.is_dir(dirPath) then
         filesystem.mkdirs(dirPath)
     end
@@ -187,11 +187,12 @@ local function downloadTheme(webPath, dirPath)
                 downloadTheme(new_webPath, new_dirPath)
             end
         end
+        HUD.BUSYSPINNER_OFF()
     end, function()
         util.toast('Failed to download.')
+        HUD.BUSYSPINNER_OFF()
     end)
     async_http.dispatch()
-    HUD.BUSYSPINNER_OFF()
 end
 
 local theme_options = {}
