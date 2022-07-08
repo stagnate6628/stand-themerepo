@@ -170,13 +170,6 @@ local function downloadTheme(webPath, dirPath)
         filesystem.mkdirs(dirPath)
     end
 
-    if not filesystem.exists(filesystem.scripts_dir() ..'Pulsive.lua') and webPath:match('Pulsive') then
-        downloadFile('Dependencies/', filesystem.scripts_dir(), 'Pulsive.lua')
-    end
-    if not filesystem.exists(filesystem.scripts_dir() ..'so no head.lua') and webPath:match('Kiddions') then
-        downloadFile('Dependencies/', filesystem.scripts_dir(), 'so no head.lua')
-    end
-
     async_http.init('api.github.com', '/repos/Jerrrry123/ThemeRepo/contents/'.. string.sub(webPath, 1, #webPath - 1), function(res)
         if res:match('API rate limit exceeded') then
             util.toast('You have been ratelimited by Githubs API, but you can use a vpn to circumvent this.')
@@ -248,24 +241,43 @@ end, function()
     preview_on = false
 end)
 
+local function parseValues(t, value)
+    local k = value:find(';')
+    if k then
+      t.credit = value:sub(0, k - 1)
+
+      t.lua = value:sub(k + 1, #value)
+    else
+      t.credit = value
+    end
+end
+
 local function parseMyRes(res)
-    local parsed = {}
+  local parsed = {}
 
-    repeat
-        local i = res:find(';')
-        local j = res:find('\n')
-        if j == nil then
-            j = #res
-        end
+  repeat
+      local i = res:find(';')
+      local j = res:find('\n')
+      if j == nil then
+          j = #res
+      end
 
-        parsed[res:sub(0, i -1)] = res:sub(i + 1, j -1)
-        res = res:sub(j + 1, #res)
-    until res:find('\n') == nil
+      parsed[res:sub(0, i -1)] = {}
 
-    local i = res:find(';')
-    parsed[res:sub(0, i -1)] = res:sub(i + 1, #res)
+      local value = res:sub(i + 1, j -1)
+      parseValues(parsed[res:sub(0, i -1)], value)
 
-    return parsed
+      res = res:sub(j + 1, #res)
+  until res:find('\n') == nil
+
+      local i = res:find(';')
+
+      parsed[res:sub(0, i -1)] = {}
+
+      local value = res:sub(i + 1, #res)
+      parseValues(parsed[res:sub(0, i -1)], value)
+
+  return parsed
 end
 
 function pairsByKeys(t, f)
@@ -274,10 +286,10 @@ function pairsByKeys(t, f)
     table.sort(a, f)
     local i = 0
     local iter = function()
-      i += 1
-      if a[i] == nil then return nil
-      else return a[i], t[a[i]]
-      end
+        i += 1
+        if a[i] == nil then return nil
+        else return a[i], t[a[i]]
+        end
     end
     return iter
   end
@@ -290,8 +302,11 @@ async_http.init('raw.githubusercontent.com', '/Jerrrry123/ThemeRepo/main/credits
 
     local parsed = parseMyRes(res)
 
-    for name, description in pairsByKeys(parsed) do
-        theme_options[#theme_options + 1] = menu.action(themeRepo_root, name, {}, description, function()
+    for name, t in pairsByKeys(parsed) do
+        theme_options[#theme_options + 1] = menu.action(themeRepo_root, name, {}, t.credit, function()
+            if t.lua != nil and not filesystem.exists(filesystem.scripts_dir() ..t.lua) then
+                downloadFile('Dependencies/', filesystem.scripts_dir(), t.lua)
+            end
             downloadTheme('Themes/'.. name ..'/', themeRepo_dir .. name ..'\\')
         end)
     end

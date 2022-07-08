@@ -1,4 +1,4 @@
 Discord;Made by lev
 Youtube;Made by lev
-Gradient Pulsive;Made by Sk
-Kiddions;Made by Maddy
+Gradient Pulsive;Made by Sk;Pulsive.lua
+Kiddions;Made by Maddy;so no head.lua
