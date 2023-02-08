@@ -1,4 +1,4 @@
-Stand;
+Stand;Made by Stand
 Discord;Made by lev
 Youtube;Made by lev
 Gradient Pulsive;Made by Sk;Pulsive.lua
