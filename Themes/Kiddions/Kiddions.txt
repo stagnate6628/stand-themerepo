@@ -1,6 +1,12 @@
 Finished Tutorial: Yes
+Understands Commands: Yes
+Understands Sliders: Yes
+Understands Profiles: Yes
+Understands Context Menu: Yes
+Understands Controller Open/Close: Yes
+Prompted For Controller Disables: Yes
 Understands Command Chaining: Yes
-Tree Compatibility Version: 35
+Tree Compatibility Version: 43
 Stand
 	Settings
 		Appearance
@@ -69,14 +75,8 @@ Stand
 			Font & Text
 				Small Text
 					X Offset: -3
-		Input
-			Back Closes Menu: On
-			Keep Cursor When Revisiting
-				Lists\: Reduced Effect For Huge Lists: Off
 		Info Text
 			Position: 1888, 26
 			Scale: 17
-		Command Box
-			Keep Draft When Closed: On
 	Lua Scripts
 		so no head: On
