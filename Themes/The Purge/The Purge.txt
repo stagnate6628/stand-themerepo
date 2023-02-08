@@ -12,6 +12,9 @@ Stand
 				Primary Colour: FF0000FF
 				Background Colour: 1C1C1CFF
 			Position: 1300, 335
+			Header
+				Header: Custom
+				Frame Interval: 30
 			Address Bar
 				Address Bar: Off
 			Cursor
@@ -45,4 +48,4 @@ Stand
 			Spacer Size: 0
 			Background Blur: 0
 	Lua Scripts
-		RTL: On
+		stand-profile-helper: On

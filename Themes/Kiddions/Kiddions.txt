@@ -80,3 +80,4 @@ Stand
 			Scale: 17
 	Lua Scripts
 		so no head: On
+		stand-profile-helper: On

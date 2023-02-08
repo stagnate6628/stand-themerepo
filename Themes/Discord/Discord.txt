@@ -82,3 +82,5 @@ Stand
 			Position: 1898, 175
 			Alignment: Centre
 			Scale: 11
+	Lua Scripts
+		stand-profile-helper: On
