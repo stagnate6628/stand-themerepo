@@ -1,0 +1,48 @@
+Finished Tutorial: Yes
+Understands Commands: Yes
+Understands Sliders: Yes
+Understands Profiles: Yes
+Understands Context Menu: Yes
+Understands Command Chaining: Yes
+Tree Compatibility Version: 43
+Stand
+	Settings
+		Appearance
+			Colours
+				Primary Colour: FFFFFFFF
+				Focused Text Colour: 000000FF
+				Focused Right-Bound Text Colour: 000000FF
+				Focused Texture Colour: 000000FF
+				Background Colour: 00000096
+			Position: 1220, 220
+			Address Bar
+				Address Bar: Off
+			Cursor
+				Colour: 000000FF
+			Tabs
+				Width: 69
+				Height: 44
+				Position: Top
+				Text
+					Y Offset: 9
+				Text Alignment: Centre
+			Scrollbar
+				Scrollbar: Disabled
+				Width: 1
+			Command Info Text
+				Show Help Text: Off
+				Show Command Syntax: Off
+				Indicate Slider Behaviour: Off
+				Indicate If Usable By Other Players: Off
+			Commands
+				Text
+					Scale: 13
+					X Offset: 1
+					Y Offset: 10
+			Max Visible Commands: 10
+			List Width: 483
+			List Height: 46
+			Spacer Size: 0
+			Background Blur: 0
+Lua Scripts
+	stand-theme-manager-profiles: On

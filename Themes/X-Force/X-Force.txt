@@ -1,0 +1,51 @@
+Finished Tutorial: Yes
+Understands Commands: Yes
+Understands Sliders: Yes
+Understands Profiles: Yes
+Understands Context Menu: Yes
+Understands Command Chaining: Yes
+Tree Compatibility Version: 43
+Stand
+	Settings
+		Appearance
+			Colours
+				Primary Colour: 34876AFF
+				Focused Text Colour: 000000FF
+				Focused Right-Bound Text Colour: 000000FF
+				Focused Texture Colour: 000000FF
+				Background Colour: 00000096
+			Position: 1240, 350
+			Address Bar
+				Address Bar: Off
+			Cursor
+				Colour: 000000FF
+			Tabs
+				Tabs: Off
+				Width: 1
+				Height: 1
+				Position: Top
+				Text
+					Scale: 1
+					X Offset: 0
+					Y Offset: 0
+				Text Alignment: Centre
+			Scrollbar
+				Scrollbar: Disabled
+				Width: 1
+			Command Info Text
+				Show Help Text: Off
+				Show Command Syntax: Off
+				Indicate Slider Behaviour: Off
+				Indicate If Usable By Other Players: Off
+			Commands
+				Text
+					Scale: 13
+					X Offset: 2
+					Y Offset: 5
+			Max Visible Commands: 14
+			List Width: 504
+			List Height: 31
+			Spacer Size: 0
+			Background Blur: 0
+	Lua Scripts
+		RTL: On
