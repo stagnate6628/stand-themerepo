@@ -1,5 +1,3 @@
-util.require_no_lag("natives-1640181023")
-
 while true do
     if menu.is_open() then
 
