@@ -14,6 +14,14 @@ local resource_dir = filesystem.resources_dir() .. 'stand-profile-helper\\'
 local home = menu.my_root()
 local themes = home:list("Themes", {}, "")
 local settings = home:list("Settings", {}, "")
+
+local use_default_assets = true
+settings:toggle("Use Default Assets on Fallback", {},
+    "If a theme is missing tags/textures, then automatically download the default Stand assets and use those instead.",
+    function(on)
+        use_default_assets = on
+    end, true)
+
 settings:action("Restart Script", {}, "", function()
     util.restart_script()
 end)
@@ -35,14 +43,15 @@ function download_themes()
                 local parts = v:split(';')
                 local theme_name = parts[1]
                 local theme_author = parts[2]
+                local deps = {}
 
                 -- todo: download scripts for supported themes
-                -- if type(parts[3]) == "string" and parts[3]:endswith(".lua") then
-                --     util.log(inspect(theme_name .. "|" .. parts[3]))
-                -- end
+                if type(parts[3]) == "string" and parts[3]:endswith(".lua") then
+                    table.insert(deps, parts[3])
+                end
 
                 themes:action(theme_name, {}, "Made by " .. theme_author, function()
-                    download_theme(theme_name)
+                    download_theme(theme_name, deps)
                 end)
                 ::continue::
             end
@@ -104,8 +113,9 @@ function does_remote_file_exist(url_path)
     return exists
 end
 
-function download_theme(theme_name)
+function download_theme(theme_name, dependencies)
     empty_headers_dir()
+    filesystem.mkdir(resource_dir .. theme_name)
 
     local profile_path = get_profile_path_by_name(theme_name)
     local font_path = theme_dir .. "Font.spritefont"
@@ -127,7 +137,8 @@ function download_theme(theme_name)
     if does_remote_file_exist(header_url_path) then
         log("Using custom header (1)")
         download_file(header_url_path, header_dir .. 'Header.bmp')
-        trigger_command("header hide; header custom")
+        trigger_command_by_ref("Stand>Settings>Appearance>Header>Header>Be Gone")
+        trigger_command_by_ref("Stand>Settings>Appearance>Header>Header>Custom")
         -- elseif does_remote_file_exist(animated_header_url_path) then
         --     log("Using custom header (2)")
         --     local i = 1
@@ -220,7 +231,15 @@ function download_theme(theme_name)
     local footer_url_path = 'Themes/' .. theme_name .. '/Footer.bmp'
     if does_remote_file_exist(footer_url_path) then
         log('Downloading footer')
-        download_file(footer_url_path, theme_dir .. theme_name .. '\\Footer.bmp')
+        download_file(footer_url_path, resource_dir .. theme_name .. '\\Footer.bmp')
+    end
+
+    for i, script in pairs(dependencies) do
+        local dep_url_path = 'Dependencies/' .. script
+        if does_remote_file_exist(dep_url_path) then
+            download_file(dep_url_path, filesystem.scripts_dir() .. script)
+            log('Downloaded dependency ' .. script)
+        end
     end
 
     load_profile(theme_name)
