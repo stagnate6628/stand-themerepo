@@ -1,5 +1,5 @@
 # stand-profile-helper
-A theme/profile downloader for Stand
+Utility to manage multiple profiles with Stand
 
 # Credits
 - https://github.com/ukn-repos/rtl
