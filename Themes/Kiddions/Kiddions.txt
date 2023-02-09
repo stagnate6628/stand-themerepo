@@ -79,5 +79,5 @@ Stand
 			Position: 1888, 26
 			Scale: 17
 	Lua Scripts
-		so no head: On
+		kiddions: On
 		stand-profile-helper: On
