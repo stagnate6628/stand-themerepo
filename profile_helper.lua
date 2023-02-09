@@ -1,4 +1,4 @@
---local inspect = require("inspect")
+local inspect = require("inspect")
 local texture_names<const> = {"Disabled", "Edit", "Enabled", "Friends", "Header Loading", "Link", "List", "Search",
                               "Toggle Off Auto", "Toggle Off", "Toggle On Auto", "Toggle On", "User", "Users"}
 local tag_names<const> = {"00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14",
@@ -128,22 +128,22 @@ function download_theme(theme_name)
         log("Using custom header (1)")
         download_file(header_url_path, header_dir .. 'Header.bmp')
         trigger_command("header hide; header custom")
-    -- elseif does_remote_file_exist(animated_header_url_path) then
-    --     log("Using custom header (2)")
-    --     local i = 1
-    --     download_file(animated_header_url_path, header_dir .. 'Header1.bmp')
-    --     i = i + 1
+        -- elseif does_remote_file_exist(animated_header_url_path) then
+        --     log("Using custom header (2)")
+        --     local i = 1
+        --     download_file(animated_header_url_path, header_dir .. 'Header1.bmp')
+        --     i = i + 1
 
-    --     animated_header_url_path = 'Themes/' .. theme_name .. '/Header' .. i .. '.bmp'
+        --     animated_header_url_path = 'Themes/' .. theme_name .. '/Header' .. i .. '.bmp'
 
-    --     while does_remote_file_exist(animated_header_url_path) do
-    --         log("Downloading header " .. i)
-    --         download_file(animated_header_url_path, header_dir .. 'Header' .. i .. '.bmp')
-    --         i = i + 1
+        --     while does_remote_file_exist(animated_header_url_path) do
+        --         log("Downloading header " .. i)
+        --         download_file(animated_header_url_path, header_dir .. 'Header' .. i .. '.bmp')
+        --         i = i + 1
 
-    --         animated_header_url_path = 'Themes/' .. theme_name .. '/Header' .. i .. '.bmp'
-    --         util.yield(100)
-    --     end
+        --         animated_header_url_path = 'Themes/' .. theme_name .. '/Header' .. i .. '.bmp'
+        --         util.yield(100)
+        --     end
     else
         trigger_command_by_ref("Stand>Settings>Appearance>Header>Header>Be Gone")
         log("Not using custom header")
@@ -154,6 +154,8 @@ function download_theme(theme_name)
         if not does_remote_file_exist(texture_url_path) then
             log('Downloading default texture ' .. texture_name)
             texture_url_path = 'Themes/Stand/Theme/' .. texture_name .. '.png'
+        else
+            log('Downloading custom texture ' .. texture_name)
         end
         download_file(texture_url_path, theme_dir .. texture_name .. '.png')
 
@@ -173,6 +175,8 @@ function download_theme(theme_name)
         if not does_remote_file_exist(tag_url_path) then
             log('Downloading default tag ' .. tag_name)
             tag_url_path = 'Themes/Stand/Theme/Custom/' .. tag_name .. '.png'
+        else
+            log('Downloading custom tag ' .. tag_name)
         end
         download_file(tag_url_path, theme_dir .. "Custom\\" .. tag_name .. '.png')
 
@@ -192,6 +196,8 @@ function download_theme(theme_name)
         if not does_remote_file_exist(tab_url_path) then
             log('Downloading default tab ' .. tab_name)
             tab_url_path = 'Themes/Stand/Theme/Tabs/' .. tab_name .. '.png'
+        else
+            log('Downloading custom tab ' .. tab_name)
         end
         download_file(tab_url_path, theme_dir .. "Tabs\\" .. tab_name .. '.png')
 
@@ -209,6 +215,12 @@ function download_theme(theme_name)
         log("Reloading font")
         util.yield(500)
         trigger_command("reloadfont")
+    end
+
+    local footer_url_path = 'Themes/' .. theme_name .. '/Footer.bmp'
+    if does_remote_file_exist(footer_url_path) then
+        log('Downloading footer')
+        download_file(footer_url_path, theme_dir .. theme_name .. '\\Footer.bmp')
     end
 
     load_profile(theme_name)
