@@ -14,7 +14,7 @@ Stand
 				Focused Right-Bound Text Colour: 000000FF
 				Focused Texture Colour: 000000FF
 				Background Colour: 00000096
-			Position: 1220, 220
+			Position: 1266, 221
 			Header
 				Header: Custom
 				Frame Interval: 30
@@ -47,5 +47,6 @@ Stand
 			List Height: 46
 			Spacer Size: 0
 			Background Blur: 0
-Lua Scripts
-	stand-profile-helper: On
+	Lua Scripts
+		[SPH] 2Take1: On
+		stand-profile-helper: On
