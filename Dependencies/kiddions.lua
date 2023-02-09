@@ -1,5 +1,3 @@
-util.toast("This script is not meant to be touched manually!")
-
 while true do
     if menu.is_open() then
 
