@@ -1,4 +1,4 @@
--- local inspect = require("inspect")
+local inspect = require("inspect")
 local texture_names<const> = {"Disabled", "Edit", "Enabled", "Friends", "Header Loading", "Link", "List", "Search",
                               "Toggle Off Auto", "Toggle Off", "Toggle On Auto", "Toggle On", "User", "Users"}
 local tag_names<const> = {"00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14",
@@ -14,6 +14,9 @@ local resource_dir = filesystem.resources_dir() .. 'stand-profile-helper\\'
 local home = menu.my_root()
 local themes = home:list("Themes", {}, "")
 local settings = home:list("Settings", {}, "")
+settings:action("Restart Script", {}, "", function()
+    util.restart_script()
+end)
 
 function download_themes()
     async_http.init('raw.githubusercontent.com', '/stagnate6628/stand-profile-helper/main/credits.txt',
@@ -59,10 +62,6 @@ if SCRIPT_MANUAL_START or SCRIPT_SILENT_START then
     util.toast(
         'Some options may cause your profiles/headers/textures to be overwritten or lost. It is recommended to keep a backup if necessary. You have been warned.')
 end
-
-settings:action("Restart Script", {}, "", function()
-    util.restart_script()
-end)
 
 function download_file(url_path, file_path)
     local downloading = true
