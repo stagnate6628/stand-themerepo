@@ -5,7 +5,7 @@ Discord;lev
 Epsilon;ukn
 Fragment;ukn
 Gradient Pulsive;Sk;Pulsive.lua
-Kiddions;Sk;so no head.lua
+Kiddions;Sk;kiddions.lua
 Ozark;ukn
 Rebound;ukn
 The Purge;ukn
