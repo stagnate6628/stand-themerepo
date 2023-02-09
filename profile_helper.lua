@@ -234,6 +234,12 @@ function download_theme(theme_name, dependencies)
         download_file(footer_url_path, resource_dir .. theme_name .. '\\Footer.bmp')
     end
 
+    local subheader_url_path = 'Themes/' .. theme_name .. 'Subheader.bmp'
+    if does_remote_file_exist(subheader_url_path) then
+        log('Downloading subheader')
+        download_file(subheader_url_path, resource_dir .. theme_name .. '\\Subheader.bmp')
+    end
+
     for i, script in pairs(dependencies) do
         local dep_url_path = 'Dependencies/' .. script
         if does_remote_file_exist(dep_url_path) then
