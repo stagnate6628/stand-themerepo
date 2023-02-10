@@ -4,7 +4,7 @@ Impulse;ukn;[SPH] Impulse.lua
 Circuit;ukn;[SPH] Circuit.lua
 Discord;lev
 Epsilon;ukn;[SPH] Epsilon.lua
-Fragment;ukn
+Fragment;ukn;[SPH] Fragment.lua
 Gradient Pulsive;Sk;Pulsive.lua
 Kiddions;Sk;[SPH] Kiddions.lua
 Ozark;ukn
