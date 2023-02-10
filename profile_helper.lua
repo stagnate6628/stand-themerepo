@@ -1,3 +1,4 @@
+local inspect = require("inspect")
 local texture_names<const> = {"Disabled", "Edit", "Enabled", "Friends", "Header Loading", "Link", "List", "Search",
                               "Toggle Off Auto", "Toggle Off", "Toggle On Auto", "Toggle On", "User", "Users"}
 local tag_names<const> = {"00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14",
@@ -80,18 +81,20 @@ if SCRIPT_MANUAL_START or SCRIPT_SILENT_START then
 
     util.toast(
         "It is recommended to backup any profiles, textures, and headers before selecting a theme. You have been warned.")
+
 end
 
 function download_file(url_path, file_path)
     local downloading = true
-    async_http.init('raw.githubusercontent.com', '/stagnate6628/stand-profile-helper/main/' .. url_path, function(body)
-        local file = assert(io.open(file_path, 'wb'))
-        file:write(body)
-        file:close()
-        downloading = false
-    end, function()
-        downloading = false
-    end)
+    async_http.init('raw.githubusercontent.com', '/stagnate6628/stand-profile-helper/main/' .. url_path,
+        function(body, _, status_code)
+            local file = assert(io.open(file_path, 'wb'))
+            file:write(body)
+            file:close()
+            downloading = false
+        end, function()
+            downloading = false
+        end)
     async_http.dispatch()
 
     while downloading do
@@ -185,9 +188,9 @@ function download_theme(theme_name, dependencies)
         i = i + 1
         if i == #texture_names then
             textures_done = true
-            log("Reloading textures (1)")
-            util.yield(500)
-            trigger_command("reloadtextures")
+            -- log("Reloading textures (1)")
+            -- util.yield(500)
+            -- trigger_command("reloadtextures")
         end
     end
 
@@ -206,9 +209,9 @@ function download_theme(theme_name, dependencies)
         j = j + 1
         if j == #tag_names then
             tags_done = true
-            log("Reloading textures (2)")
-            util.yield(500)
-            trigger_command("reloadtextures")
+            -- log("Reloading textures (2)")
+            -- util.yield(500)
+            -- trigger_command("reloadtextures")
         end
     end
 
@@ -226,10 +229,16 @@ function download_theme(theme_name, dependencies)
 
         k = k + 1
         if i == #tab_names then
-            log("Reloading textures (3)")
-            util.yield(500)
-            trigger_command("reloadtextures")
+            tabs_done = true
+            -- log("Reloading textures (3)")
+            -- util.yield(500)
+            -- trigger_command("reloadtextures")
         end
+    end
+
+    if texture_done and tags_done and tabs_done then
+        log("Reloading textures")
+        trigger_command("reloadtextures")
     end
 
     if filesystem.is_regular_file(font_path) then
@@ -317,7 +326,7 @@ end
 
 function trigger_command_by_ref(ref)
     local _ref = menu.ref_by_path(ref, 43)
-    if not trigger_command_by_ref:isValid() then
+    if not _ref:isValid() then
         return
     end
 
