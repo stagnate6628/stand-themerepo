@@ -10,6 +10,6 @@ Kiddions;Sk;[SPH] Kiddions.lua
 Ozark;ukn;[SPH] Ozark.lua
 Rebound;ukn;[SPH] Rebound.lua
 The Purge;ukn
-X-Force;ukn
+X-Force;ukn;[SPH] X-Force.lua
 XCheats;ukn
 Youtube;lev
