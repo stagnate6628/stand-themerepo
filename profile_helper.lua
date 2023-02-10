@@ -147,9 +147,23 @@ function download_theme(theme_name, dependencies)
     end
     download_file(font_url_path, font_path)
 
+    local footer_url_path = 'Themes/' .. theme_name .. '/Footer.bmp'
+    if does_remote_file_exist(footer_url_path) then
+        log('Downloading footer')
+        download_file(footer_url_path, resource_dir .. theme_name .. '\\Footer.bmp')
+    end
+
+    local subheader_exists = false
+    local subheader_url_path = 'Themes/' .. theme_name .. '/Subheader.bmp'
+    if does_remote_file_exist(subheader_url_path) then
+        subheader_exists = true
+        log('Downloading subheader')
+        download_file(subheader_url_path, resource_dir .. theme_name .. '\\Subheader.bmp')
+    end
+
     local header_url_path = 'Themes/' .. theme_name .. '/Header.bmp'
     local animated_header_url_path = 'Themes/' .. theme_name .. '/Header1.bmp'
-    if does_remote_file_exist(header_url_path) then
+    if does_remote_file_exist(header_url_path) and not subheader_exists then
         log("Using custom header (1)")
         download_file(header_url_path, header_dir .. 'Header.bmp')
         trigger_command_by_ref("Stand>Settings>Appearance>Header>Header>Be Gone")
@@ -157,14 +171,16 @@ function download_theme(theme_name, dependencies)
     elseif does_remote_file_exist(animated_header_url_path) then
         log("Using custom header (2)")
         local i = 1
-        download_file(animated_header_url_path, header_dir .. 'Header1.bmp')
+        download_file(animated_header_url_path, resource_dir .. theme_name .. '/Header1.bmp')
+        log("Downloading header " .. i)
         i = i + 1
 
+        trigger_command_by_ref("Stand>Settings>Appearance>Header>Header>Be Gone")
         animated_header_url_path = 'Themes/' .. theme_name .. '/Header' .. i .. '.bmp'
 
         while does_remote_file_exist(animated_header_url_path) do
             log("Downloading header " .. i)
-            download_file(animated_header_url_path, header_dir .. 'Header' .. i .. '.bmp')
+            download_file(animated_header_url_path, resource_dir .. theme_name .. '/Header' .. i .. '.bmp')
             i = i + 1
 
             animated_header_url_path = 'Themes/' .. theme_name .. '/Header' .. i .. '.bmp'
@@ -238,18 +254,6 @@ function download_theme(theme_name, dependencies)
         log("Reloading font")
         util.yield(500)
         trigger_command("reloadfont")
-    end
-
-    local footer_url_path = 'Themes/' .. theme_name .. '/Footer.bmp'
-    if does_remote_file_exist(footer_url_path) then
-        log('Downloading footer')
-        download_file(footer_url_path, resource_dir .. theme_name .. '\\Footer.bmp')
-    end
-
-    local subheader_url_path = 'Themes/' .. theme_name .. '/Subheader.bmp'
-    if does_remote_file_exist(subheader_url_path) then
-        log('Downloading subheader')
-        download_file(subheader_url_path, resource_dir .. theme_name .. '\\Subheader.bmp')
     end
 
     for i, script in pairs(dependencies) do
