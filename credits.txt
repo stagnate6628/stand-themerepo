@@ -7,7 +7,7 @@ Epsilon;ukn;[SPH] Epsilon.lua
 Fragment;ukn;[SPH] Fragment.lua
 Gradient Pulsive;Sk;Pulsive.lua
 Kiddions;Sk;[SPH] Kiddions.lua
-Ozark;ukn
+Ozark;ukn;[SPH] Ozark.lua
 Rebound;ukn
 The Purge;ukn
 X-Force;ukn
