@@ -15,9 +15,6 @@ Stand
 				Focused Texture Colour: 000000FF
 				Background Colour: 020002D2
 			Position: 320, 440
-			Header
-				Header: Custom
-				Frame Interval: 30
 			Address Bar
 				Address Bar: Off
 			Cursor
@@ -51,4 +48,5 @@ Stand
 			Spacer Size: 0
 			Background Blur: 0
 	Lua Scripts
+		[SPH] Fragment: On
 		stand-profile-helper: On
