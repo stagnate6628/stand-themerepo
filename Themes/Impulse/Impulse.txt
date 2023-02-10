@@ -15,6 +15,8 @@ Stand
 				Focused Texture Colour: 000000FF
 				Background Colour: 060A14C8
 			Position: 80, 200
+			Header
+				Header: Custom
 			Address Bar
 				Address Bar: Off
 			Cursor
@@ -47,4 +49,5 @@ Stand
 			Spacer Size: 12
 			Background Blur: 0
 	Lua Scripts
+		[SPH] Impulse: On
 		stand-profile-helper: On
