@@ -16,14 +16,14 @@ local themes = home:list("Themes", {}, "")
 local settings = home:list("Settings", {}, "")
 
 local use_default_assets = true
-local show_logs = true
+local show_logs = false
 settings:toggle("Use Default Assets on Fallback", {},
     "If a theme is missing tags/textures, then automatically download the default Stand assets and use those instead.",
     function(on)
         use_default_assets = on
     end, true)
 settings:toggle("Download Status", {}, "Display the download status with toasts", function(on)
-    logging = on
+    show_logs = on
 end, false)
 
 settings:action("Restart Script", {}, "", function()
@@ -134,7 +134,9 @@ function download_theme(theme_name, dependencies)
     local font_path = theme_dir .. "Font.spritefont"
 
     download_file('Themes/' .. theme_name .. '/' .. theme_name .. '.txt', profile_path)
-    util.yield(100)
+    if does_profile_exist_by_name(theme_name) then
+        log('Downloaded profile')
+    end
 
     local font_url_path = 'Themes/Stand/Font.spritefont'
     if does_remote_file_exist('Themes/' .. theme_name .. '/Font.spritefont') then
@@ -152,22 +154,22 @@ function download_theme(theme_name, dependencies)
         download_file(header_url_path, header_dir .. 'Header.bmp')
         trigger_command_by_ref("Stand>Settings>Appearance>Header>Header>Be Gone")
         trigger_command_by_ref("Stand>Settings>Appearance>Header>Header>Custom")
-        -- elseif does_remote_file_exist(animated_header_url_path) then
-        --     log("Using custom header (2)")
-        --     local i = 1
-        --     download_file(animated_header_url_path, header_dir .. 'Header1.bmp')
-        --     i = i + 1
+    elseif does_remote_file_exist(animated_header_url_path) then
+        log("Using custom header (2)")
+        local i = 1
+        download_file(animated_header_url_path, header_dir .. 'Header1.bmp')
+        i = i + 1
 
-        --     animated_header_url_path = 'Themes/' .. theme_name .. '/Header' .. i .. '.bmp'
+        animated_header_url_path = 'Themes/' .. theme_name .. '/Header' .. i .. '.bmp'
 
-        --     while does_remote_file_exist(animated_header_url_path) do
-        --         log("Downloading header " .. i)
-        --         download_file(animated_header_url_path, header_dir .. 'Header' .. i .. '.bmp')
-        --         i = i + 1
+        while does_remote_file_exist(animated_header_url_path) do
+            log("Downloading header " .. i)
+            download_file(animated_header_url_path, header_dir .. 'Header' .. i .. '.bmp')
+            i = i + 1
 
-        --         animated_header_url_path = 'Themes/' .. theme_name .. '/Header' .. i .. '.bmp'
-        --         util.yield(100)
-        --     end
+            animated_header_url_path = 'Themes/' .. theme_name .. '/Header' .. i .. '.bmp'
+            util.yield(100)
+        end
     else
         trigger_command_by_ref("Stand>Settings>Appearance>Header>Header>Be Gone")
         log("Not using custom header")
@@ -183,14 +185,12 @@ function download_theme(theme_name, dependencies)
         end
         download_file(texture_url_path, theme_dir .. texture_name .. '.png')
 
-        util.yield(500)
+        util.yield(250)
 
         i = i + 1
         if i == #texture_names then
-            textures_done = true
-            -- log("Reloading textures (1)")
-            -- util.yield(500)
-            -- trigger_command("reloadtextures")
+            log("Reloading textures (1)")
+            trigger_command("reloadtextures")
         end
     end
 
@@ -204,14 +204,13 @@ function download_theme(theme_name, dependencies)
         end
         download_file(tag_url_path, theme_dir .. "Custom\\" .. tag_name .. '.png')
 
-        util.yield(500)
+        util.yield(250)
 
         j = j + 1
         if j == #tag_names then
             tags_done = true
-            -- log("Reloading textures (2)")
-            -- util.yield(500)
-            -- trigger_command("reloadtextures")
+            log("Reloading textures (2)")
+            trigger_command("reloadtextures")
         end
     end
 
@@ -225,20 +224,14 @@ function download_theme(theme_name, dependencies)
         end
         download_file(tab_url_path, theme_dir .. "Tabs\\" .. tab_name .. '.png')
 
-        util.yield(500)
+        util.yield(250)
 
         k = k + 1
         if i == #tab_names then
             tabs_done = true
-            -- log("Reloading textures (3)")
-            -- util.yield(500)
-            -- trigger_command("reloadtextures")
+            log("Reloading textures (3)")
+            trigger_command("reloadtextures")
         end
-    end
-
-    if texture_done and tags_done and tabs_done then
-        log("Reloading textures")
-        trigger_command("reloadtextures")
     end
 
     if filesystem.is_regular_file(font_path) then
@@ -305,7 +298,6 @@ function does_profile_exist_by_name(profile_name)
 end
 
 function empty_headers_dir()
-    local header_dir = stand_dir .. "Headers\\Custom Header"
     local files = filesystem.list_files(header_dir)
 
     for _, path in ipairs(files) do
