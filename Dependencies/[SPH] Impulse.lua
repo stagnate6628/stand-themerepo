@@ -25,11 +25,6 @@ local header = directx.create_texture(header_path)
 local footer = directx.create_texture(footer_path)
 local subheader = directx.create_texture(subheader_path)
 
-d = 0
-menu.slider(menu.my_root(), 'x', {}, '', -1000000, 1000000, 0, 1, function(value)
-    d = value / 100
-end)
-
 util.create_tick_handler(function()
     if not menu.is_open() then
         return false
