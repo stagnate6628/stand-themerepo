@@ -3,7 +3,7 @@ Stand;Stand
 Impulse;ukn;[SPH] Impulse.lua
 Circuit;ukn;[SPH] Circuit.lua
 Discord;lev
-Epsilon;ukn
+Epsilon;ukn;[SPH] Epsilon.lua
 Fragment;ukn
 Gradient Pulsive;Sk;Pulsive.lua
 Kiddions;Sk;[SPH] Kiddions.lua
