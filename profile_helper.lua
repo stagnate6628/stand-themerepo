@@ -15,20 +15,26 @@ local themes = home:list("Themes", {}, "")
 local settings = home:list("Settings", {}, "")
 
 local use_default_assets = true
+local show_logs = true
 settings:toggle("Use Default Assets on Fallback", {},
     "If a theme is missing tags/textures, then automatically download the default Stand assets and use those instead.",
     function(on)
         use_default_assets = on
     end, true)
+settings:toggle("Download Status", {}, "Display the download status with toasts", function(on)
+    logging = on
+end, false)
 
 settings:action("Restart Script", {}, "", function()
     util.restart_script()
 end)
 
 function download_themes()
+    local downloading = true
     async_http.init('raw.githubusercontent.com', '/stagnate6628/stand-profile-helper/main/credits.txt',
         function(res, _, status_code)
             if res:match('API rate limit exceeded') or status_code ~= 200 then
+                downloading = false
                 log("rate limit hit")
                 return
             end
@@ -44,7 +50,6 @@ function download_themes()
                 local theme_author = parts[2]
                 local deps = {}
 
-                -- todo: download scripts for supported themes
                 if type(parts[3]) == "string" and parts[3]:endswith(".lua") then
                     table.insert(deps, parts[3])
                 end
@@ -54,10 +59,16 @@ function download_themes()
                 end)
                 ::continue::
             end
+            downloading = false
         end, function()
-            log("failed to download theme")
+            log("failed to download themes")
+            downloading = false
         end)
     async_http.dispatch()
+
+    while downloading do
+        util.yield()
+    end
 end
 
 if SCRIPT_MANUAL_START or SCRIPT_SILENT_START then
@@ -68,7 +79,7 @@ if SCRIPT_MANUAL_START or SCRIPT_SILENT_START then
     download_themes()
 
     util.toast(
-        'Some options may cause your profiles/headers/textures to be overwritten or lost. It is recommended to keep a backup if necessary. You have been warned.')
+        "It is recommended to backup any profiles, textures, and headers before selecting a theme. You have been warned.")
 end
 
 function download_file(url_path, file_path)
@@ -251,7 +262,9 @@ function download_theme(theme_name, dependencies)
 end
 
 function log(msg)
-    util.toast(msg, TOAST_ALL)
+    if show_logs then
+        util.toast(msg, TOAST_ALL)
+    end
 end
 
 function load_profile(profile_name)
