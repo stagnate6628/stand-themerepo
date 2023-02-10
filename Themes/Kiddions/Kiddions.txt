@@ -52,7 +52,6 @@ Stand
 				Indicate Slider Behaviour: Off
 				Indicate If Usable By Other Players: Off
 			Notifications
-				Custom Position: 1596, 1076
 				Width: 360
 				Border Colour: CEF2FFFF
 				Flash Colour: FFCCDBFF
