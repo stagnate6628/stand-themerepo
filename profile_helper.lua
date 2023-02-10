@@ -162,11 +162,15 @@ function download_theme(theme_name, dependencies)
 
     local header_url_path = 'Themes/' .. theme_name .. '/Header.bmp'
     local animated_header_url_path = 'Themes/' .. theme_name .. '/Header1.bmp'
-    if does_remote_file_exist(header_url_path) and not subheader_exists then
+    if does_remote_file_exist(header_url_path) then
         log("Using custom header (1)")
-        download_file(header_url_path, header_dir .. 'Header.bmp')
         trigger_command_by_ref("Stand>Settings>Appearance>Header>Header>Be Gone")
-        trigger_command_by_ref("Stand>Settings>Appearance>Header>Header>Custom")
+        if not subheader_exists then
+            download_file(header_url_path, header_dir .. 'Header.bmp')
+            trigger_command_by_ref("Stand>Settings>Appearance>Header>Header>Custom")
+        else
+            download_file(header_url_path, resource_dir .. theme_name .. '/Header.bmp')
+        end
     elseif does_remote_file_exist(animated_header_url_path) then
         log("Using custom header (2)")
         local i = 1
