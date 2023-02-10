@@ -16,7 +16,6 @@ Stand
 				Background Colour: 00000096
 			Position: 1360, 195
 			Header
-				Header: Custom
 				Frame Interval: 30
 			Address Bar
 				Address Bar: Off
@@ -51,4 +50,5 @@ Stand
 			Spacer Size: 0
 			Background Blur: 0
 	Lua Scripts
+		[SPH] Epsilon: On
 		stand-profile-helper: On
