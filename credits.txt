@@ -8,7 +8,7 @@ Fragment;ukn;[SPH] Fragment.lua
 Gradient Pulsive;Sk;Pulsive.lua
 Kiddions;Sk;[SPH] Kiddions.lua
 Ozark;ukn;[SPH] Ozark.lua
-Rebound;ukn
+Rebound;ukn;[SPH] Rebound.lua
 The Purge;ukn
 X-Force;ukn
 XCheats;ukn
