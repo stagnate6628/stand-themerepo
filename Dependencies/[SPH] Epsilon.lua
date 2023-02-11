@@ -28,9 +28,9 @@ local subheader = directx.create_texture(subheader_path)
 while true do
     if menu.is_open() then
         local x, y, w, h = menu.get_main_view_position_and_size()
-        directx.draw_texture(header, 1, (w / 1080) + 0.04984, 0, 0, x, (y - (130) / 1080), 0, 1, 1, 1, 1)
-        directx.draw_texture(subheader, 1, w / 1080 + 0.01274, 0, 0, x, (y - 28 / 1080), 0, 1, 1, 1, 1)
-        directx.draw_texture(footer, 1, w / 1080 + 0.01368, 0, 0, x, (y + h - (1 / 1080) + 0.0013), 0, 1, 1, 1, 1)
+        directx.draw_texture(header, 1, w / 1080 + 0.04984, 0, 0, x, y - 130 / 1080, 0, 1, 1, 1, 1)
+        directx.draw_texture(subheader, 1, w / 1080 + 0.01274, 0, 0, x, y - 28 / 1080, 0, 1, 1, 1, 1)
+        directx.draw_texture(footer, 1, w / 1080 + 0.01368, 0, 0, x, y + h - (1 / 1080) + 0.0013, 0, 1, 1, 1, 1)
     end
     util.yield()
 end
