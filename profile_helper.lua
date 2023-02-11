@@ -71,7 +71,7 @@ function download_themes()
     end
 end
 
-if SCRIPT_MANUAL_START or SCRIPT_SILENT_START then
+if SCRIPT_MANUAL_START and not SCRIPT_SILENT_START then
     if not filesystem.exists(resource_dir) then
         filesystem.mkdir(resource_dir)
     end
@@ -80,7 +80,6 @@ if SCRIPT_MANUAL_START or SCRIPT_SILENT_START then
 
     util.toast(
         "It is recommended to backup any profiles, textures, and headers before selecting a theme. You have been warned.")
-
 end
 
 function download_file(url_path, file_path)
