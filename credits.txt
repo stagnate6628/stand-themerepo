@@ -11,5 +11,5 @@ Ozark;ukn;[SPH] Ozark.lua
 Rebound;ukn;[SPH] Rebound.lua
 The Purge;ukn
 X-Force;ukn;[SPH] X-Force.lua
-XCheats;ukn
+XCheats;ukn;[SPH] XCheats.lua
 Youtube;lev
