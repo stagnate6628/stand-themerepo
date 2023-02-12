@@ -16,7 +16,7 @@ Stand
 				HUD Colour: 791826FF
 				AR Colour: 791826FF
 				Minigame Colour: 791826FF
-			Position: 1498, 311
+			Position: 1468, 311
 			Header
 				Header: Custom
 			Address Bar
