@@ -7,6 +7,30 @@ Understands Controller Open/Close: Yes
 Prompted For Controller Disables: Yes
 Understands Command Chaining: Yes
 Tree Compatibility Version: 43
+Players
+	Settings
+		Tags
+			Brackets: STD
+			Self: 
+			Friend: 
+			Crew Member: 
+			In Timeout: 
+			Modder: 
+			Admin: 
+			Likely Modder: 
+			Attacked You: 
+			Host: 
+			Next Host: 
+			Script Host: 
+			Invulnerable: 
+			Indestructible Vehicle: 
+			RC Vehicle: 
+			Off The Radar: 
+			In An Interior: 
+			Spectating: 
+			Typing: 
+			Dead: 
+			VPN: 
 Stand
 	Settings
 		Appearance
@@ -46,15 +70,16 @@ Stand
 			Scrollbar
 				Width: 5
 			Notifications
-				Border Colour: EDF2EDFF
-				Background Colour: 1D1E1EFF
+				Border Colour: EFF4EFFF
+				Flash Colour: 202121FF
+				Background Colour: 202121FF
 			Commands
 				Text
 					Y Offset: 3
 			Border
 				Width: 5
 				Rounded: On
-				Colour: 1D1E1EFF
+				Colour: 202121FF
 			List Width: 490
 			List Height: 33
 			Spacer Size: 13
@@ -63,5 +88,7 @@ Stand
 					Y Offset: 3
 				Small Text
 					Y Offset: 3
+		Info Text
+			Scale: 18
 	Lua Scripts
 		stand-profile-helper: On
