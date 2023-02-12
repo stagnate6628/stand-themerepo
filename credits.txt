@@ -9,6 +9,7 @@ Gradient Pulsive;Sk;Pulsive.lua
 Luna;ukn;[SPH] Luna.lua
 Luna-Impulse;Millennium#0001;InfOverlay.lua
 Kiddions;Sk;[SPH] Kiddions.lua
+Kokushibo;DANO#4903
 Ozark;ukn;[SPH] Ozark.lua
 Rebound;ukn;[SPH] Rebound.lua
 The Purge;ukn
