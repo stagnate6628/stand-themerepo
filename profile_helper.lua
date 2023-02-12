@@ -24,7 +24,7 @@ settings:toggle("Use Default Assets on Fallback", {},
 settings:toggle("Download Status", {}, "Display the download status with toasts", function(on)
     show_logs = on
 end, true)
-settings:action("Update Themes", {}, "Updates available themes to download.", function()
+settings:action("Update Themes", {}, "Updates the list of available themes to download.", function()
     download_themes()
 end)
 
@@ -193,7 +193,10 @@ function download_theme(theme_name, dependencies)
     else
         local header_url_png_path = 'Themes/' .. theme_name .. '/Header.png'
         if does_remote_file_exist(header_url_png_path) then
+            log("Using custom header (3)")
             download_file(header_url_png_path, header_dir .. theme_name .. '.png')
+            trigger_command_by_ref("Stand>Settings>Appearance>Header>Header>Be Gone")
+            trigger_command_by_ref("Stand>Settings>Appearance>Header>Header>Custom")
         else
             trigger_command_by_ref("Stand>Settings>Appearance>Header>Header>Be Gone")
             log("Not using custom header")
