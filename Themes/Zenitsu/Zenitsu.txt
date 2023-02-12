@@ -1,8 +1,12 @@
 Finished Tutorial: Yes
+Understands Commands: Yes
+Understands Sliders: Yes
+Understands Profiles: Yes
+Understands Context Menu: Yes
 Understands Controller Open/Close: Yes
 Prompted For Controller Disables: Yes
 Understands Command Chaining: Yes
-Tree Compatibility Version: 39
+Tree Compatibility Version: 43
 Self
 	Appearance
 		Outfit
