@@ -37,6 +37,13 @@ settings:action("Restart Script", {}, "", function()
 end)
 
 function download_themes()
+    local children = menu.get_children(themes)
+    if #children > 0 then
+        for k, v in pairs(children) do
+            v:delete()
+        end
+    end
+
     local downloading = true
     async_http.init('raw.githubusercontent.com', '/stagnate6628/stand-profile-helper/main/credits.txt',
         function(res, _, status_code)
