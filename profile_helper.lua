@@ -3,7 +3,7 @@ local texture_names<const> = {"Disabled", "Edit", "Enabled", "Friends", "Header 
 local tag_names<const> = {"00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14",
                           "15", "16", "17", "18", "19", "0A", "0B", "0C", "0D", "0E", "0F", "1A", "1B", "1C", "1D",
                           "1E", "1F"}
-local tab_names<const> = {"Self", "Vehicles", "Online", "Players", "World", "Game", "Stand"}
+local tab_names<const> = {"Self", "Vehicle", "Online", "Players", "World", "Game", "Stand"}
 
 local stand_dir = filesystem.stand_dir()
 local theme_dir = stand_dir .. "Theme\\"
@@ -189,6 +189,7 @@ function download_theme(theme_name, dependencies)
         log("Using custom header (1)")
         hide_header()
         if not subheader_exists then
+            empty_headers_dir()
             download_file(header_url_path, header_dir .. 'Header.bmp')
             custom_header()
         else
