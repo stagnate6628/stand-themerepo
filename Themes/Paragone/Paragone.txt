@@ -1,0 +1,31 @@
+Finished Tutorial: Yes
+Understands Commands: Yes
+Understands Sliders: Yes
+Understands Profiles: Yes
+Understands Context Menu: Yes
+Understands Controller Open/Close: Yes
+Prompted For Controller Disables: Yes
+Understands Command Chaining: Yes
+Tree Compatibility Version: 43
+Stand
+	Settings
+		Appearance
+			Colours
+				Primary Colour: 1E6793FF
+				Background Colour: 000000FF
+				Unfocused Texture Colour: 1E6793FF
+				HUD Colour: 1E6793FF
+				AR Colour: 1E6793FF
+				Minigame Colour: 1E6793FF
+			Header
+				Header: Paragon by Denzy
+			Address Bar
+				Show Cursor Position: On
+			Tabs
+				Show Icon Left: On
+			Notifications
+				Border Colour: 1E6793FF
+				Flash Colour: 1E6793FF
+			Max Visible Commands: 12
+	Lua Scripts
+		stand-profile-helper: On

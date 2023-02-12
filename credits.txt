@@ -12,6 +12,7 @@ Kiddions;Sk;[SPH] Kiddions.lua
 Kokushibo;DANO#4903
 Optimum;IvanV#6270
 Ozark;ukn;[SPH] Ozark.lua
+Paragone;IceDoomfist#0001
 Rebound;ukn;[SPH] Rebound.lua
 The Purge;ukn
 X-Force;ukn;[SPH] X-Force.lua
