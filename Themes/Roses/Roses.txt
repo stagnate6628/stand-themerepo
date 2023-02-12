@@ -1,0 +1,75 @@
+Finished Tutorial: Yes
+Understands Commands: Yes
+Understands Sliders: Yes
+Understands Profiles: Yes
+Understands Context Menu: Yes
+Understands Controller Open/Close: Yes
+Prompted For Controller Disables: Yes
+Understands Command Chaining: Yes
+Tree Compatibility Version: 43
+Stand
+	Settings
+		Appearance
+			Colours
+				Primary Colour: FF0044FF
+				Background Colour: 070707FA
+				HUD Colour: FFFFFFFF
+				AR Colour: FF0044FF
+				Minigame Colour: FF0044FF
+			Position: 277, 300
+			Header
+				Header: Custom
+				Frame Interval: 30
+			Address Bar
+				Address Bar: Off
+				Root Name: Hidden
+				Address Separator: Stand/Online
+				Show Cursor Position: On
+			Cursor
+				Colour: FFFFFFFF
+			Tabs
+				Width: 54
+				Height: 27
+				Position: Top
+				Text
+					Scale: 11
+					X Offset: 11
+					Y Offset: 6
+				Show Name: Off
+				Show Icon Right: On
+			Scrollbar
+				Scrollbar: Disabled
+			Command Info Text
+				Position: Bottom
+			Notifications
+				Type: Stand, Custom Position
+				Custom Position: 456, 1053
+				Border Colour: 00000000
+				Flash Colour: FF0044FF
+				Background Colour: 000000A3
+			Commands
+				Text
+					Scale: 14
+			Border
+				Width: 5
+				Rounded: On
+				Colour: FF0044FF
+			Max Visible Commands: 16
+			List Width: 378
+			List Height: 26
+			Spacer Size: 4
+			Smooth Scrolling: 50
+			Background Blur: 0
+			Font & Text
+				Command Box Input Text
+					Scale: 17
+				Small Text
+					Scale: 11
+		Input
+			Back Closes Menu: On
+		Info Text
+			Position: 278, 936
+			Alignment: Top Left
+			Scale: 18
+	Lua Scripts
+		stand-profile-helper: On
