@@ -41,6 +41,7 @@ end
 hyperlink_option("Open Themes Folder", theme_dir)
 hyperlink_option("Open Profiles Folder", stand_dir .. "Profiles")
 hyperlink_option("Open Custom Header Folder", header_dir)
+hyperlink_option("Open Lua Scripts Folder", filesystem.scripts_dir())
 hyperlink_option("Open Script Resources Folder", resource_dir)
 
 settings:action("Restart Script", {}, "", function()
@@ -156,15 +157,15 @@ function download_theme(theme_name, dependencies)
 
     download_file('Themes/' .. theme_name .. '/' .. theme_name .. '.txt', profile_path)
     if does_profile_exist_by_name(theme_name) then
-        log('Downloaded profile')
+        log('Downloading profile')
     end
 
     local font_url_path = 'Themes/Stand/Font.spritefont'
     if does_remote_file_exist('Themes/' .. theme_name .. '/Font.spritefont') then
         font_url_path = 'Themes/' .. theme_name .. '/' .. 'Font.spritefont'
-        log('Downloading font for this theme')
+        log('Downloading custom font')
     else
-        log('Downloading default stand font')
+        log('Downloading default font')
     end
     download_file(font_url_path, font_path)
 
@@ -186,10 +187,10 @@ function download_theme(theme_name, dependencies)
     local animated_header_url_path = 'Themes/' .. theme_name .. '/Header1.bmp'
     if does_remote_file_exist(header_url_path) then
         log("Using custom header (1)")
-        trigger_command_by_ref("Stand>Settings>Appearance>Header>Header>Be Gone")
+        hide_header()
         if not subheader_exists then
             download_file(header_url_path, header_dir .. 'Header.bmp')
-            trigger_command_by_ref("Stand>Settings>Appearance>Header>Header>Custom")
+            custom_header()
         else
             download_file(header_url_path, resource_dir .. theme_name .. '/Header.bmp')
         end
