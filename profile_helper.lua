@@ -326,7 +326,7 @@ function download_theme(theme_name, dependencies)
         trigger_command("reloadfont")
     end
 
-    for i, script in pairs(dependencies) do
+    for _, script in pairs(dependencies) do
         local dep_url_path = 'Dependencies/' .. script
         if does_remote_file_exist(dep_url_path) then
             download_file(dep_url_path, filesystem.scripts_dir() .. script)
@@ -368,7 +368,7 @@ function load_profile(profile_name)
     util.yield(500)
     trigger_command_by_ref("Stand>Profiles>" .. profile_name .. ">Active")
     util.yield(100)
-    trigger_command("load" .. string.strip(profile_name, '-'))
+    trigger_command("load" .. string.gsub(s, "%-", ""))
     util.yield(500)
     trigger_command_by_ref("Stand>Lua Scripts")
     util.yield(100)
