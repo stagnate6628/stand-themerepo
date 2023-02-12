@@ -24,9 +24,11 @@ settings:toggle("Use Default Assets on Fallback", {},
 settings:toggle("Download Status", {}, "Display the download status with toasts", function(on)
     show_logs = on
 end, true)
-settings:action("Update Themes", {}, "Updates the list of available themes to download.", function()
-    download_themes()
-end)
+settings:action("Update Themes", {},
+    "Updates the list of available themes to download. If there were no changes, then you may need to wait for the API to update or there were truly no changes.",
+    function()
+        download_themes()
+    end)
 settings:hyperlink("Open Themes Folder", "file:///" .. theme_dir)
 settings:hyperlink("Open Profiles Folder", "file:///" .. stand_dir .. "Profiles")
 settings:hyperlink("Open Custom Header Folder", "file:///" .. header_dir)
@@ -209,8 +211,42 @@ function download_theme(theme_name, dependencies)
             trigger_command_by_ref("Stand>Settings>Appearance>Header>Header>Be Gone")
             trigger_command_by_ref("Stand>Settings>Appearance>Header>Header>Custom")
         else
-            trigger_command_by_ref("Stand>Settings>Appearance>Header>Header>Be Gone")
-            log("Not using custom header")
+            empty_headers_dir()
+            local exists
+            local downloading = true
+            async_http.init('https://api.github.com', '/repos/stagnate6628/stand-profile-helper/contents/Themes/' ..
+                theme_name .. '/Custom Header', function(body, headers, status_code)
+                if body:match("404: Not Found") or status_code == 404 then
+                    exists = false
+                else
+                    exists = true
+
+                    local json = require("json")
+                    local inspect = require("inspect")
+                    body = json.decode(body)
+
+                    for k, v in pairs(body) do
+                        download_file(v.path, header_dir .. v.name)
+                        log("Downloaded " .. v.name)
+                    end
+                end
+                downloading = false
+            end, function()
+                exists = false
+                downloading = false
+            end)
+            async_http.dispatch()
+
+            while downloading do
+                util.yield()
+            end
+
+            if exists then
+                log("Using custom header (4)")
+            else
+                trigger_command_by_ref("Stand>Settings>Appearance>Header>Header>Be Gone")
+                log("Not using custom header")
+            end
         end
     end
 
