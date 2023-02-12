@@ -78,3 +78,4 @@ Stand
 			Scale: 17
 	Lua Scripts
 		InfOverlay: On
+		stand-profile-helper: On
