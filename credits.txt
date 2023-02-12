@@ -15,6 +15,7 @@ Kokushibo;DANO#4903
 Old UI;huara#0100
 Optimum;IvanV#6270
 Ozark;ukn;[SPH] Ozark.lua
+Menyoo;Cloudys#1244
 Mercyyy;Mercury#1773
 Minimalistic;Prisuhm#5253
 Paragone;IceDoomfist#0001
