@@ -217,8 +217,8 @@ function download_theme(theme_name, dependencies)
             empty_headers_dir()
             log("Using custom header (3)")
             download_file(header_url_png_path, header_dir .. theme_name .. '.png')
-            trigger_command_by_ref("Stand>Settings>Appearance>Header>Header>Be Gone")
-            trigger_command_by_ref("Stand>Settings>Appearance>Header>Header>Custom")
+            hide_header()
+            custom_header()
         else
             empty_headers_dir()
             local exists
@@ -231,7 +231,6 @@ function download_theme(theme_name, dependencies)
                     exists = true
 
                     local json = require("json")
-                    local inspect = require("inspect")
                     body = json.decode(body)
 
                     for k, v in pairs(body) do
@@ -250,12 +249,11 @@ function download_theme(theme_name, dependencies)
                 util.yield()
             end
 
+            hide_header()
             if exists then
                 log("Using custom header (4)")
-                trigger_command_by_ref("Stand>Settings>Appearance>Header>Header>Be Gone")
-                trigger_command_by_ref("Stand>Settings>Appearance>Header>Header>Custom")
+                custom_header()
             else
-                trigger_command_by_ref("Stand>Settings>Appearance>Header>Header>Be Gone")
                 log("Not using custom header")
             end
         end
@@ -341,6 +339,14 @@ function log(msg)
     if show_logs then
         util.toast(msg, TOAST_ALL)
     end
+end
+
+function hide_header()
+    trigger_command_by_ref("Stand>Settings>Appearance>Header>Header>Be Gone")
+end
+
+function custom_header()
+    trigger_command_by_ref("Stand>Settings>Appearance>Header>Header>Custom")
 end
 
 function load_profile(profile_name)
