@@ -26,7 +26,7 @@ Rebound;ukn;[SPH] Rebound.lua
 Rockstar Admin Tools;Nanomachines Son#6969 and Jimmy!#9444
 Roses;𝐫𝐞𝐳#1000
 Space;
-Sunset;hypertack#3121;
+Sunset;hypertack#3121
 The Purge;ukn
 X-Force;ukn;[SPH] X-Force.lua
 XCheats;ukn;[SPH] XCheats.lua
