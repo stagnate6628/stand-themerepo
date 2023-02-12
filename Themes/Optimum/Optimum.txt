@@ -25,7 +25,6 @@ Players
 			Script Host: 
 			Invulnerable: 
 			Indestructible Vehicle: 
-			RC Vehicle: 
 			Off The Radar: 
 			In An Interior: 
 			Spectating: 
