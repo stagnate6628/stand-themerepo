@@ -15,7 +15,7 @@ local themes = home:list("Themes", {}, "")
 local settings = home:list("Settings", {}, "")
 
 local use_default_assets = true
-local show_logs = false
+local show_logs = true
 settings:toggle("Use Default Assets on Fallback", {},
     "If a theme is missing tags/textures, then automatically download the default Stand assets and use those instead.",
     function(on)
@@ -23,7 +23,10 @@ settings:toggle("Use Default Assets on Fallback", {},
     end, true)
 settings:toggle("Download Status", {}, "Display the download status with toasts", function(on)
     show_logs = on
-end, false)
+end, true)
+settings:action("Update Themes", {}, "Updates available themes to download.", function()
+    download_themes()
+end)
 
 settings:action("Restart Script", {}, "", function()
     util.restart_script()
@@ -76,11 +79,10 @@ if SCRIPT_MANUAL_START and not SCRIPT_SILENT_START then
         filesystem.mkdir(resource_dir)
     end
 
-    download_themes()
-
     util.toast(
         "It is recommended to backup any profiles, textures, and headers before selecting a theme. You have been warned.")
 end
+download_themes()
 
 function download_file(url_path, file_path)
     local downloading = true
@@ -189,8 +191,13 @@ function download_theme(theme_name, dependencies)
             util.yield(100)
         end
     else
-        trigger_command_by_ref("Stand>Settings>Appearance>Header>Header>Be Gone")
-        log("Not using custom header")
+        local header_url_png_path = 'Themes/' .. theme_name .. '/Header.png'
+        if does_remote_file_exist(header_url_png_path) then
+            download_file(header_url_png_path, header_dir .. theme_name .. '.png')
+        else
+            trigger_command_by_ref("Stand>Settings>Appearance>Header>Header>Be Gone")
+            log("Not using custom header")
+        end
     end
 
     for i, texture_name in pairs(texture_names) do
