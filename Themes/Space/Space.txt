@@ -1,61 +1,12 @@
 Finished Tutorial: Yes
+Understands Commands: Yes
+Understands Sliders: Yes
+Understands Profiles: Yes
+Understands Context Menu: Yes
 Understands Controller Open/Close: Yes
 Prompted For Controller Disables: Yes
 Understands Command Chaining: Yes
-Tree Compatibility Version: 38
-Self
-	Movement
-		Levitation
-			Movement Speed: 1.50
-			Sprint Multiplier: 10.00
-			Movement Ignores Pitch: Off
-			Min Distance From Ground: 0.10
-			Max Distance From Ground: 0.10
-			Upward Force: 0.00
-			Downward Force: 0.00
-			Downward Deadzone: 0
-			Snapping: 0.00
-		Walk And Run Speed: 1.15
-		Swim Speed: 1.20
-	Appearance
-		Outfit
-			Lock Outfit: 
-Online
-	Enhancements
-		Disable Idle/AFK Kick: On
-		Disable Death Barriers: On
-		Bypass Casino Region Lock: On
-		Bypass Time Trial Vehicle Suitability: On
-		Notify On Commendation: On
-		Disable Daily Expenses: On
-	Protections
-		Events
-			Raw Network Events: Warning Acknowledged
-	Tunables
-		Disable Insurance Payments: On
-		Halloween Event: On
-Players
-	Settings
-		AR Beacon On Focused Players
-			Within A Player's List: On
-			Exclude Me: Off
-		When Leaving Player's List...
-			Stop Spectating Them: On
-World
-	Enhanced Open World
-		Enhanced Open World: On
-		Blips: Off
-	AR Waypoint: On
-	AR GPS: On
-Game
-	Disables
-		Disable Vehicle Focus Camera: On
-		Disable Idle Camera: On
-		Disable Recordings: On
-		Disable Flight Music: On
-	Edit HUD/UI Colours
-		GREEN: FA6279FF
-		GREENLIGHT: F995A6FF
+Tree Compatibility Version: 43
 Stand
 	Settings
 		Appearance
@@ -128,27 +79,9 @@ Stand
 				Small Text
 					Scale: 11
 					X Offset: 0
-		Input
-			Back Closes Menu: On
-			Keep Cursor When Revisiting
-				Lists: On
-			Key Repeat Interval: 50
-			Key Long-Hold Repeat Interval: 50
-			Key Repeat Interval For Tabs: 60
 		Info Text
 			Position: 460, 728
 			Alignment: Top Left
 			Scale: 10
-		Warnings
-			Automatically Proceed On Warnings
-				Command Box: On
-				Hotkey: On
-			Force Me To Read Warnings: Off
-		Hide Information
-			Hide Rockstar ID: Enabled
-			Hide IP Address: Enabled
-		Notifications
-			Suppress Generic Responses
-				Command Box: On
-		Command Box
-			Keep Draft When Closed: On
+	Lua Scripts
+		stand-profile-helper: On
