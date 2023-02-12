@@ -1,0 +1,90 @@
+Finished Tutorial: Yes
+Understands Controller Open/Close: Yes
+Prompted For Controller Disables: Yes
+Understands Command Chaining: Yes
+Tree Compatibility Version: 39
+Self
+	Appearance
+		Outfit
+			Lock Outfit: 
+Online
+	Protections
+		Detections
+			Any Detection
+				Notification: Enabled
+Game
+	Disables
+		Disable Game Inputs
+			CHARACTER_WHEEL: On while Stand is open
+			MULTIPLAYER_INFO: On while Stand is open
+			ENTER: On while Stand is open
+			PHONE: On while Stand is open
+			COVER: On while Stand is open
+			VEH_ACCELERATE: On while Stand is open
+			VEH_BRAKE: On while Stand is open
+			VEH_HEADLIGHT: On while Stand is open
+			VEH_CIN_CAM: On while Stand is open
+			VEH_NEXT_RADIO: On while Stand is open
+			VEH_PREV_RADIO: On while Stand is open
+			VEH_RADIO_WHEEL: On while Stand is open
+			MELEE_ATTACK_LIGHT: On while Stand is open
+			MELEE_ATTACK_ALTERNATE: On while Stand is open
+			SELECT_CHARACTER_MICHAEL: On while Stand is open
+			SELECT_CHARACTER_FRANKLIN: On while Stand is open
+			SELECT_CHARACTER_TREVOR: On while Stand is open
+			SELECT_CHARACTER_MULTIPLAYER: On while Stand is open
+			MELEE_ATTACK1: On while Stand is open
+			MELEE_ATTACK2: On while Stand is open
+			MAP_POI: On while Stand is open
+Stand
+	Settings
+		Appearance
+			Colours
+				Primary Colour: FFA237FF
+				Focused Texture Colour: F9A237FF
+				Background Colour: 000000FF
+				HUD Colour: B57436FF
+				AR Colour: 0090FFFF
+			Position: 1462, 560
+			Header
+				Header: Custom
+			Address Bar
+				Show Cursor Position: On
+			Cursor
+				Scroll Gap: 0
+				Width: 2
+				Rounded: On
+				Colour: F9FF5EFF
+			Tabs
+				Width: 64
+				Position: Top
+				Text
+					X Offset: 0
+					Y Offset: 5
+				Text Alignment: Centre
+				Show Icon Left: On
+				Show Name: Off
+			Scrollbar
+				Scrollbar: Disabled
+				Width: 1
+			Command Info Text
+				Show Help Text: Off
+				Show Command Syntax: Off
+				Indicate Slider Behaviour: Off
+				Indicate If Usable By Other Players: Off
+			Notifications
+				Border Colour: B57436FF
+				Flash Colour: FFA237FF
+			Border
+				Width: 2
+				Rounded: On
+				Colour: B57436FF
+			Max Visible Commands: 10
+			List Width: 448
+			Spacer Size: 2
+			Background Blur: 0
+		Info Text
+			Position: 1875, 98
+			Alignment: Top Centre
+	Lua Scripts
+		MusinessBanager: On
