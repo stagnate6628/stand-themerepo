@@ -35,7 +35,7 @@ function hyperlink_option(option, path)
         filesystem.mkdir(path)
     end
 
-    settings:hyperlink(option, "file:///" .. path)
+    settings:hyperlink(option, "file:///" .. path, "Opens the directory shown below")
 end
 
 hyperlink_option("Open Themes Folder", theme_dir)
@@ -339,6 +339,8 @@ function log(msg)
     if not show_logs then
         return
     end
+
+    util.toast(msg)
 
     local log_path = resource_dir .. "\\log.txt"
     local log_file = io.open(log_path, "a+")
