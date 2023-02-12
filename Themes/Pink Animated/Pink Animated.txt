@@ -1,8 +1,10 @@
 Finished Tutorial: Yes
-Understands Controller Open/Close: Yes
-Prompted For Controller Disables: Yes
+Understands Commands: Yes
+Understands Sliders: Yes
+Understands Profiles: Yes
+Understands Context Menu: Yes
 Understands Command Chaining: Yes
-Tree Compatibility Version: 38
+Tree Compatibility Version: 43
 Stand
 	Settings
 		Appearance
@@ -51,10 +53,5 @@ Stand
 			List Height: 30
 			Smooth Scrolling: 0
 			Background Blur: 0
-		Warnings
-			Automatically Proceed On Warnings
-				Command Box: On
-				Hotkey: On
-			Force Me To Read Warnings: Off
-		Open After Injection: On
-		Menu Navigation Reminders: Off
+	Lua Scripts
+		stand-profile-helper: On
