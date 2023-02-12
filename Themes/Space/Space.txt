@@ -1,0 +1,154 @@
+Finished Tutorial: Yes
+Understands Controller Open/Close: Yes
+Prompted For Controller Disables: Yes
+Understands Command Chaining: Yes
+Tree Compatibility Version: 38
+Self
+	Movement
+		Levitation
+			Movement Speed: 1.50
+			Sprint Multiplier: 10.00
+			Movement Ignores Pitch: Off
+			Min Distance From Ground: 0.10
+			Max Distance From Ground: 0.10
+			Upward Force: 0.00
+			Downward Force: 0.00
+			Downward Deadzone: 0
+			Snapping: 0.00
+		Walk And Run Speed: 1.15
+		Swim Speed: 1.20
+	Appearance
+		Outfit
+			Lock Outfit: 
+Online
+	Enhancements
+		Disable Idle/AFK Kick: On
+		Disable Death Barriers: On
+		Bypass Casino Region Lock: On
+		Bypass Time Trial Vehicle Suitability: On
+		Notify On Commendation: On
+		Disable Daily Expenses: On
+	Protections
+		Events
+			Raw Network Events: Warning Acknowledged
+	Tunables
+		Disable Insurance Payments: On
+		Halloween Event: On
+Players
+	Settings
+		AR Beacon On Focused Players
+			Within A Player's List: On
+			Exclude Me: Off
+		When Leaving Player's List...
+			Stop Spectating Them: On
+World
+	Enhanced Open World
+		Enhanced Open World: On
+		Blips: Off
+	AR Waypoint: On
+	AR GPS: On
+Game
+	Disables
+		Disable Vehicle Focus Camera: On
+		Disable Idle Camera: On
+		Disable Recordings: On
+		Disable Flight Music: On
+	Edit HUD/UI Colours
+		GREEN: FA6279FF
+		GREENLIGHT: F995A6FF
+Stand
+	Settings
+		Appearance
+			Colours
+				Primary Colour: 161616FF
+				Focused Text Colour: FA6279FF
+				Focused Right-Bound Text Colour: FA6279FF
+				Focused Texture Colour: FA6279FF
+				Background Colour: 161616DE
+				Unfocused Text Colour: FA6279FF
+				Unfocused Right-Bound Text Colour: FA6279FF
+				Unfocused Texture Colour: FA6279FF
+				HUD Colour: FFFFFFFF
+				AR Colour: FA62790A
+				Minigame Colour: FA6279FF
+			Position: 1090, 345
+			Header
+				Header: Custom
+				Frame Interval: 60
+			Address Bar
+				Root Name: Stand {} Crash Addict Edition
+				Height: 20
+				Text
+					Scale: 10
+				Show Cursor Position: On
+			Cursor
+				Scroll Gap: 6
+				Width: 1
+				Colour: FA6279FF
+			Tabs
+				Width: 30
+				Text
+					Scale: 12
+					Y Offset: 4
+				Text Alignment: Centre
+				Show Name: Off
+				Show Icon Right: On
+			Scrollbar
+				Scrollbar: Disabled
+				Width: 5
+			Command Info Text
+				Position: Bottom
+			Notifications
+				Type: Stand, Custom Position
+				Custom Position: 1510, 340
+				Width: 395
+				Border Colour: FA6279FF
+				Flash Colour: 161616FF
+				Background Colour: 161616C8
+			Commands
+				Text
+					Scale: 12
+					X Offset: 0
+					Y Offset: 4
+				Colour Commands
+					Preview Colour In Texture: Off
+				Prefill Current Value For Command Box
+					Text Inputs: Off
+				Number Sliders
+					Selectable N/A Sliders: On
+			Border
+				Width: 2
+				Colour: FA6279FF
+			Max Visible Commands: 13
+			List Width: 369
+			Spacer Size: 5
+			Smooth Scrolling: 100
+			Background Blur: 0
+			Font & Text
+				Small Text
+					Scale: 11
+					X Offset: 0
+		Input
+			Back Closes Menu: On
+			Keep Cursor When Revisiting
+				Lists: On
+			Key Repeat Interval: 50
+			Key Long-Hold Repeat Interval: 50
+			Key Repeat Interval For Tabs: 60
+		Info Text
+			Position: 460, 728
+			Alignment: Top Left
+			Scale: 10
+		Warnings
+			Automatically Proceed On Warnings
+				Command Box: On
+				Hotkey: On
+			Force Me To Read Warnings: Off
+		Hide Information
+			Hide Rockstar ID: Enabled
+			Hide IP Address: Enabled
+		Notifications
+			Suppress Generic Responses
+				Command Box: On
+		Command Box
+			Keep Draft When Closed: On
