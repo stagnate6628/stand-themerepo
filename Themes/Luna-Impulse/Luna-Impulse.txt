@@ -1,0 +1,80 @@
+Finished Tutorial: Yes
+Understands Commands: Yes
+Understands Sliders: Yes
+Understands Profiles: Yes
+Understands Context Menu: Yes
+Understands Controller Open/Close: Yes
+Prompted For Controller Disables: Yes
+Understands Command Chaining: Yes
+Tree Compatibility Version: 43
+Players
+	Settings
+		InfOverlay Settings
+			X\:: 3.16
+			Y\:: 2.41
+			Overlay colours
+				Title Bar Colour: B21C97FF
+				Background Colour: 080A07FF
+				Name Colour: 1CFFFFFF
+				Label Colour: E223BEFF
+				Info Colour: 1CFFFFFF
+			Element Sizing & Spacing
+				Overlay Width: 14
+				Padding: 6
+				Spacing: 0
+			Text Sizing & Spacing
+				Name: 0.62
+				Info Text: 0.42
+				Line Spacing: 35
+			Border
+				Colour: FF007BFF
+			Background Blur: 0
+Stand
+	Settings
+		Appearance
+			Colours
+				Primary Colour: B21C97FF
+				Focused Text Colour: 00FFFAFF
+				Focused Right-Bound Text Colour: 1CECFFFF
+				Background Colour: 0A0C09FF
+				Unfocused Text Colour: 1CFFFFFF
+				Unfocused Right-Bound Text Colour: 1CFFFFFF
+				HUD Colour: 4947E5FF
+				AR Colour: 4947E5FF
+				Minigame Colour: 4947E5FF
+			Position: 1120, 260
+			Header
+				Header: Custom
+				Frame Interval: 50
+			Address Bar
+				Root Name: Hidden
+				Show Current List Only: On
+				Show Cursor Position: On
+			Cursor
+				Scroll Gap: 1
+			Tabs
+				Width: 66
+				Height: 30
+				Position: Top
+				Text Alignment: Centre
+				Show Name: Off
+				Show Icon Right: On
+			Scrollbar
+				Scrollbar: Disabled
+			Command Info Text
+				Position: Right
+			Notifications
+				Type: Stand, Custom Position
+				Custom Position: 1641, 955
+				Width: 270
+				Border Colour: A7298EFF
+			Border
+				Rounded: On
+			Max Visible Commands: 8
+			List Width: 462
+			Spacer Size: 0
+		Info Text
+			Position: 1907, 81
+			Scale: 17
+	Lua Scripts
+		InfOverlay: On
