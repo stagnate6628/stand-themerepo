@@ -243,6 +243,8 @@ function download_theme(theme_name, dependencies)
 
             if exists then
                 log("Using custom header (4)")
+                trigger_command_by_ref("Stand>Settings>Appearance>Header>Header>Be Gone")
+                trigger_command_by_ref("Stand>Settings>Appearance>Header>Header>Custom")
             else
                 trigger_command_by_ref("Stand>Settings>Appearance>Header>Header>Be Gone")
                 log("Not using custom header")
@@ -342,7 +344,7 @@ function load_profile(profile_name)
     util.yield(500)
     trigger_command_by_ref("Stand>Profiles>" .. profile_name .. ">Active")
     util.yield(100)
-    trigger_command("load" .. profile_name)
+    trigger_command("load" .. string.strip(profile_name, '-'))
     util.yield(500)
     trigger_command_by_ref("Stand>Lua Scripts")
     util.yield(100)
