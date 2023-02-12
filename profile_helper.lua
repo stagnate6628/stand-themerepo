@@ -14,10 +14,6 @@ local home = menu.my_root()
 local themes = home:list("Themes", {}, "")
 local settings = home:list("Settings", {}, "")
 
-home:action("test", {}, "", function()
-    log("hello world")
-end)
-
 local use_default_assets = true
 local show_logs = true
 settings:toggle("Use Default Assets on Fallback", {},
