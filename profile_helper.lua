@@ -14,6 +14,10 @@ local home = menu.my_root()
 local themes = home:list("Themes", {}, "")
 local settings = home:list("Settings", {}, "")
 
+home:action("test", {}, "", function()
+    log("hello world")
+end)
+
 local use_default_assets = true
 local show_logs = true
 settings:toggle("Use Default Assets on Fallback", {},
@@ -72,7 +76,7 @@ function download_themes()
 
                 local parts = v:split(';')
                 local theme_name = parts[1]
-                local theme_author = parts[2]
+                local theme_author = parts[2] or unknown
                 local deps = {}
 
                 if type(parts[3]) == "string" and parts[3]:endswith(".lua") then
@@ -336,9 +340,14 @@ function download_theme(theme_name, dependencies)
 end
 
 function log(msg)
-    if show_logs then
-        util.toast(msg, TOAST_ALL)
+    if not show_logs then
+        return
     end
+
+    local log_path = resource_dir .. "\\log.txt"
+    local log_file = io.open(log_path, "a+")
+    log_file:write("[" .. os.date("%c") .. "] " .. msg .. "\n")
+    log_file:close()
 end
 
 function hide_header()
