@@ -18,9 +18,6 @@ Stand
 				Unfocused Right-Bound Text Colour: A8A8A8FF
 				Unfocused Texture Colour: A8A8A8FF
 			Position: 32, 165
-			Header
-				Header: Custom
-				Frame Interval: 30
 			Address Bar
 				Address Bar: Off
 			Cursor
