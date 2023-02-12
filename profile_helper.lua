@@ -131,7 +131,6 @@ function does_remote_file_exist(url_path)
 end
 
 function download_theme(theme_name, dependencies)
-    empty_headers_dir()
     filesystem.mkdir(resource_dir .. theme_name)
 
     local profile_path = get_profile_path_by_name(theme_name)
@@ -197,6 +196,7 @@ function download_theme(theme_name, dependencies)
     else
         local header_url_png_path = 'Themes/' .. theme_name .. '/Header.png'
         if does_remote_file_exist(header_url_png_path) then
+            empty_headers_dir()
             log("Using custom header (3)")
             download_file(header_url_png_path, header_dir .. theme_name .. '.png')
             trigger_command_by_ref("Stand>Settings>Appearance>Header>Header>Be Gone")
