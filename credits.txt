@@ -15,3 +15,4 @@ X-Force;ukn;[SPH] X-Force.lua
 XCheats;ukn;[SPH] XCheats.lua
 Youtube;lev
 Midnight Violet;Chr1stian#4130
+Rockstar Admin Tools;Nanomachines Son#6969 and Jimmy!#9444

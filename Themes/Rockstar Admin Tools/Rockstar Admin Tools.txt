@@ -1,0 +1,79 @@
+Finished Tutorial: Yes
+Prompted For Controller Disables: Yes
+Understands Command Chaining: Yes
+Tree Compatibility Version: 43
+Players
+	Settings
+		Tags
+			Self: 
+			Friend: 
+			Crew Member: 
+			In Timeout: 
+			Modder: 
+			Modder or Admin: 
+			Admin: 
+			Likely Modder: 
+			Attacked You: 
+			Host: 
+			Next Host: 
+			Script Host: 
+			Invulnerable: 
+			Indestructible Vehicle: 
+			RC Vehicle: 
+			Off The Radar: 
+			In An Interior: 
+			Spectating: 
+			Typing: 
+			Dead: 
+			VPN: 
+Stand
+	Settings
+		Appearance
+			Colours
+				Primary Colour: FFAA00FF
+				Focused Text Colour: 000000FF
+				Focused Right-Bound Text Colour: 000000FF
+				Focused Texture Colour: 000000FF
+				Background Colour: 00000078
+				HUD Colour: FFAA00FF
+				AR Colour: FFAA00FF
+				Minigame Colour: FFAA00FF
+			Position: 1331, 80
+			Header
+				Header: Rockstar Admin Tools
+			Address Bar
+				Address Separator: Stand / Online
+				Show Current List Only: On
+				Height: 38
+				Text
+					Scale: 18
+			Cursor
+				Rounded: On
+				Colour: FFAA00FF
+			Tabs
+				Height: 35
+				Text
+					Scale: 17
+			Scrollbar
+				Width: 5
+			Command Info Text
+				Position: Bottom
+			Notifications
+				Type: Game
+				Border Colour: FFAA00FF
+				Flash Colour: FFAA00FF
+			Commands
+				Text
+					Scale: 17
+			Border
+				Width: 3
+				Rounded: On
+				Colour: FFAA00FF
+			Max Visible Commands: 15
+			List Height: 35
+			Smooth Scrolling: 100
+			Font & Text
+				Small Text
+					Scale: 16
+	Lua Scripts
+		stand-profile-helper: On
