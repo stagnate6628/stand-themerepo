@@ -1,86 +1,10 @@
 Finished Tutorial: Yes
-Prompted For Controller Disables: Yes
+Understands Commands: Yes
+Understands Sliders: Yes
+Understands Profiles: Yes
+Understands Context Menu: Yes
 Understands Command Chaining: Yes
-Tree Compatibility Version: 38
-Self
-	Movement
-		Levitation
-			Movement Speed: 1.50
-			Sprint Multiplier: 10.00
-			Movement Ignores Pitch: Off
-			Min Distance From Ground: 0.10
-			Max Distance From Ground: 0.10
-			Upward Force: 0.00
-			Downward Force: 0.00
-			Downward Deadzone: 0
-			Snapping: 0.00
-		Walk And Run Speed: 1.15
-		Swim Speed: 1.20
-	Appearance
-		Outfit
-			Disable Outfit Restrictions: On
-			Lock Outfit: 
-	Immortality: On
-	Auto Heal: On
-	Gracefulness: On
-	Glued To Seats: On
-	Lock Wanted Level: On
-	Infinite Stamina: On
-Vehicle
-	Movement
-		Super Drive
-			Super Drive Uses Camera: Off
-			Speed: 0.30
-	Indestructible: On
-	Permanent Mint Condition: On
-	Can't Be Locked On: On
-	Instantly Enter & Exit Vehicles: On
-	Stop Vehicles When Exiting: On
-	Driveby In All Vehicles: On
-	Driveby With All Weapons: On
-Online
-	Enhancements
-		Disable Idle/AFK Kick: On
-		Disable Death Barriers: On
-		Bypass Casino Region Lock: On
-		Bypass Time Trial Vehicle Suitability: On
-		Notify On Commendation: On
-		Disable Daily Expenses: On
-	Protections
-		Events
-			Raw Network Events: Warning Acknowledged
-	Spoofing
-		Name Spoofing
-			Name Spoofing: On
-			Spoofed Name: IShowSpeed
-		IP Address Spoofing
-			IP Address Spoofing: On
-			Spoofed IP Address: 5.89.190.107
-	Tunables
-		Disable Insurance Payments: On
-		Halloween Event: On
-	Off The Radar: On
-Players
-	Settings
-		AR Beacon On Focused Players
-			Within A Player's List: On
-			Exclude Me: Off
-		When Leaving Player's List...
-			Stop Spectating Them: On
-World
-	Enhanced Open World
-		Enhanced Open World: On
-	AR Waypoint: On
-	AR GPS: On
-Game
-	Disables
-		Disable Vehicle Focus Camera: On
-		Disable Idle Camera: On
-		Disable Recordings: On
-		Disable Flight Music: On
-	Edit HUD/UI Colours
-		GREEN: FA6279FF
-		GREENLIGHT: F995A6FF
+Tree Compatibility Version: 43
 Stand
 	Settings
 		Appearance
