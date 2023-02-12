@@ -6,6 +6,7 @@ Discord;lev
 Epsilon;ukn;[SPH] Epsilon.lua
 Fragment;ukn;[SPH] Fragment.lua
 Gradient Pulsive;Sk;Pulsive.lua
+Hexy;Colonel BeiRay_UwU#0290 and Fish.#6108
 Luna;ukn;[SPH] Luna.lua
 Luna-Impulse;Millennium#0001;InfOverlay.lua
 Kiddions;Sk;[SPH] Kiddions.lua
