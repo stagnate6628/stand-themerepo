@@ -29,10 +29,19 @@ settings:action("Update Themes", {},
     function()
         download_themes()
     end)
-settings:hyperlink("Open Themes Folder", "file:///" .. theme_dir)
-settings:hyperlink("Open Profiles Folder", "file:///" .. stand_dir .. "Profiles")
-settings:hyperlink("Open Custom Header Folder", "file:///" .. header_dir)
-settings:hyperlink("Open Script Resources Folder", "file:///" .. resource_dir)
+
+function hyperlink_option(option, path)
+    if not filesystem.is_dir(path) then
+        filesystem.mkdir(path)
+    end
+
+    settings:hyperlink(option, "file:///" .. path)
+end
+
+hyperlink_option("Open Themes Folder", theme_dir)
+hyperlink_option("Open Profiles Folder", stand_dir .. "Profiles")
+hyperlink_option("Open Custom Header Folder", header_dir)
+hyperlink_option("Open Script Resources Folder", resource_dir)
 
 settings:action("Restart Script", {}, "", function()
     util.restart_script()
