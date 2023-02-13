@@ -47,4 +47,5 @@ Stand
 					Scale: 11
 					X Offset: -1
 	Lua Scripts
+        [SPH] Windows11: On
 		stand-profile-helper: On
