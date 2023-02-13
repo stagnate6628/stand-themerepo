@@ -1,6 +1,7 @@
 Stand;Stand
 2Take1;ukn;[SPH] 2Take1.lua
 BlackNWhite;Snub#8646
+Cherax;CocoW#3060;[SPH] Cherax.lua
 Circuit;ukn;[SPH] Circuit.lua
 Discord;lev
 Epsilon;ukn;[SPH] Epsilon.lua

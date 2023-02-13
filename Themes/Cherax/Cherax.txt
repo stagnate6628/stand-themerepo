@@ -1,0 +1,50 @@
+Finished Tutorial: Yes
+Understands Commands: Yes
+Understands Sliders: Yes
+Understands Profiles: Yes
+Understands Context Menu: Yes
+Prompted For Controller Disables: Yes
+Understands Command Chaining: Yes
+Tree Compatibility Version: 43
+Stand
+	Settings
+		Appearance
+			Colours
+				Primary Colour: 6F23E0FF
+				Background Colour: 0C0114FF
+				Unfocused Text Colour: 3705FFFF
+				Unfocused Right-Bound Text Colour: 3705FFFF
+				Unfocused Texture Colour: 3705FFFF
+			Address Bar
+				Height: 25
+				Show Cursor Position: On
+			Cursor
+				Scroll Gap: 0
+				Colour: FFFFFFFF
+			Tabs
+				Width: 92
+				Height: 35
+				Text
+					Scale: 17
+			Command Info Text
+				Position: Bottom
+			Notifications
+				Border Colour: 6F23E0FF
+				Flash Colour: 6F23E0FF
+				Background Colour: 0C0114FF
+			Commands
+				Text
+					Scale: 17
+			Max Visible Commands: 9
+			List Width: 484
+			List Height: 35
+			Spacer Size: 0
+			Background Blur: 0
+			Font & Text
+				Small Text
+					Scale: 11
+					X Offset: -4
+					Y Offset: 4
+	Lua Scripts
+		[SPH] Cherax: On
+		stand-profile-helper: On
