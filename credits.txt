@@ -28,6 +28,7 @@ Roses;𝐫𝐞𝐳#1000
 Space;
 Sunset;hypertack#3121
 The Purge;ukn
+Windows11;CocoW#3060
 X-Force;ukn;[SPH] X-Force.lua
 XCheats;ukn;[SPH] XCheats.lua
 Youtube;lev
