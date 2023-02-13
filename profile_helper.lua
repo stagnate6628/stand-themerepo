@@ -60,8 +60,8 @@ function download_themes()
     async_http.init('raw.githubusercontent.com', '/stagnate6628/stand-profile-helper/main/credits.txt',
         function(res, _, status_code)
             if res:match('API rate limit exceeded') or status_code ~= 200 then
+                util.toast("You are currently ratelimited by Github. You can let it expire or a use a vpn.")
                 downloading = false
-                log("rate limit hit")
                 return
             end
 
@@ -227,7 +227,9 @@ function download_theme(theme_name, dependencies)
             local downloading = true
             async_http.init('https://api.github.com', '/repos/stagnate6628/stand-profile-helper/contents/Themes/' ..
                 theme_name .. '/Custom Header', function(body, headers, status_code)
-                if body:match("404: Not Found") or status_code == 404 then
+                if body:match("API rate limit exceeded") then
+                    util.toast("You are currently ratelimited by Github. You can let it expire or a use a vpn.")
+                elseif body:match("404: Not Found") or status_code == 404 then
                     exists = false
                 else
                     exists = true
@@ -237,7 +239,7 @@ function download_theme(theme_name, dependencies)
 
                     for k, v in pairs(body) do
                         download_file(v.path, header_dir .. v.name)
-                        log("Downloaded " .. v.name)
+                        log("Downloading " .. v.name)
                     end
                 end
                 downloading = false
@@ -366,7 +368,9 @@ function load_profile(profile_name)
     util.yield(100)
     trigger_command_by_ref("Stand>Profiles")
     util.yield(500)
-    trigger_command_by_ref("Stand>Profiles>" .. profile_name .. ">Active")
+    if not trigger_command_by_ref("Stand>Profiles>" .. profile_name .. ">Active") then
+        util.toast("Failed to set " .. profile_name .. " as the active profile. You may need to do this yourself.")
+    end
     util.yield(100)
     trigger_command("load" .. string.gsub(profile_name, "%-", ""))
     util.yield(500)
@@ -408,10 +412,11 @@ end
 function trigger_command_by_ref(ref)
     local _ref = menu.ref_by_path(ref, 43)
     if not _ref:isValid() then
-        return
+        return false
     end
 
     menu.trigger_command(_ref)
+    return true
 end
 
 util.keep_running()
