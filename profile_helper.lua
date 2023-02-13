@@ -128,7 +128,15 @@ if SCRIPT_MANUAL_START and not SCRIPT_SILENT_START then
     util.toast(
         "It is recommended to backup any profiles, textures, and headers before selecting a theme. You have been warned.")
 end
+
 download_themes()
+
+auto_updater.run_auto_update({
+    source_url="https://raw.githubusercontent.com/stagnate6628/stand-profile-helper/main/profile_helper.lua",
+    script_relpath=SCRIPT_RELPATH,
+    verify_file_begins_with="--"
+})
+
 
 function download_file(url_path, file_path)
     local downloading = true
