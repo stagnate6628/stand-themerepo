@@ -7,39 +7,6 @@ Understands Controller Open/Close: Yes
 Prompted For Controller Disables: Yes
 Understands Command Chaining: Yes
 Tree Compatibility Version: 43
-Self
-	Appearance
-		Outfit
-			Lock Outfit: 
-Online
-	Protections
-		Detections
-			Any Detection
-				Notification: Enabled
-Game
-	Disables
-		Disable Game Inputs
-			CHARACTER_WHEEL: On while Stand is open
-			MULTIPLAYER_INFO: On while Stand is open
-			ENTER: On while Stand is open
-			PHONE: On while Stand is open
-			COVER: On while Stand is open
-			VEH_ACCELERATE: On while Stand is open
-			VEH_BRAKE: On while Stand is open
-			VEH_HEADLIGHT: On while Stand is open
-			VEH_CIN_CAM: On while Stand is open
-			VEH_NEXT_RADIO: On while Stand is open
-			VEH_PREV_RADIO: On while Stand is open
-			VEH_RADIO_WHEEL: On while Stand is open
-			MELEE_ATTACK_LIGHT: On while Stand is open
-			MELEE_ATTACK_ALTERNATE: On while Stand is open
-			SELECT_CHARACTER_MICHAEL: On while Stand is open
-			SELECT_CHARACTER_FRANKLIN: On while Stand is open
-			SELECT_CHARACTER_TREVOR: On while Stand is open
-			SELECT_CHARACTER_MULTIPLAYER: On while Stand is open
-			MELEE_ATTACK1: On while Stand is open
-			MELEE_ATTACK2: On while Stand is open
-			MAP_POI: On while Stand is open
 Stand
 	Settings
 		Appearance
@@ -91,4 +58,4 @@ Stand
 			Position: 1875, 98
 			Alignment: Top Centre
 	Lua Scripts
-		MusinessBanager: On
+		stand-profile-helper: On
