@@ -31,11 +31,13 @@ if not status then
             util.toast("Error downloading auto-updater lib. Update failed to download.", TOAST_ALL)
         end)
     async_http.dispatch()
+
     local i = 1
-    while (auto_update_complete == nil and i < 40) do
+    while auto_update_complete == nil and i < 40 do
         util.yield(250)
         i = i + 1
     end
+
     if auto_update_complete == nil then
         error("Error downloading auto-updater lib. HTTP Request timeout")
     end
@@ -287,10 +289,8 @@ function download_theme(theme_name, dependencies)
                     exists = false
                 else
                     exists = true
-
-                    local json = require("json")
-                    body = json.decode(body)
-
+                    
+                    body = soup.json.decode(body)
                     for k, v in pairs(body) do
                         download_file(v.path, header_dir .. v.name)
                         log("Downloading " .. v.name)
