@@ -46,6 +46,8 @@ Stand
 				HUD Colour: EFF4EFFF
 				AR Colour: EFF4EFFF
 				Minigame Colour: EFF4EFFF
+			Header
+				Header: Custom
 			Address Bar
 				Root Name: Hidden
 				Address Separator: Stand \ Online
