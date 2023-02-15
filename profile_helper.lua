@@ -153,7 +153,7 @@ function download_theme(theme_name, dependencies)
 
     local footer_url_path = get_remote_theme_dir_by_name(theme_name, "Footer.bmp")
     local resource_footer_path = get_resource_dir_by_name(theme_name, "Footer.bmp")
-    if io.exists(resource_footer_path) and not prevent_redownloads then
+    if io.exists(resource_footer_path) and prevent_redownloads then
         log("Re-using cached footer file")
     else
         if does_remote_file_exist(footer_url_path) then
@@ -168,7 +168,7 @@ function download_theme(theme_name, dependencies)
     local subheader_url_path = get_remote_theme_dir_by_name(theme_name, "Subheader.bmp")
     local resource_subheader_path = get_resource_dir_by_name(theme_name, "Subheader.bmp")
 
-    if io.exists(resource_subheader_path) and not prevent_downloads then
+    if io.exists(resource_subheader_path) and prevent_downloads then
         log("Re-using cached subheader file")
     else
         if does_remote_file_exist(subheader_url_path) then
@@ -260,21 +260,21 @@ function download_theme(theme_name, dependencies)
 
         i = i + 1
         if i == #texture_names then
-            util.yield(100)
+            util.yield(1000)
             textures_done = true
             log("Textures done")
         end
     end
 
-    for j, tag_name in tag_names do
-        local tag_url_path = get_remote_theme_dir_by_name(tag_name, "Theme\\Custom\\" .. tag_name .. ".png")
+    for i, tag_name in tag_names do
+        local tag_url_path = get_remote_theme_dir_by_name(theme_name, "Theme/Custom/" .. tag_name .. ".png")
         local def
         if not does_remote_file_exist(tag_url_path) then
             def = true
-            tag_url_path = get_remote_theme_dir_by_name("Stand", "Theme\\Custom\\" .. tag_name .. ".png")
+            tag_url_path = get_remote_theme_dir_by_name("Stand", "Theme/Custom/" .. tag_name .. ".png")
         end
 
-        local tag_path = theme_dir .. "Theme\\" .. ".png"
+        local tag_path = get_local_theme_dir_by_name("Custom\\" .. tag_name .. ".png")
         local resource_tag_path = get_resource_dir_by_name(theme_name, "Theme\\Custom\\" .. tag_name .. ".png")
         if io.exists(resource_tag_path) and prevent_redownloads then
             copy_file(resource_tag_path, tag_path)
@@ -290,19 +290,19 @@ function download_theme(theme_name, dependencies)
 
         util.yield(250)
 
-        j = j + 1
-        if j == #tag_names then
-            util.yield(100)
+        i = i + 1
+        if i == #tag_names then
+            util.yield(1000)
             tags_done = true
             log("Tags done")
         end
     end
 
-    for k, tab_name in tab_names do
-        local tab_url_path = get_remote_theme_dir_by_name(theme_name, "Theme\\Tabs\\" .. tab_name .. ".png")
+    for i, tab_name in tab_names do
+        local tab_url_path = get_remote_theme_dir_by_name(theme_name, "Theme/Tabs/" .. tab_name .. ".png")
         local def
         if not does_remote_file_exist(tab_url_path) then
-            tab_url_path = get_remote_theme_dir_by_name("Stand", "\\Theme\\Tabs\\" .. tab_name .. ".png")
+            tab_url_path = get_remote_theme_dir_by_name("Stand", "/Theme/Tabs/" .. tab_name .. ".png")
             def = true
         end
 
@@ -322,9 +322,9 @@ function download_theme(theme_name, dependencies)
 
         util.yield(250)
 
-        k = k + 1
+        i = i + 1
         if i == #tab_names then
-            util.yield(100)
+            util.yield(1000)
             tabs_done = true
             log("Tabs done")
         end
