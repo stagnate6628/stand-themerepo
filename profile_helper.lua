@@ -18,7 +18,8 @@ local settings = home:list("Settings", {}, "")
 
 local prevent_redownloads = true
 local show_logs = true
-settings:toggle("Re-Use Local Assets", {}, "Re-uses downloaded assets and prevents any extra downloads if they exist.",
+settings:toggle("Re-Use Local Assets", {},
+    "Re-uses downloaded assets and prevents any extra downloads if they exist. Note that if these files are not what they are supposed to be, then obviously the theme will look different or you may encounter issues. As long as you do not tamper with the files, this should be fine to leave enabled.",
     function(on)
         prevent_redownloads = on
     end, true)
@@ -30,27 +31,17 @@ settings:action("Update Themes", {},
     function()
         download_themes()
     end)
-
-function hyperlink_option(option, path)
-    if not filesystem.is_dir(path) then
-        filesystem.mkdir(path)
-    end
-
-    settings:hyperlink(option, "file:///" .. path, "Opens the directory shown below")
-end
-
-hyperlink_option("Open Themes Folder", theme_dir)
-hyperlink_option("Open Profiles Folder", stand_dir .. "Profiles")
-hyperlink_option("Open Custom Header Folder", header_dir)
-hyperlink_option("Open Lua Scripts Folder", filesystem.scripts_dir())
-hyperlink_option("Open Script Resources Folder", resource_dir)
+settings:hyperlink("Open Themes Folder", "file:///" .. theme_dir)
+settings:hyperlink("Open Profiles Folder", "file:///" .. stand_dir .. "Profiles")
+settings:hyperlink("Open Custom Header Folder", "file:///" .. header_dir)
+settings:hyperlink("Open Lua Scripts Folder", "file:///" .. filesystem.scripts_dir())
+settings:hyperlink("Open Script Resources Folder", "file:///" .. resource_dir)
 settings:action("Empty Script Log", {}, "", function()
     local log_path = resource_dir .. "\\log.txt"
     local log_file = io.open(log_path, "wb")
     log_file:write("")
     log_file:close()
 end)
-
 settings:action("Restart Script", {}, "", function()
     util.restart_script()
 end)
@@ -66,10 +57,9 @@ function download_themes()
     local downloading = true
     async_http.init("raw.githubusercontent.com", "/stagnate6628/stand-profile-helper/main/credits.txt",
         function(res, _, status_code)
-            if res:match("API rate limit exceeded") or status_code ~= 200 then
+            if body == "API rate limit exceeded" or status_code == 429 then
                 util.toast("You are currently ratelimited by Github. You can let it expire or a use a vpn.")
-                downloading = false
-                return
+                util.stop_script()
             end
 
             local profile = res:split("\n")
@@ -80,7 +70,7 @@ function download_themes()
 
                 local parts = v:split(";")
                 local theme_name = parts[1]
-                local theme_author = parts[2] or unknown
+                local theme_author = parts[2] or "unknown"
                 local deps = {}
 
                 if type(parts[3]) == "string" and parts[3]:endswith(".lua") then
@@ -94,7 +84,7 @@ function download_themes()
             end
             downloading = false
         end, function()
-            log("failed to download themes")
+            log("Failed to download themes list.")
             downloading = false
         end)
     async_http.dispatch()
@@ -105,18 +95,14 @@ function download_themes()
 end
 
 if SCRIPT_MANUAL_START and not SCRIPT_SILENT_START then
-    if not filesystem.exists(resource_dir) then
-        filesystem.mkdir(resource_dir)
-    end
-
-    util.toast(
-        "It is recommended to backup any profiles, textures, and headers before selecting a theme. You have been warned.")
+    util.toast("It is recommended to backup any profiles, textures, and headers before selecting a theme.")
 end
 
+filesystem.mkdir(stand_dir .. "Lua Scripts\\resources")
+filesystem.mkdir(resource_dir)
 download_themes()
 
 function download_theme(theme_name, dependencies)
-    filesystem.mkdir(stand_dir .. "Lua Scripts\\resources")
     filesystem.mkdir(resource_dir .. theme_name)
     filesystem.mkdir(resource_dir .. theme_name .. "\\Custom Header")
     filesystem.mkdir(resource_dir .. theme_name .. "\\Theme")
@@ -234,7 +220,7 @@ function download_theme(theme_name, dependencies)
         end
     end
 
-    for i, texture_name in texture_names do
+    for _, texture_name in texture_names do
         local texture_url_path = get_remote_theme_dir_by_name(theme_name, "Theme/" .. texture_name .. ".png")
         local def
         if not does_remote_file_exist(texture_url_path) then
@@ -257,16 +243,9 @@ function download_theme(theme_name, dependencies)
         end
 
         util.yield(250)
-
-        i = i + 1
-        if i == #texture_names then
-            util.yield(1000)
-            textures_done = true
-            log("Textures done")
-        end
     end
 
-    for i, tag_name in tag_names do
+    for _, tag_name in tag_names do
         local tag_url_path = get_remote_theme_dir_by_name(theme_name, "Theme/Custom/" .. tag_name .. ".png")
         local def
         if not does_remote_file_exist(tag_url_path) then
@@ -287,18 +266,9 @@ function download_theme(theme_name, dependencies)
                 log("Downloaded custom tag " .. tag_name)
             end
         end
-
-        util.yield(250)
-
-        i = i + 1
-        if i == #tag_names then
-            util.yield(1000)
-            tags_done = true
-            log("Tags done")
-        end
     end
 
-    for i, tab_name in tab_names do
+    for _, tab_name in tab_names do
         local tab_url_path = get_remote_theme_dir_by_name(theme_name, "Theme/Tabs/" .. tab_name .. ".png")
         local def
         if not does_remote_file_exist(tab_url_path) then
@@ -319,24 +289,12 @@ function download_theme(theme_name, dependencies)
                 log("Downloaded custom tab " .. tab_name)
             end
         end
-
-        util.yield(250)
-
-        i = i + 1
-        if i == #tab_names then
-            util.yield(1000)
-            tabs_done = true
-            log("Tabs done")
-        end
     end
 
     util.yield(1000)
 
     trigger_command("reloadfont")
-    if textures_done or tabs_done or tags_done then
-        trigger_command("reloadtextures")
-        log("Reloading textures")
-    end
+    trigger_command("reloadtextures")
 
     for _, script in dependencies do
         local dep_url_path = "Dependencies/" .. script
