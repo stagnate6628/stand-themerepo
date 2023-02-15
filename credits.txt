@@ -21,6 +21,7 @@ Minimalistic;Prisuhm#5253
 Old UI;huara#0100
 Optimum;IvanV#6270
 Ozark;ukn;[SPH] Ozark.lua
+Paragon;ukn;[SPH] Paragon.lua
 Paragone;IceDoomfist#0001
 Pink Animated;slides#2137
 Rebound;ukn;[SPH] Rebound.lua
