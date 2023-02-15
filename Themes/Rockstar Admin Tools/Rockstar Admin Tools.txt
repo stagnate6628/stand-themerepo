@@ -45,7 +45,7 @@ Stand
 				Minigame Colour: FFAA00FF
 			Position: 1331, 80
 			Header
-				Header: Rockstar Admin Tools
+				Header: Custom
 			Address Bar
 				Address Separator: Stand / Online
 				Show Current List Only: On
