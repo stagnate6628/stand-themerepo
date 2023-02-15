@@ -98,16 +98,12 @@ if SCRIPT_MANUAL_START and not SCRIPT_SILENT_START then
     util.toast("It is recommended to backup any profiles, textures, and headers before selecting a theme.")
 end
 
-filesystem.mkdir(stand_dir .. "Lua Scripts\\resources")
-filesystem.mkdir(resource_dir)
 download_themes()
 
 function download_theme(theme_name, dependencies)
-    filesystem.mkdir(resource_dir .. theme_name)
-    filesystem.mkdir(resource_dir .. theme_name .. "\\Custom Header")
-    filesystem.mkdir(resource_dir .. theme_name .. "\\Theme")
-    filesystem.mkdir(resource_dir .. theme_name .. "\\Theme\\Custom")
-    filesystem.mkdir(resource_dir .. theme_name .. "\\Theme\\Tabs")
+    io.makedirs(resource_dir .. theme_name .. "\\Custom Header")
+    io.makedirs(resource_dir .. theme_name .. "\\Theme\\Custom")
+    io.makedirs(resource_dir .. theme_name .. "\\Theme\\Tabs")
 
     local profile_path = get_profile_path_by_name(theme_name)
     local font_path = theme_dir .. "Font.spritefont"
@@ -272,7 +268,7 @@ function download_theme(theme_name, dependencies)
         local tab_url_path = get_remote_theme_dir_by_name(theme_name, "Theme/Tabs/" .. tab_name .. ".png")
         local def
         if not does_remote_file_exist(tab_url_path) then
-            tab_url_path = get_remote_theme_dir_by_name("Stand", "/Theme/Tabs/" .. tab_name .. ".png")
+            tab_url_path = get_remote_theme_dir_by_name("Stand", "Theme/Tabs/" .. tab_name .. ".png")
             def = true
         end
 
