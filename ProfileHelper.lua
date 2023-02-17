@@ -45,7 +45,32 @@ if auto_updater == true then
     error("Invalid auto-updater lib. Please delete your Stand/Lua Scripts/lib/auto-updater.lua and try again")
 end
 
-require("downloader")
+auto_updater.run_auto_update({
+    source_url = "https://raw.githubusercontent.com/stagnate6628/stand-profile-helper/main/ProfileHelper.lua",
+    script_relpath = SCRIPT_RELPATH,
+    verify_file_begins_with = "--",
+    check_interval = 86400,
+    silent_updates = true,
+    dependencies = {{
+        name = "downloader",
+        source_url = "https://raw.githubusercontent.com/stagnate6628/stand-profile-helper/main/lib/downloader.lua",
+        script_relpath = "lib/downloader.lua",
+        verify_file_begins_with = "function",
+        is_required = true
+    }}
+})
+
+-- Load required dependencies into global namespace
+for _, dependency in pairs(auto_update_config.dependencies) do
+    if dependency.is_required then
+        if dependency.loaded_lib == nil then
+            util.toast("Error loading lib " .. dependency.name, TOAST_ALL)
+        else
+            local var_name = dependency.name
+            _G[var_name] = dependency.loaded_lib
+        end
+    end
+end
 
 local texture_names<const> = {"Disabled", "Edit", "Enabled", "Friends", "Header Loading", "Link", "List", "Search",
                               "Toggle Off Auto", "Toggle Off", "Toggle On Auto", "Toggle On", "User", "Users"}
@@ -57,7 +82,7 @@ local tab_names<const> = {"Self", "Vehicle", "Online", "Players", "World", "Game
 local stand_dir = filesystem.stand_dir()
 local theme_dir = stand_dir .. "Theme\\"
 local header_dir = stand_dir .. "Headers\\Custom Header"
-local resource_dir = filesystem.resources_dir() .. "stand-profile-helper\\"
+local resource_dir = filesystem.resources_dir() .. "ProfileHelper\\"
 
 local home = menu.my_root()
 local themes = home:list("Themes", {}, "")
@@ -415,7 +440,7 @@ function load_profile(profile_name)
     util.yield(100)
     trigger_command_by_ref("Stand>Lua Scripts")
     util.yield(100)
-    trigger_command_by_ref("Stand>Lua Scripts>stand-profile-helper")
+    trigger_command_by_ref("Stand>Lua Scripts>ProfileHelper")
     util.yield(100)
     trigger_command("clearstandnotifys")
 end
