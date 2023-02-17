@@ -1,6 +1,5 @@
 -- Auto Updater from https://github.com/hexarobi/stand-lua-auto-updater
-util.toast("testign auto update")
-
+util.toast("still testing auto updater")
 local status, auto_updater = pcall(require, "auto-updater")
 if not status then
     local auto_update_complete = nil
@@ -120,6 +119,11 @@ settings:action("Empty Script Log", {}, "", function()
     local log_file = io.open(log_path, "wb")
     log_file:write("")
     log_file:close()
+end)
+settings:action("Update Script", {}, "", function()
+    auto_update_config.check_interval = 0
+    log("Checking for script updates")
+    auto_updater.run_auto_update(auto_update_config)
 end)
 settings:action("Restart Script", {}, "", function()
     util.restart_script()
