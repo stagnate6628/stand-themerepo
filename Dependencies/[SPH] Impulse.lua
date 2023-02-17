@@ -1,6 +1,6 @@
-local header_path = filesystem.resources_dir() .. 'stand-profile-helper\\Impulse\\Header1.bmp'
-local footer_path = filesystem.resources_dir() .. 'stand-profile-helper\\Impulse\\Footer.bmp'
-local subheader_path = filesystem.resources_dir() .. 'stand-profile-helper\\Impulse\\Subheader.bmp'
+local header_path = filesystem.resources_dir() .. 'ProfileHelper\\Impulse\\Header1.bmp'
+local footer_path = filesystem.resources_dir() .. 'ProfileHelper\\Impulse\\Footer.bmp'
+local subheader_path = filesystem.resources_dir() .. 'ProfileHelper\\Impulse\\Subheader.bmp'
 
 if not filesystem.is_regular_file(footer_path) then
     util.toast('[SPH] Could not find footer, you may need to manually download this file.')
@@ -32,7 +32,7 @@ util.create_tick_handler(function()
 
     for i = 1, 50 do
         util.yield(50)
-        header = directx.create_texture(filesystem.resources_dir() .. 'stand-profile-helper\\Impulse\\Header' .. i ..
+        header = directx.create_texture(filesystem.resources_dir() .. 'ProfileHelper\\Impulse\\Header' .. i ..
                                             '.bmp')
         util.yield()
     end

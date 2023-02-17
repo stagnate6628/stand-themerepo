@@ -92,4 +92,4 @@ Stand
 		Discord Rich Presence: On
 		Menu Navigation Reminders: Off
 	Lua Scripts
-		stand-profile-helper: On
+		ProfileHelper: On

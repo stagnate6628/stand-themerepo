@@ -1,6 +1,6 @@
-local header_path = filesystem.resources_dir() .. 'stand-profile-helper\\Circuit\\Header.bmp'
-local footer_path = filesystem.resources_dir() .. 'stand-profile-helper\\Circuit\\Footer.bmp'
-local subheader_path = filesystem.resources_dir() .. 'stand-profile-helper\\Circuit\\Subheader.bmp'
+local header_path = filesystem.resources_dir() .. 'ProfileHelper\\Circuit\\Header.bmp'
+local footer_path = filesystem.resources_dir() .. 'ProfileHelper\\Circuit\\Footer.bmp'
+local subheader_path = filesystem.resources_dir() .. 'ProfileHelper\\Circuit\\Subheader.bmp'
 
 if not filesystem.is_regular_file(footer_path) then
     util.toast('[SPH] Could not find footer, you may need to manually download this file.')

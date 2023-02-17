@@ -50,4 +50,4 @@ Stand
 			Background Blur: 0
 	Lua Scripts
 		[SPH] Paragon: On
-    stand-profile-helper: On
+    ProfileHelper: On

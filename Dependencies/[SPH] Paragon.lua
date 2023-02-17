@@ -1,6 +1,6 @@
 require("downloader")
 
-local base_dir = filesystem.resources_dir() .. "stand-profile-helper\\Paragon\\"
+local base_dir = filesystem.resources_dir() .. "ProfileHelper\\Paragon\\"
 if not io.isdir(base_dir) then
     io.makedirs(base_dir)
 end

@@ -11,8 +11,8 @@ local line_colour<const> = {
     ["a"] = 1.0
 }
 
-local background_path = filesystem.resources_dir() .. "\\stand-profile-helper\\Windows11\\Background.png"
-local profile_path = filesystem.resources_dir() .. "\\stand-profile-helper\\Windows11\\Profile.png"
+local background_path = filesystem.resources_dir() .. "\\ProfileHelper\\Windows11\\Background.png"
+local profile_path = filesystem.resources_dir() .. "\\ProfileHelper\\Windows11\\Profile.png"
 
 if not filesystem.is_regular_file(background_path) then
     util.toast("[SPH] Could not find background, you may need to manually download this file.")

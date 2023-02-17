@@ -30,8 +30,8 @@ local zbcmd_colour = {
     ["a"] = 1.0
 }
 
-local background_path = filesystem.resources_dir() .. "\\stand-profile-helper\\Zanium\\Background.png"
-local logo_path = filesystem.resources_dir() .. "\\stand-profile-helper\\Zanium\\Logo.png"
+local background_path = filesystem.resources_dir() .. "\\ProfileHelper\\Zanium\\Background.png"
+local logo_path = filesystem.resources_dir() .. "\\ProfileHelper\\Zanium\\Logo.png"
 
 if not filesystem.is_regular_file(background_path) then
     util.toast("[SPH] Could not find background, you may need to manually download this file.")
@@ -41,7 +41,7 @@ end
 if not filesystem.is_regular_file(logo_path) then
     local downloading = true
     -- this is pretty bad
-    async_http.init("raw.githubusercontent.com", "/stagnate6628/stand-profile-helper/main/Themes/Zanium/Logo.png",
+    async_http.init("raw.githubusercontent.com", "/stagnate6628/ProfileHelper/main/Themes/Zanium/Logo.png",
         function(body, _, status_code)
             local file = assert(io.open(logo_path, "wb"))
             file:write(body)

@@ -1,11 +1,11 @@
-local footer_path = filesystem.resources_dir() .. 'stand-profile-helper\\2Take1\\Footer.bmp'
+local footer_path = filesystem.resources_dir() .. 'ProfileHelper\\2Take1\\Footer.bmp'
 
 if not filesystem.is_regular_file(footer_path) then
 		util.toast('[SPH] Could not find footer, you may need to manually download this file.')
     return
 end
 
-local footer = directx.create_texture(filesystem.resources_dir() .. 'stand-profile-helper\\2Take1\\Footer.bmp')
+local footer = directx.create_texture(filesystem.resources_dir() .. 'ProfileHelper\\2Take1\\Footer.bmp')
 
 while true do
     if menu.is_open() then

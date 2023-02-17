@@ -1,6 +1,6 @@
-local header_path = filesystem.resources_dir() .. 'stand-profile-helper\\XCheats\\Header.bmp'
-local subheader_path = filesystem.resources_dir() .. 'stand-profile-helper\\XCheats\\Subheader.bmp'
-local footer_path = filesystem.resources_dir() .. 'stand-profile-helper\\XCheats\\Footer.bmp'
+local header_path = filesystem.resources_dir() .. 'ProfileHelper\\XCheats\\Header.bmp'
+local subheader_path = filesystem.resources_dir() .. 'ProfileHelper\\XCheats\\Subheader.bmp'
+local footer_path = filesystem.resources_dir() .. 'ProfileHelper\\XCheats\\Footer.bmp'
 
 if not filesystem.is_regular_file(header_path) then
     util.toast('[SPH] Could not find header, you may need to manually download this file.')

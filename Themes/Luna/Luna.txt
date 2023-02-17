@@ -48,4 +48,4 @@ Stand
 			Background Blur: 0
 	Lua Scripts
 		[SPH] Luna: On
-		stand-profile-helper: On
+		ProfileHelper: On

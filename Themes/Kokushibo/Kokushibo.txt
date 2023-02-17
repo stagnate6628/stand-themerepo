@@ -40,4 +40,4 @@ Stand
 			Background Blur: 0
 			Stream-Proof Rendering: On
 	Lua Scripts
-		stand-profile-helper: On
+		ProfileHelper: On

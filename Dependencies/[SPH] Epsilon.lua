@@ -1,6 +1,6 @@
-local header_path = filesystem.resources_dir() .. 'stand-profile-helper\\Epsilon\\Header.bmp'
-local footer_path = filesystem.resources_dir() .. 'stand-profile-helper\\Epsilon\\Footer.bmp'
-local subheader_path = filesystem.resources_dir() .. 'stand-profile-helper\\Epsilon\\Subheader.bmp'
+local header_path = filesystem.resources_dir() .. 'ProfileHelper\\Epsilon\\Header.bmp'
+local footer_path = filesystem.resources_dir() .. 'ProfileHelper\\Epsilon\\Footer.bmp'
+local subheader_path = filesystem.resources_dir() .. 'ProfileHelper\\Epsilon\\Subheader.bmp'
 
 if not filesystem.is_regular_file(footer_path) then
     util.toast('[SPH] Could not find footer, you may need to manually download this file.')

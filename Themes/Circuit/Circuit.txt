@@ -52,4 +52,4 @@ Stand
 			Background Blur: 0
 	Lua Scripts
 		[SPH] Circuit: On
-		stand-profile-helper: On
+		ProfileHelper: On

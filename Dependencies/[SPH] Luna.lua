@@ -1,6 +1,6 @@
-local header_path = filesystem.resources_dir() .. 'stand-profile-helper\\Luna\\Header.bmp'
-local subheader_path = filesystem.resources_dir() .. 'stand-profile-helper\\Luna\\Subheader.bmp'
-local footer_path = filesystem.resources_dir() .. 'stand-profile-helper\\Luna\\Footer.bmp'
+local header_path = filesystem.resources_dir() .. 'ProfileHelper\\Luna\\Header.bmp'
+local subheader_path = filesystem.resources_dir() .. 'ProfileHelper\\Luna\\Subheader.bmp'
+local footer_path = filesystem.resources_dir() .. 'ProfileHelper\\Luna\\Footer.bmp'
 
 if not filesystem.is_regular_file(header_path) then
     util.toast('[SPH] Could not find header, you may need to manually download this file.')

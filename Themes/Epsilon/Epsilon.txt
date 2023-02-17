@@ -51,4 +51,4 @@ Stand
 			Background Blur: 0
 	Lua Scripts
 		[SPH] Epsilon: On
-		stand-profile-helper: On
+		ProfileHelper: On

@@ -108,4 +108,4 @@ Stand
 			Scale: 12
 		Language: English (US)
 	Lua Scripts
-		stand-profile-helper: On
+		ProfileHelper: On

@@ -1,6 +1,6 @@
-local header_path = filesystem.resources_dir() .. 'stand-profile-helper\\Fragment\\Header.bmp'
-local footer_path = filesystem.resources_dir() .. 'stand-profile-helper\\Fragment\\Footer.bmp'
-local subheader_path = filesystem.resources_dir() .. 'stand-profile-helper\\Fragment\\Subheader.bmp'
+local header_path = filesystem.resources_dir() .. 'ProfileHelper\\Fragment\\Header.bmp'
+local footer_path = filesystem.resources_dir() .. 'ProfileHelper\\Fragment\\Footer.bmp'
+local subheader_path = filesystem.resources_dir() .. 'ProfileHelper\\Fragment\\Subheader.bmp'
 
 if not filesystem.is_regular_file(footer_path) then
     util.toast('[SPH] Could not find footer, you may need to manually download this file.')

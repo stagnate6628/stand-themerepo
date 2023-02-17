@@ -1,6 +1,6 @@
-local header_path = filesystem.resources_dir() .. 'stand-profile-helper\\X-Force\\Header.bmp'
-local subheader_path = filesystem.resources_dir() .. 'stand-profile-helper\\X-Force\\Subheader.bmp'
-local footer_path = filesystem.resources_dir() .. 'stand-profile-helper\\X-Force\\Footer.bmp'
+local header_path = filesystem.resources_dir() .. 'ProfileHelper\\X-Force\\Header.bmp'
+local subheader_path = filesystem.resources_dir() .. 'ProfileHelper\\X-Force\\Subheader.bmp'
+local footer_path = filesystem.resources_dir() .. 'ProfileHelper\\X-Force\\Footer.bmp'
 
 if not filesystem.is_regular_file(header_path) then
     util.toast('[SPH] Could not find header, you may need to manually download this file.')

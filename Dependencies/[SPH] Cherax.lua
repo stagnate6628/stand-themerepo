@@ -1,4 +1,4 @@
-local header_path = filesystem.resources_dir() .. "stand-profile-helper\\Cherax\\Header.bmp"
+local header_path = filesystem.resources_dir() .. "ProfileHelper\\Cherax\\Header.bmp"
 
 if not filesystem.is_regular_file(header_path) then
     util.toast("[SPH] Could not find header, you may need to manually download this file.")

@@ -1,5 +1,5 @@
-local header_path = filesystem.resources_dir() .. 'stand-profile-helper\\Ozark\\Header.bmp'
-local subheader_path = filesystem.resources_dir() .. 'stand-profile-helper\\Ozark\\Subheader.bmp'
+local header_path = filesystem.resources_dir() .. 'ProfileHelper\\Ozark\\Header.bmp'
+local subheader_path = filesystem.resources_dir() .. 'ProfileHelper\\Ozark\\Subheader.bmp'
 
 if not filesystem.is_regular_file(header_path) then
     util.toast('[SPH] Could not find header, you may need to manually download this file.')

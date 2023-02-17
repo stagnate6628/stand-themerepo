@@ -49,4 +49,4 @@ Stand
 			Background Blur: 0
 	Lua Scripts
 		[SPH] Rebound: On
-		stand-profile-helper: On
+		ProfileHelper: On

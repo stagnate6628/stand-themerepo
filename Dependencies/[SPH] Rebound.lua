@@ -1,6 +1,6 @@
-local header_path = filesystem.resources_dir() .. 'stand-profile-helper\\Rebound\\Header.bmp'
-local subheader_path = filesystem.resources_dir() .. 'stand-profile-helper\\Rebound\\Subheader.bmp'
-local footer_path = filesystem.resources_dir() .. 'stand-profile-helper\\Rebound\\Footer.bmp'
+local header_path = filesystem.resources_dir() .. 'ProfileHelper\\Rebound\\Header.bmp'
+local subheader_path = filesystem.resources_dir() .. 'ProfileHelper\\Rebound\\Subheader.bmp'
+local footer_path = filesystem.resources_dir() .. 'ProfileHelper\\Rebound\\Footer.bmp'
 
 if not filesystem.is_regular_file(header_path) then
     util.toast('[SPH] Could not find header, you may need to manually download this file.')

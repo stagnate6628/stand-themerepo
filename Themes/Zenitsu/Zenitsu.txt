@@ -58,4 +58,4 @@ Stand
 			Position: 1875, 98
 			Alignment: Top Centre
 	Lua Scripts
-		stand-profile-helper: On
+		ProfileHelper: On

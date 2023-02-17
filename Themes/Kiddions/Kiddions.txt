@@ -78,4 +78,4 @@ Stand
 			Scale: 17
 	Lua Scripts
 		[SPH] Kiddions: On
-		stand-profile-helper: On
+		ProfileHelper: On

@@ -93,4 +93,4 @@ Stand
 		Info Text
 			Scale: 18
 	Lua Scripts
-		stand-profile-helper: On
+		ProfileHelper: On

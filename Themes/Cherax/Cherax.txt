@@ -47,4 +47,4 @@ Stand
 					Y Offset: 4
 	Lua Scripts
 		[SPH] Cherax: On
-		stand-profile-helper: On
+		ProfileHelper: On

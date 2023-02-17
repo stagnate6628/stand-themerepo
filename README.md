@@ -1,4 +1,4 @@
-# stand-profile-helper
+# ProfileHelper
 Utility to manage multiple profiles with Stand
 
 # Wiki

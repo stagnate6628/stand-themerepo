@@ -107,4 +107,4 @@ Stand
 			Position: 1909, 7
 			Scale: 13
 	Lua Scripts
-		stand-profile-helper: On
+		ProfileHelper: On

@@ -40,4 +40,4 @@ Stand
 			Smooth Scrolling: 0
 			Background Blur: 2
 	Lua Scripts
-		stand-profile-helper: On
+		ProfileHelper: On

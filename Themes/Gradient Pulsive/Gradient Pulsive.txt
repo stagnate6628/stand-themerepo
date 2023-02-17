@@ -65,4 +65,4 @@ Stand
 		Pulsive: On
 			Primary Colour: 29A2D9FF
 			Background Colour: 28282800
-		stand-profile-helper: On
+		ProfileHelper: On

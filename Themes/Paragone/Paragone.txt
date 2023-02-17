@@ -28,4 +28,4 @@ Stand
 				Flash Colour: 1E6793FF
 			Max Visible Commands: 12
 	Lua Scripts
-		stand-profile-helper: On
+		ProfileHelper: On

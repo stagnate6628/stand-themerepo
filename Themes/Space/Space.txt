@@ -84,4 +84,4 @@ Stand
 			Alignment: Top Left
 			Scale: 10
 	Lua Scripts
-		stand-profile-helper: On
+		ProfileHelper: On

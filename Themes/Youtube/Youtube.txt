@@ -74,4 +74,4 @@ Stand
 				Small Text
 					Scale: 8
 	Lua Scripts
-		stand-profile-helper: On
+		ProfileHelper

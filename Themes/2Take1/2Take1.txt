@@ -49,4 +49,4 @@ Stand
 			Background Blur: 0
 	Lua Scripts
 		[SPH] 2Take1: On
-		stand-profile-helper: On
+		ProfileHelper: On
