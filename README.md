@@ -1,5 +1,5 @@
 # ProfileHelper
-Utility to manage multiple profiles with Stand
+Lua script to help apply themes blazingly fast for Stand
 
 # Wiki
 https://github.com/stagnate6628/stand-profile-helper/wiki
