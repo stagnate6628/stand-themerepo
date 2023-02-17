@@ -17,14 +17,20 @@ local themes = home:list("Themes", {}, "")
 local settings = home:list("Settings", {}, "")
 
 local prevent_redownloads = true
+local combine_profiles = false
 local show_logs = true
 settings:toggle("Re-Use Local Assets", {},
     "Re-uses downloaded assets and prevents any extra downloads if they exist. Note that if these files are not what they are supposed to be, then obviously the theme will look different or you may encounter issues. As long as you do not tamper with the files, this should be fine to leave enabled.",
-    function(on)
-        prevent_redownloads = on
+    function(state)
+        prevent_redownloads = state
     end, true)
-settings:toggle("Download Status", {}, "Display the download status with toasts", function(on)
-    show_logs = on
+settings:toggle("Combine Profiles", {},
+    "Experimental: Attempts to combine relevant settings from the downloaded profile with the active profile (%appdata%\\Stand\\Meta State.txt). There will still be a clean copy of the downloaded theme inside the Themes folder. Should not cause any issues but still recommended to leave this off in the event you lose any data.",
+    function(state)
+        combine_profiles = state
+    end, false)
+settings:toggle("Download Status", {}, "Display the download status with toasts", function(state)
+    show_logs = state
 end, true)
 settings:action("Update Themes", {},
     "Updates the list of available themes to download. If there were no changes, then you may need to wait for the API to update or there were truly no changes.",
@@ -276,7 +282,7 @@ function download_theme(theme_name, dependencies)
         local tab_path = get_local_theme_dir_by_name("Tabs\\" .. tab_name .. ".png")
         if io.exists(resource_tab_path) and prevent_redownloads then
             copy_file(resource_tab_path, tab_path)
-            log("Copied tab " .. resource_tab_path)
+            log("Copied tab " .. tab_name)
         else
             download_file(tab_url_path, {tab_path, resource_tab_path})
             if def then
@@ -325,6 +331,8 @@ function custom_header()
 end
 
 function load_profile(profile_name)
+    profile_name = clean_profile_name(profile_name)
+
     util.yield(500)
     trigger_command_by_ref("Stand>Profiles")
     util.yield(100)
@@ -332,12 +340,32 @@ function load_profile(profile_name)
     util.yield(100)
     trigger_command_by_ref("Stand>Profiles")
     util.yield(500)
-    if not trigger_command_by_ref("Stand>Profiles>" .. profile_name .. ">Active") then
-        util.toast("Failed to set " .. profile_name .. " as the active profile. You may need to do this yourself.")
+
+    if combine_profiles then
+        local active_profile_name = clean_profile_name(get_active_profile_name())
+        for k, v in util.read_colons_and_tabs_file(get_profile_path_by_name(profile_name)) do
+            if k:startswith("Stand>Settings>Appearance") or k:startswith("Stand>Lua Scripts") then
+                local ref = menu.ref_by_path(k .. ">" .. v, 43)
+                if not ref:isValid() then
+                    trigger_command_by_ref(k, v)
+                else
+                    trigger_command_by_ref(k .. ">" .. v)
+                end
+            end
+            util.yield()
+        end
+        util.yield(100)
+        trigger_command("save" .. active_profile_name)
+    else
+        if not trigger_command_by_ref("Stand>Profiles>" .. profile_name .. ">Active") then
+            util.toast("Failed to set " .. profile_name .. " as the active profile. You may need to do this yourself.")
+        end
+        util.yield(100)
+        trigger_command("load" .. profile_name)
+        util.yield(500)
     end
+
     util.yield(100)
-    trigger_command("load" .. string.gsub(string.gsub(profile_name, "%-", ""), " ", ""))
-    util.yield(500)
     trigger_command_by_ref("Stand>Lua Scripts")
     util.yield(100)
     trigger_command_by_ref("Stand>Lua Scripts>stand-profile-helper")
@@ -345,8 +373,31 @@ function load_profile(profile_name)
     trigger_command("clearstandnotifys")
 end
 
+function clean_profile_name(profile_name)
+    return string.gsub(string.gsub(profile_name, "%-", ""), " ", "")
+end
+
 function get_profile_path_by_name(profile_name)
     return stand_dir .. "Profiles\\" .. profile_name .. ".txt"
+end
+
+function get_active_profile_name()
+    local meta_state_path = filesystem.stand_dir() .. "Meta State.txt"
+    local file = io.open(meta_state_path, "rb")
+
+    if file == nil then
+        return file
+    end
+
+    local str = file:read("*a")
+    file:close()
+
+    if str:startswith("Active Profile:") then
+        local active_profile_name = str:gsub("[\n\r]", ""):split(": ")[2]
+        return active_profile_name
+    end
+
+    return nil
 end
 
 function get_remote_theme_dir_by_name(theme_name, file_name)
@@ -388,13 +439,18 @@ function trigger_command(command, args)
     menu.trigger_commands(command)
 end
 
-function trigger_command_by_ref(ref)
+function trigger_command_by_ref(ref, args)
     local _ref = menu.ref_by_path(ref, 43)
     if not _ref:isValid() then
         return false
     end
 
-    menu.trigger_command(_ref)
+    if args == nil then
+        menu.trigger_command(_ref)
+        return true
+    end
+
+    menu.trigger_command(_ref, args)
     return true
 end
 
