@@ -1,4 +1,6 @@
 -- Auto Updater from https://github.com/hexarobi/stand-lua-auto-updater
+util.toast("testign auto update")
+
 local status, auto_updater = pcall(require, "auto-updater")
 if not status then
     local auto_update_complete = nil
