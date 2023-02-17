@@ -45,7 +45,7 @@ if auto_updater == true then
     error("Invalid auto-updater lib. Please delete your Stand/Lua Scripts/lib/auto-updater.lua and try again")
 end
 
-auto_updater.run_auto_update({
+local auto_update_config = {
     source_url = "https://raw.githubusercontent.com/stagnate6628/stand-profile-helper/main/ProfileHelper.lua",
     script_relpath = SCRIPT_RELPATH,
     verify_file_begins_with = "--",
@@ -58,10 +58,9 @@ auto_updater.run_auto_update({
         verify_file_begins_with = "function",
         is_required = true
     }}
-})
-
--- Load required dependencies into global namespace
-for _, dependency in pairs(auto_update_config.dependencies) do
+}
+auto_updater.run_auto_update(auto_update_config)
+for _, dependency in auto_update_config.dependencies do
     if dependency.is_required then
         if dependency.loaded_lib == nil then
             util.toast("Error loading lib " .. dependency.name, TOAST_ALL)
