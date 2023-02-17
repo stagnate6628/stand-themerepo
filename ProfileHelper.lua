@@ -96,7 +96,7 @@ settings:toggle("Re-Use Local Assets", {},
         prevent_redownloads = state
     end, true)
 settings:toggle("Combine Profiles", {},
-    "Experimental: Attempts to combine relevant settings from the downloaded profile with the active profile (%appdata%\\Stand\\Meta State.txt). There will still be a clean copy of the downloaded theme inside the Themes folder. Should not cause any issues but still recommended to leave this off in the event you lose any data.",
+    "Experimental: Attempts to combine relevant settings from the downloaded profile with the active profile (%appdata%\\Stand\\Meta State.txt). There will still be a clean copy of the downloaded theme inside the Profiles folder. Should not cause any issues but still recommended to leave this off in the event you lose any data.",
     function(state)
         combine_profiles = state
     end, false)
