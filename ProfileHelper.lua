@@ -405,6 +405,7 @@ function custom_header()
 end
 
 function load_profile(profile_name)
+    local original_name = profile_name
     profile_name = clean_profile_name(profile_name)
 
     util.yield(500)
@@ -431,8 +432,8 @@ function load_profile(profile_name)
         util.yield(100)
         trigger_command("save" .. active_profile_name)
     else
-        if not trigger_command_by_ref("Stand>Profiles>" .. profile_name .. ">Active") then
-            util.toast("Failed to set " .. profile_name .. " as the active profile. You may need to do this yourself.")
+        if not trigger_command_by_ref("Stand>Profiles>" .. original_name .. ">Active") then
+            util.toast("Failed to set " .. original_name .. " as the active profile. You may need to do this yourself.")
         end
         util.yield(100)
         trigger_command("load" .. profile_name)
@@ -441,6 +442,7 @@ function load_profile(profile_name)
 
     util.yield(100)
     trigger_command_by_ref("Stand>Lua Scripts")
+
     util.yield(100)
     trigger_command_by_ref("Stand>Lua Scripts>ProfileHelper")
     util.yield(100)
