@@ -30,6 +30,7 @@ Rebound;ukn;[SPH] Rebound.lua
 Rockstar Admin Tools;Nanomachines Son#6969 and Jimmy!#9444
 Roses;𝐫𝐞𝐳#1000
 Space;
+Spotify;Weiss le boug aberrant#2157;Pulsive.lua
 Sunset;hypertack#3121
 The Purge;ukn
 Windows11;CocoW#3060;[SPH] Windows11.lua
