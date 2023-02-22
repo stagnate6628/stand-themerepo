@@ -1,0 +1,56 @@
+Finished Tutorial: Yes
+Understands Commands: Yes
+Understands Sliders: Yes
+Understands Profiles: Yes
+Understands Command Chaining: Yes
+Tree Compatibility Version: 43
+Stand
+	Settings
+		Appearance
+			Colours
+				Primary Colour: 000000FF
+				Background Colour: FFFFFFFF
+				Unfocused Text Colour: 000000FF
+				Unfocused Right-Bound Text Colour: 000000FF
+				Unfocused Texture Colour: 000000FF
+			Position: 191, 43
+			Address Bar
+				Root Name: Hidden
+				Address Separator: Stand / Online
+				Height: 18
+				Text
+					Scale: 11
+					Y Offset: 0
+			Cursor
+				Scroll Gap: 0
+			Tabs
+				Width: 68
+				Height: 6
+				Position: Top
+				Text
+					Scale: 8
+				Text Alignment: Centre
+				Show Name: Off
+			Command Info Text
+				Position: Bottom
+			Notifications
+				Type: Game
+				Border Colour: 000000FF
+				Flash Colour: FFFFFFFF
+			Commands
+				Text
+					X Offset: -3
+					Y Offset: 3
+			Max Visible Commands: 14
+			List Width: 476
+			List Height: 30
+			Spacer Size: 6
+			Smooth Scrolling: 40
+			Background Blur: 0
+			Font & Text
+				Small Text
+					X Offset: -3
+					Y Offset: 3
+	Lua Scripts
+		[SPH] Off-White: On
+		ProfileHelper: on
