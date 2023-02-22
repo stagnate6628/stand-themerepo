@@ -450,7 +450,7 @@ function load_profile(profile_name)
 end
 
 function clean_profile_name(profile_name)
-    return string.gsub(string.gsub(profile_name, "%-", ""), " ", "")
+    return string.gsub(string.gsub(profile_name, "%-", ""), " ", ""):lower()
 end
 
 function get_profile_path_by_name(profile_name)
