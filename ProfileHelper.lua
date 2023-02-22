@@ -253,7 +253,7 @@ function download_theme(theme_name, dependencies)
         -- todo: move only .bmp files to resource_dir ?
         if not subheader_exists then
             empty_headers_dir()
-            download_file(header_url_path, {get_local_theme_dir_by_name("Header.bmp")})
+            download_file(header_url_path, {get_resource_dir_by_name(theme_name, "Header.bmp")})
             custom_header()
         else
             download_file(header_url_path, {get_resource_dir_by_name(theme_name, "Header.bmp")})
