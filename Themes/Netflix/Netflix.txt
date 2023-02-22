@@ -45,8 +45,6 @@ Stand
 			List Width: 423
 			List Height: 31
 			Spacer Size: 2
-			Stream-Proof Rendering: On
-		Open After Injection: On
 	Lua Scripts
 		Pulsive: On
 			Primary Colour: FF0000FF
