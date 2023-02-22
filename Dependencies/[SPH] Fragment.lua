@@ -21,11 +21,6 @@ if should_exit then
     util.stop_script()
 end
 
-xy = 0
-menu.slider(menu.my_root(), '.', {}, "", -10000000000000, 10000000000000, 1, 1, function(value)
-    xy = value / 10000
-end)
-
 local header = directx.create_texture(header_path)
 local footer = directx.create_texture(footer_path)
 local subheader = directx.create_texture(subheader_path)
