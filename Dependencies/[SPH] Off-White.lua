@@ -9,6 +9,8 @@ if should_exit then
     util.stop_script()
 end
 
+local header = directx.draw_texture(header_path)
+
 while true do
     if menu.is_open() then
         directx.draw_texture(header, 0.0375, 0.0375, 0.5, 0.5, 110 / 1920, 0.2491, 0, 1, 1, 1, 1)
