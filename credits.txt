@@ -18,6 +18,7 @@ Menyoo;Cloudys#1244
 Mercyyy;Mercury#1773
 Midnight Violet;Chr1stian#4130
 Minimalistic;Prisuhm#5253
+Netflix;Weiss le boug aberrant#2157;Pulsive.lua
 Off-White;Maddy#6666
 Old UI;huara#0100
 Optimum;IvanV#6270
