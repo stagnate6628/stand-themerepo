@@ -319,8 +319,6 @@ function download_theme(theme_name, dependencies)
                 log("Downloaded custom texture " .. texture_name)
             end
         end
-
-        util.yield(250)
     end
 
     for _, tag_name in tag_names do
