@@ -5,7 +5,7 @@ if not status then
     util.toast("Installing auto-updater...", TOAST_ALL)
     async_http.init("raw.githubusercontent.com", "/hexarobi/stand-lua-auto-updater/main/auto-updater.lua",
         function(result, headers, status_code)
-            local function parse_auto_update_result(result, headers, status_code)
+            function parse_auto_update_result(result, headers, status_code)
                 local error_prefix = "Error downloading auto-updater: "
                 if status_code ~= 200 then
                     util.toast(error_prefix .. status_code, TOAST_ALL)
@@ -71,12 +71,19 @@ for _, dependency in auto_update_config.dependencies do
     end
 end
 
-local texture_names<const> = {"Disabled", "Edit", "Enabled", "Friends", "Header Loading", "Link", "List", "Search",
-                              "Toggle Off Auto", "Toggle Off", "Toggle On Auto", "Toggle On", "User", "Users"}
-local tag_names<const> = {"00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14",
-                          "15", "16", "17", "18", "19", "0A", "0B", "0C", "0D", "0E", "0F", "1A", "1B", "1C", "1D",
-                          "1E", "1F"}
-local tab_names<const> = {"Self", "Vehicle", "Online", "Players", "World", "Game", "Stand"}
+local theme_files<const> = {"Disabled.png", "Edit.png", "Enabled.png", "Font.spritefont", "Friends.png",
+                            "Header Loading.png", "Link.png", "List.png", "Search.png", "Toggle Off Auto.png",
+                            "Toggle Off.png", "Toggle On Auto.png", "Toggle On.png", "User.png", "Users.png"}
+local tag_names<const> = {"00.png", "01.png", "02.png", "03.png", "04.png", "05.png", "06.png", "07.png", "08.png",
+                          "09.png", "10.png", "11.png", "12.png", "13.png", "14.png", "15.png", "16.png", "17.png",
+                          "18.png", "19.png", "0A.png", "0B.png", "0C.png", "0D.png", "0E.png", "0F.png", "1A.png",
+                          "1B.png", "1C.png", "1D.png", "1E.png", "1F.png"}
+local tab_names<const> = {"Self.png", "Vehicle.png", "Online.png", "Players.png", "World.png", "Game.png", "Stand.png"}
+-- local map<const> = {
+--     ["texture"] = texture_names,
+--     ["tag"] = tag_names,
+--     ["tabs"] = tab_names
+-- }
 
 local stand_dir = filesystem.stand_dir()
 local theme_dir = stand_dir .. "Theme\\"
@@ -128,6 +135,10 @@ settings:action("Restart Script", {}, "", function()
     util.restart_script()
 end)
 
+if SCRIPT_MANUAL_START and not SCRIPT_SILENT_START then
+    util.toast("It is recommended to backup any profiles, textures, and headers before selecting a theme.")
+end
+
 function download_themes()
     local children = menu.get_children(themes)
     if #children > 0 then
@@ -175,11 +186,6 @@ function download_themes()
         util.yield()
     end
 end
-
-if SCRIPT_MANUAL_START and not SCRIPT_SILENT_START then
-    util.toast("It is recommended to backup any profiles, textures, and headers before selecting a theme.")
-end
-
 download_themes()
 
 function download_theme(theme_name, dependencies)
@@ -188,8 +194,6 @@ function download_theme(theme_name, dependencies)
     io.makedirs(resource_dir .. theme_name .. "\\Theme\\Tabs")
 
     local profile_path = get_profile_path_by_name(theme_name)
-    local font_path = theme_dir .. "Font.spritefont"
-
     local resource_profile_path = get_resource_dir_by_name(theme_name, theme_name .. ".txt")
     if io.exists(resource_profile_path) and prevent_redownloads then
         copy_file(resource_profile_path, profile_path)
@@ -197,22 +201,6 @@ function download_theme(theme_name, dependencies)
     else
         download_file("Themes/" .. theme_name .. "/" .. theme_name .. ".txt", {profile_path, resource_profile_path})
         log("Downloaded profile")
-    end
-
-    -- todo: see if moving font.spritefont to theme/ is better
-    local font_path = get_local_theme_dir_by_name("Font.spritefont")
-    local font_url_path = get_remote_theme_dir_by_name(theme_name, "Font.spritefont")
-    if not does_remote_file_exist(font_url_path) then
-        font_url_path = get_remote_theme_dir_by_name("Stand", "Font.spritefont")
-    end
-
-    local resource_font_path = get_resource_dir_by_name(theme_name, "Font.spritefont")
-    if io.exists(resource_font_path) and prevent_redownloads then
-        copy_file(resource_font_path, font_path)
-        log("Re-using cached font file")
-    else
-        download_file(font_url_path, {font_path, get_resource_dir_by_name(theme_name, "Font.spritefont")})
-        log("Downloaded font")
     end
 
     local footer_url_path = get_remote_theme_dir_by_name(theme_name, "Footer.bmp")
@@ -232,7 +220,7 @@ function download_theme(theme_name, dependencies)
     local subheader_url_path = get_remote_theme_dir_by_name(theme_name, "Subheader.bmp")
     local resource_subheader_path = get_resource_dir_by_name(theme_name, "Subheader.bmp")
 
-    if io.exists(resource_subheader_path) and prevent_downloads then
+    if io.exists(resource_subheader_path) and prevent_redownloads then
         log("Re-using cached subheader file")
     else
         if does_remote_file_exist(subheader_url_path) then
@@ -298,71 +286,71 @@ function download_theme(theme_name, dependencies)
         end
     end
 
-    for _, texture_name in texture_names do
-        local texture_url_path = get_remote_theme_dir_by_name(theme_name, "Theme/" .. texture_name .. ".png")
+    for _, file in theme_files do
+        local texture_url_path = get_remote_theme_dir_by_name(theme_name, "Theme/" .. file)
         local def
         if not does_remote_file_exist(texture_url_path) then
             def = true
-            texture_url_path = get_remote_theme_dir_by_name("Stand", "Theme/" .. texture_name .. ".png")
+            texture_url_path = get_remote_theme_dir_by_name("Stand", "Theme/" .. file)
         end
 
-        local texture_path = theme_dir .. texture_name .. ".png"
-        local resource_texture_path = get_resource_dir_by_name(theme_name, "Theme\\" .. texture_name .. ".png")
+        local texture_path = theme_dir .. file
+        local resource_texture_path = get_resource_dir_by_name(theme_name, "Theme\\" .. file)
         if io.exists(resource_texture_path) and prevent_redownloads then
             copy_file(resource_texture_path, texture_path)
-            log("Copied texture " .. texture_name)
+            log("Copied Theme file " .. file)
         else
             download_file(texture_url_path, {texture_path, resource_texture_path})
             if def then
-                log("Downloaded default texture " .. texture_name)
+                log("Downloaded default Theme file " .. file)
             else
-                log("Downloaded custom texture " .. texture_name)
+                log("Downloaded custom Theme file " .. file)
             end
         end
     end
 
-    for _, tag_name in tag_names do
-        local tag_url_path = get_remote_theme_dir_by_name(theme_name, "Theme/Custom/" .. tag_name .. ".png")
+    for _, file in tag_names do
+        local tag_url_path = get_remote_theme_dir_by_name(theme_name, "Theme/Custom/" .. file)
         local def
         if not does_remote_file_exist(tag_url_path) then
             def = true
-            tag_url_path = get_remote_theme_dir_by_name("Stand", "Theme/Custom/" .. tag_name .. ".png")
+            tag_url_path = get_remote_theme_dir_by_name("Stand", "Theme/Custom/" .. file)
         end
 
-        local tag_path = get_local_theme_dir_by_name("Custom\\" .. tag_name .. ".png")
-        local resource_tag_path = get_resource_dir_by_name(theme_name, "Theme\\Custom\\" .. tag_name .. ".png")
+        local tag_path = get_local_theme_dir_by_name("Custom\\" .. file)
+        local resource_tag_path = get_resource_dir_by_name(theme_name, "Theme\\Custom\\" .. file)
         if io.exists(resource_tag_path) and prevent_redownloads then
             copy_file(resource_tag_path, tag_path)
-            log("Copied tag " .. tag_name)
+            log("Copied Tag/" .. tag_name)
         else
             download_file(tag_url_path, {tag_path, resource_tag_path})
             if def then
-                log("Downloaded default tag " .. tag_name)
+                log("Downloaded default Tag " .. tag_name)
             else
-                log("Downloaded custom tag " .. tag_name)
+                log("Downloaded custom Tag " .. tag_name)
             end
         end
     end
 
-    for _, tab_name in tab_names do
-        local tab_url_path = get_remote_theme_dir_by_name(theme_name, "Theme/Tabs/" .. tab_name .. ".png")
+    for _, file in tab_names do
+        local tab_url_path = get_remote_theme_dir_by_name(theme_name, "Theme/Tabs/" .. file)
         local def
         if not does_remote_file_exist(tab_url_path) then
-            tab_url_path = get_remote_theme_dir_by_name("Stand", "Theme/Tabs/" .. tab_name .. ".png")
+            tab_url_path = get_remote_theme_dir_by_name("Stand", "Theme/Tabs/" .. file)
             def = true
         end
 
-        local resource_tab_path = get_resource_dir_by_name(theme_name, "Theme\\Tabs\\" .. tab_name .. ".png")
-        local tab_path = get_local_theme_dir_by_name("Tabs\\" .. tab_name .. ".png")
+        local resource_tab_path = get_resource_dir_by_name(theme_name, "Theme\\Tabs\\" .. file)
+        local tab_path = get_local_theme_dir_by_name("Tabs\\" .. tab_name .. file)
         if io.exists(resource_tab_path) and prevent_redownloads then
             copy_file(resource_tab_path, tab_path)
-            log("Copied tab " .. tab_name)
+            log("Copied Theme/Tabs" .. tab_name)
         else
             download_file(tab_url_path, {tab_path, resource_tab_path})
             if def then
-                log("Downloaded default tab " .. tab_name)
+                log("Downloaded default Tab " .. tab_name)
             else
-                log("Downloaded custom tab " .. tab_name)
+                log("Downloaded custom Tab " .. tab_name)
             end
         end
     end
@@ -486,11 +474,12 @@ end
 
 function get_resource_dir_by_name(theme_name, file_name)
     local str = resource_dir .. theme_name
-    if file_name ~= nil then
-        str = str .. "\\" .. file_name
+
+    if file_name == nil then
+        return str
     end
 
-    return str
+    return str .. "\\" .. file_name
 end
 
 function does_profile_exist_by_name(profile_name)
@@ -500,9 +489,7 @@ end
 
 function empty_headers_dir()
     for _, path in io.listdir(header_dir) do
-        if filesystem.is_regular_file(path) then
-            io.remove(path)
-        end
+        io.remove(path)
     end
 end
 
@@ -515,18 +502,18 @@ function trigger_command(command, args)
     menu.trigger_commands(command)
 end
 
-function trigger_command_by_ref(ref, args)
-    local _ref = menu.ref_by_path(ref, 43)
-    if not _ref:isValid() then
+function trigger_command_by_ref(path, args)
+    local ref = menu.ref_by_path(path, 43)
+    if not ref:isValid() then
         return false
     end
 
     if args == nil then
-        menu.trigger_command(_ref)
-        return true
+        menu.trigger_command(ref)
+    else
+        menu.trigger_command(ref, args)
     end
 
-    menu.trigger_command(_ref, args)
     return true
 end
 
