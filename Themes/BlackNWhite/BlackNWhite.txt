@@ -3,49 +3,28 @@ Understands Commands: Yes
 Understands Sliders: Yes
 Understands Profiles: Yes
 Understands Context Menu: Yes
-Understands Controller Open/Close: Yes
-Prompted For Controller Disables: Yes
 Understands Command Chaining: Yes
 Tree Compatibility Version: 43
-Players
-	Settings
-		Tags
-			Friend: 
-			Crew Member: 
-			In Timeout: 
-			Modder: 
-			Modder or Admin: 
-			Admin: 
-			Likely Modder: 
-			Attacked You: 
-			Host: 
-			Next Host: 
-			Script Host: 
-			Invulnerable: 
-			Indestructible Vehicle: 
-			Off The Radar: 
-			In An Interior: 
-			Spectating: 
-			Typing: 
-			Dead: 
 Stand
 	Settings
 		Appearance
 			Colours
 				Primary Colour: 0C0C0C2D
 				Focused Text Colour: FFF5F2FF
+				Focused Right-Bound Text Colour: 000000FF
+				Focused Texture Colour: 000000FF
 				Background Colour: 00000064
-				HUD Colour: FFD400FF
+				HUD Colour: 00FF2AFF
 					Rainbow Mode: 25
 				AR Colour: 00FFE9FF
 				Minigame Colour: 002EFFFF
-			Position: 1065, 174
+			Position: 1266, 221
 			Header
 				Header: Custom
 				Frame Interval: 30
 				Legacy Positioning: Off
 			Address Bar
-				Root Name: {}
+				Address Bar: Off
 				Show Current List Only: On
 				Text
 					Scale: 11
@@ -54,25 +33,35 @@ Stand
 				Width: 1
 				Colour: FFFFFFFF
 			Tabs
-				Width: 28
+				Width: 45
 				Height: 30
+				Position: Top
+				Text
+					X Offset: -3
 				Text Alignment: Centre
 				Show Name: Off
 				Show Icon Right: On
 				Icons Use Text Colour: Off
 			Scrollbar
 				Scrollbar: Disabled
+				Width: 1
 			Command Info Text
 				Position: Bottom
+				Show Help Text: Off
+				Show Command Syntax: Off
 				Indicate Slider Behaviour: Off
+				Indicate If Usable By Other Players: Off
 			Notifications
-				Custom Position: 323, 1060
 				Width: 370
-				Border Colour: 26FF00FF
+				Border Colour: FF00E5FF
 					Rainbow Mode: 20
-				Flash Colour: 26FF004B
+				Flash Colour: D800FF4B
 					Rainbow Mode: 20
 				Background Colour: 14141996
+			Commands
+				Text
+					Scale: 13
+					X Offset: 1
 			Border
 				Width: 4
 				Rounded: On
@@ -86,9 +75,5 @@ Stand
 			Font & Text
 				Small Text
 					Scale: 11
-		Info Text
-			Position: 884, 999
-			Alignment: Centre
-			Scale: 12
 	Lua Scripts
 		ProfileHelper: On
