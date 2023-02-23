@@ -216,7 +216,6 @@ function download_theme(theme_name, dependencies)
         end
     end
 
-    local subheader_exists = false
     local subheader_url_path = get_remote_theme_dir_by_name(theme_name, "Subheader.bmp")
     local resource_subheader_path = get_resource_dir_by_name(theme_name, "Subheader.bmp")
 
@@ -237,15 +236,7 @@ function download_theme(theme_name, dependencies)
         -- header.bmp exists in root of a theme dir
         log("Downloaded header (1)")
         hide_header()
-
-        -- todo: move only .bmp files to resource_dir ?
-        if not subheader_exists then
-            empty_headers_dir()
-            download_file(header_url_path, {get_resource_dir_by_name(theme_name, "Header.bmp")})
-            custom_header()
-        else
-            download_file(header_url_path, {get_resource_dir_by_name(theme_name, "Header.bmp")})
-        end
+        download_file(header_url_path, {get_resource_dir_by_name(theme_name, "Header.bmp")})
     elseif does_remote_file_exist(animated_header_url_path) then
         -- header1.bmp up to headerX.bmp exists in root of theme dir
         log("Downloaded header (2)")
@@ -298,13 +289,13 @@ function download_theme(theme_name, dependencies)
         local resource_texture_path = get_resource_dir_by_name(theme_name, "Theme\\" .. file)
         if io.exists(resource_texture_path) and prevent_redownloads then
             copy_file(resource_texture_path, texture_path)
-            log("Copied Theme file " .. file)
+            log("Copied Theme/" .. file)
         else
             download_file(texture_url_path, {texture_path, resource_texture_path})
             if def then
-                log("Downloaded default Theme file " .. file)
+                log("Downloaded default Theme/" .. file)
             else
-                log("Downloaded custom Theme file " .. file)
+                log("Downloaded custom Theme/" .. file)
             end
         end
     end
@@ -321,13 +312,13 @@ function download_theme(theme_name, dependencies)
         local resource_tag_path = get_resource_dir_by_name(theme_name, "Theme\\Custom\\" .. file)
         if io.exists(resource_tag_path) and prevent_redownloads then
             copy_file(resource_tag_path, tag_path)
-            log("Copied Tag/" .. tag_name)
+            log("Copied Tag/" .. file)
         else
             download_file(tag_url_path, {tag_path, resource_tag_path})
             if def then
-                log("Downloaded default Tag " .. tag_name)
+                log("Downloaded default Tag/" .. file)
             else
-                log("Downloaded custom Tag " .. tag_name)
+                log("Downloaded custom Tag/" .. file)
             end
         end
     end
@@ -341,16 +332,16 @@ function download_theme(theme_name, dependencies)
         end
 
         local resource_tab_path = get_resource_dir_by_name(theme_name, "Theme\\Tabs\\" .. file)
-        local tab_path = get_local_theme_dir_by_name("Tabs\\" .. tab_name .. file)
+        local tab_path = get_local_theme_dir_by_name("Tabs\\" .. file)
         if io.exists(resource_tab_path) and prevent_redownloads then
             copy_file(resource_tab_path, tab_path)
-            log("Copied Theme/Tabs" .. tab_name)
+            log("Copied Tab/" .. file)
         else
             download_file(tab_url_path, {tab_path, resource_tab_path})
             if def then
-                log("Downloaded default Tab " .. tab_name)
+                log("Downloaded default Tab/" .. file)
             else
-                log("Downloaded custom Tab " .. tab_name)
+                log("Downloaded custom Tab/" .. file)
             end
         end
     end
