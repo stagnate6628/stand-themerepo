@@ -71,14 +71,16 @@ for _, dependency in auto_update_config.dependencies do
     end
 end
 
-local theme_files<const> = {"Disabled.png", "Edit.png", "Enabled.png", "Font.spritefont", "Friends.png",
-                            "Header Loading.png", "Link.png", "List.png", "Search.png", "Toggle Off Auto.png",
-                            "Toggle Off.png", "Toggle On Auto.png", "Toggle On.png", "User.png", "Users.png"}
-local tag_names<const> = {"00.png", "01.png", "02.png", "03.png", "04.png", "05.png", "06.png", "07.png", "08.png",
-                          "09.png", "10.png", "11.png", "12.png", "13.png", "14.png", "15.png", "16.png", "17.png",
-                          "18.png", "19.png", "0A.png", "0B.png", "0C.png", "0D.png", "0E.png", "0F.png", "1A.png",
-                          "1B.png", "1C.png", "1D.png", "1E.png", "1F.png"}
-local tab_names<const> = {"Self.png", "Vehicle.png", "Online.png", "Players.png", "World.png", "Game.png", "Stand.png"}
+local theme_files<const> = table.freeze({"Disabled.png", "Edit.png", "Enabled.png", "Font.spritefont", "Friends.png",
+                                         "Header Loading.png", "Link.png", "List.png", "Search.png",
+                                         "Toggle Off Auto.png", "Toggle Off.png", "Toggle On Auto.png", "Toggle On.png",
+                                         "User.png", "Users.png"})
+local tag_names<const> = table.freeze({"00.png", "01.png", "02.png", "03.png", "04.png", "05.png", "06.png", "07.png",
+                                       "08.png", "09.png", "10.png", "11.png", "12.png", "13.png", "14.png", "15.png",
+                                       "16.png", "17.png", "18.png", "19.png", "0A.png", "0B.png", "0C.png", "0D.png",
+                                       "0E.png", "0F.png", "1A.png", "1B.png", "1C.png", "1D.png", "1E.png", "1F.png"})
+local tab_names<const> = table.freeze({"Self.png", "Vehicle.png", "Online.png", "Players.png", "World.png", "Game.png",
+                                       "Stand.png"})
 -- local map<const> = {
 --     ["texture"] = texture_names,
 --     ["tag"] = tag_names,
@@ -166,8 +168,14 @@ function download_themes()
                 local theme_author = parts[2] or "unknown"
                 local deps = {}
 
-                if type(parts[3]) == "string" and parts[3]:endswith(".lua") then
-                    table.insert(deps, parts[3])
+                if parts[3] and type(parts[3]) == "string" then
+                    if parts[3]:contains(",") then
+                        for k, v in parts[3]:split(",") do
+                            table.insert(deps, v)
+                        end
+                    else
+                        table.insert(deps, parts[3])
+                    end
                 end
 
                 themes:action(theme_name, {}, "Made by " .. theme_author, function()
