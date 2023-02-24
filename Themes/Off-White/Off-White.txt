@@ -54,4 +54,4 @@ Stand
 					Y Offset: 3
 	Lua Scripts
 		[SPH] Off-White: On
-		ProfileHelper: on
+		ProfileHelper: On
