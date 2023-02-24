@@ -182,7 +182,8 @@ function download_themes()
                 themes:action(theme_name, {}, "Made by " .. theme_author, function(click_type)
                     if is_downloading then
                         menu.show_warning(themes, click_type,
-                            "It appears a download has already started. Click to proceed if it isn't.", function()
+                            "It appears that a download has already started. Note that some themes may be bundled with larger assets, so they will take longer to download (most notably fonts and headers). Unless you know what you are doing, it is recommended to wait. Otherwise, click to proceed.",
+                            function()
                                 is_downloading = false
                             end)
                         return
@@ -449,7 +450,6 @@ function load_profile(profile_name)
     trigger_command_by_ref("Stand>Lua Scripts>ProfileHelper")
     util.yield(100)
 
-    
     trigger_command("clearstandnotifys")
 end
 
