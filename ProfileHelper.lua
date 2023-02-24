@@ -96,6 +96,7 @@ local home = menu.my_root()
 local themes = home:list("Themes", {}, "")
 local settings = home:list("Settings", {}, "")
 
+local is_downloading = false
 local prevent_redownloads = true
 local combine_profiles = false
 local show_logs = true
@@ -178,8 +179,18 @@ function download_themes()
                     end
                 end
 
-                themes:action(theme_name, {}, "Made by " .. theme_author, function()
+                themes:action(theme_name, {}, "Made by " .. theme_author, function(click_type)
+                    if is_downloading then
+                        menu.show_warning(themes, click_type,
+                            "It appears a download has already started. Click to proceed if it isn't.", function()
+                                is_downloading = false
+                            end)
+                        return
+                    end
+
+                    is_downloading = true
                     download_theme(theme_name, deps)
+                    is_downloading = false
                 end)
                 ::continue::
             end
