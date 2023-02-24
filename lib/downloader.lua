@@ -47,6 +47,7 @@ function download_file(url_path, file_paths)
 
             if exists and file_paths and type(file_paths) == "table" then
                 for _, path in file_paths do
+                    io.makedirs(get_dirname_from_path(path))
                     local file = io.open(path, "wb")
                     if file ~= nil then
                         file:write(body)
@@ -66,6 +67,8 @@ function download_file(url_path, file_paths)
 end
 
 function download_directory(url_path, dump_directory)
+    io.makedirs(get_dirname_from_path(dump_directory))
+    
     local downloading = true
     local exists
     async_http.init("https://api.github.com", "/repos/stagnate6628/stand-profile-helper/contents/" .. url_path,
@@ -112,4 +115,9 @@ function get_file_name_from_path(path)
     end
 
     return nil
+end
+
+-- https://stackoverflow.com/questions/9102126/lua-return-directory-path-from-path
+function get_dirname_from_path(path)
+    return path:match("(.*[/\\])")
 end
