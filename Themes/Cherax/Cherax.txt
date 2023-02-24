@@ -3,7 +3,6 @@ Understands Commands: Yes
 Understands Sliders: Yes
 Understands Profiles: Yes
 Understands Context Menu: Yes
-Prompted For Controller Disables: Yes
 Understands Command Chaining: Yes
 Tree Compatibility Version: 43
 Stand
@@ -46,5 +45,5 @@ Stand
 					X Offset: -4
 					Y Offset: 4
 	Lua Scripts
-		[SPH] Cherax: On
 		ProfileHelper: On
+		[SPH] Cherax: On
