@@ -16,7 +16,7 @@ if not io.exists(background_path) then
     util.restart_script()
 end
 
-if not io.exists(profile_path) then
+if not io.exists(logo_path) then
     if not status then
         util.toast("[SPH] Logo not found, you may need to manually download this file.")
         should_exit = true
@@ -24,7 +24,7 @@ if not io.exists(profile_path) then
     end
 
     util.toast("[SPH] Logo not found, attempting download. The script will automatically restart when finished.")
-    download_file("Themes/Zanium/Logo.png", {profile_path})
+    download_file("Themes/Zanium/Logo.png", {logo_path})
     util.toast("[SPH] Restarting")
     util.restart_script()
 end
