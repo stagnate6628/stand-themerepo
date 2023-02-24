@@ -29,9 +29,6 @@ Players
 			Typing: 
 			Dead: 
 			VPN: 
-		When Leaving Player's List...
-			Stop Spectating Them: On
-		Reverse Order: On
 Stand
 	Settings
 		Appearance
