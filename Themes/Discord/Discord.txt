@@ -81,4 +81,4 @@ Stand
 			Alignment: Centre
 			Scale: 11
 	Lua Scripts
-		ProfileHelper
+		ProfileHelper: On
