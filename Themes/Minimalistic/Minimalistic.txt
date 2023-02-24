@@ -5,31 +5,6 @@ Understands Profiles: Yes
 Understands Context Menu: Yes
 Understands Command Chaining: Yes
 Tree Compatibility Version: 43
-Players
-	Settings
-		Tags
-			Brackets: STD
-			Self: 
-			Friend: 
-			Crew Member: 
-			In Timeout: 
-			Modder: 
-			Modder or Admin: 
-			Admin: 
-			Likely Modder: 
-			Attacked You: 
-			Host: 
-			Next Host: 
-			Script Host: 
-			Invulnerable: Hidden
-			Indestructible Vehicle: 
-			RC Vehicle: 
-			Off The Radar: 
-			In An Interior: 
-			Spectating: 
-			Typing: 
-			Dead: 
-			VPN: 
 Stand
 	Settings
 		Appearance
@@ -79,9 +54,4 @@ Stand
 			Position: 1889, 170
 			Scale: 17
 	Lua Scripts
-		Pulsive: On
-			Primary Colour: 323232FF
-			Reset Animation on Selection Change: Off
-			Animation Speed: 0
-			Seperator Height: 1
 		ProfileHelper: On
