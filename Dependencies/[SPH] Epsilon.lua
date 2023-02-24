@@ -6,7 +6,7 @@ local subheader_path = filesystem.resources_dir() .. 'ProfileHelper\\Epsilon\\Su
 
 if not io.exists(header_path) then
     if not status then
-        util.toast('[SPH] Could not find footer, you may need to manually download this file.')
+        util.toast("[SPH] Header not found, you may need to manually download this file.")
         should_exit = true
         return
     end
@@ -19,7 +19,7 @@ end
 
 if not io.exists(footer_path) then
     if not status then
-        util.toast('[SPH] Could not find footer, you may need to manually download this file.')
+        util.toast("[SPH] Footer not found, you may need to manually download this file.")
         should_exit = true
         return
     end
@@ -32,7 +32,7 @@ end
 
 if not io.exists(subheader_path) then
     if not status then
-        util.toast('[SPH] Could not find subheader, you may need to manually download this file.')
+        util.toast("[SPH] Subheader not found, you may need to manually download this file.")
         should_exit = true
         return
     end
