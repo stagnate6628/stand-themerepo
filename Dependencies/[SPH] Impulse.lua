@@ -1,20 +1,67 @@
-local header_path = filesystem.resources_dir() .. 'ProfileHelper\\Impulse\\Header1.bmp'
-local footer_path = filesystem.resources_dir() .. 'ProfileHelper\\Impulse\\Footer.bmp'
-local subheader_path = filesystem.resources_dir() .. 'ProfileHelper\\Impulse\\Subheader.bmp'
+local status, err = pcall(require, "downloader")
 
-if not filesystem.is_regular_file(footer_path) then
-    util.toast('[SPH] Could not find footer, you may need to manually download this file.')
-    should_exit = true
+local header_path = filesystem.resources_dir() .. "ProfileHelper\\Impulse\\Header1.bmp"
+local footer_path = filesystem.resources_dir() .. "ProfileHelper\\Impulse\\Footer.bmp"
+local subheader_path = filesystem.resources_dir() .. "ProfileHelper\\Impulse\\Subheader.bmp"
+
+local function get_header_path(i)
+    return filesystem.resources_dir() .. "ProfileHelper\\Impulse\\Header" .. i .. ".bmp"
 end
 
-if not filesystem.is_regular_file(header_path) then
-    util.toast('[SPH] Could not find header, you may need to manually download this file.')
-    should_exit = true
+if not io.exists(header_path) then
+    if not status then
+        util.toast("[SPH] Header not found, you may need to manually download the files.")
+        should_exit = true
+        return
+    end
+
+    util.toast("[SPH] Headers not found, attempting download. The script will automatically restart when finished.")
+
+    local i = 1
+    util.toast("[SPH] Downloaded header " .. i)
+    download_file("Themes/Impulse/Header1.bmp", {filesystem.resources_dir() .. "ProfileHelper\\Impulse\\Header1.bmp"})
+
+    i = i + 1
+    local url_path = "Themes/Impulse/Header" .. i .. ".bmp"
+
+    while does_remote_file_exist(url_path) do
+        util.toast("[SPH] Downloaded header " .. i)
+        download_file("Themes/Impulse/Header" .. i .. ".bmp",
+            {filesystem.resources_dir() .. "ProfileHelper\\Impulse\\Header" .. i .. ".bmp"})
+        i = i + 1
+
+        url_path = "Themes/Impulse/Header" .. i .. ".bmp"
+        util.yield(100)
+    end
+
+    util.toast("[SPH] Restarting")
+    util.restart_script()
 end
 
-if not filesystem.is_regular_file(subheader_path) then
-    util.toast('[SPH] Could not find subheader, you may need to manually download this file.')
-    should_exit = true
+if not io.exists(footer_path) then
+    if not status then
+        util.toast("[SPH] Could not find footer, you may need to manually download this file.")
+        should_exit = true
+        return
+    end
+
+    util.toast("[SPH] Footer not found, attempting download. The script will automatically restart when finished.")
+    download_file("Themes/Impulse/Footer.bmp", {footer_path})
+    util.toast("[SPH] Restarting")
+    util.restart_script()
+end
+
+if not io.exists(subheader_path) then
+    if not status then
+        util.toast("[SPH] Could not find subheader, you may need to manually download this file.")
+        should_exit = true
+        return
+    end
+
+    util.toast("[SPH] Subheader not found, attempting download. The script will automatically restart when finished.")
+    download_file("Themes/Impulse/Subheader.bmp", {subheader_path})
+    util.toast("[SPH] Restarting")
+    util.restart_script()
 end
 
 if should_exit then
@@ -32,8 +79,7 @@ util.create_tick_handler(function()
 
     for i = 1, 50 do
         util.yield(50)
-        header = directx.create_texture(filesystem.resources_dir() .. 'ProfileHelper\\Impulse\\Header' .. i ..
-                                            '.bmp')
+        header = directx.create_texture(get_header_path(i))
         util.yield()
     end
 
@@ -43,7 +89,7 @@ end)
 while true do
     if menu.is_open() then
         local x, y, w, h = menu.get_main_view_position_and_size()
-        directx.draw_texture(header, 1, (w / 1080) + 0.05115, 0, 0, x, (y - (146) / 1080), 0, 1, 1, 1, 1)
+        directx.draw_texture(header, 1, (w / 1080) + 0.05115, 0, 0, x, y - 146 / 1080, 0, 1, 1, 1, 1)
         directx.draw_texture(subheader, 1, (w / 1080) + 0.016, 0, 0, x, (y - 35 / 1080), 0, 1, 1, 1, 1)
         directx.draw_texture(footer, 1, (w / 1080) + 0.0169, 0, 0, x, (y + h - (1 / 1080)), 0, 1, 1, 1, 1)
 
