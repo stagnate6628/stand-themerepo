@@ -182,7 +182,7 @@ function download_themes()
                 themes:action(theme_name, {}, "Made by " .. theme_author, function(click_type)
                     if is_downloading then
                         menu.show_warning(themes, click_type,
-                            "It appears that a download has already started. Note that some themes may be bundled with larger assets, so they will take longer to download (most notably fonts and headers). Unless you know what you are doing, it is recommended to wait. Otherwise, click to proceed.",
+                            "It appears that a download has already started. Note that some themes may be bundled with larger assets, so they will take longer to download (most notably fonts and animated headers). Unless you know what you are doing, it is recommended to wait. Otherwise, click to proceed.",
                             function()
                                 is_downloading = false
                             end)
