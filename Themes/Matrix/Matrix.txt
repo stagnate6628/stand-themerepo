@@ -86,21 +86,5 @@ Stand
 			Position: 460, 728
 			Alignment: Top Left
 			Scale: 10
-		Warnings
-			Automatically Proceed On Warnings
-				Command Box: On
-				Hotkey: On
-			Force Me To Read Warnings: Off
-		Hide Information
-			Hide Rockstar ID: Enabled
-			Hide IP Address: Enabled
-		Notifications
-			Suppress Generic Responses
-				Command Box: On
-				Hotkey: On
-		Command Box
-			Keep Draft When Closed: On
 	Lua Scripts
-		JinxScript: On
-			Self
-				Script Host Addict: On
+		ProfileHelper: On
