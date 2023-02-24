@@ -3,7 +3,6 @@ Understands Commands: Yes
 Understands Sliders: Yes
 Understands Profiles: Yes
 Understands Context Menu: Yes
-Prompted For Controller Disables: Yes
 Understands Command Chaining: Yes
 Tree Compatibility Version: 43
 Stand
