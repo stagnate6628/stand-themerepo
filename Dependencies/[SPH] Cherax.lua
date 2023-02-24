@@ -1,8 +1,18 @@
+local status, err = pcall(require, "downloader")
+
 local header_path = filesystem.resources_dir() .. "ProfileHelper\\Cherax\\Header.bmp"
 
-if not filesystem.is_regular_file(header_path) then
-    util.toast("[SPH] Could not find header, you may need to manually download this file.")
-    should_exit = true
+if not io.exists(header_path) then
+    if not status then
+        util.toast("[SPH] Could not find header, you may need to manually download this file.")
+        should_exit = true
+        return
+    end
+
+    util.toast("[SPH] Header not found, attempting download. The script will automatically restart when finished.")
+    download_file("Themes/Cherax/Header.bmp", {header_path})
+    util.toast("[SPH] Restarting")
+    util.restart_script()
 end
 
 if should_exit then
