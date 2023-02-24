@@ -440,10 +440,11 @@ function load_profile(profile_name)
 
     util.yield(100)
     trigger_command_by_ref("Stand>Lua Scripts")
-
     util.yield(100)
     trigger_command_by_ref("Stand>Lua Scripts>ProfileHelper")
     util.yield(100)
+    trigger_command_by_ref("Stand>Profiles>[SPH] " .. original_name)
+    
     trigger_command("clearstandnotifys")
 end
 
