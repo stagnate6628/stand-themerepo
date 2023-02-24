@@ -46,5 +46,5 @@ Stand
 					Scale: 11
 					X Offset: -1
 	Lua Scripts
-        [SPH] Windows11: On
+        	[SPH] Windows11: On
 		ProfileHelper: On
