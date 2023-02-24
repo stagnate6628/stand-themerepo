@@ -441,12 +441,6 @@ function load_profile(profile_name)
 
     trigger_command_by_ref("Stand>Lua Scripts")
     util.yield(100)
-    trigger_command_by_ref("Stand")
-    util.yield(100)
-    trigger_command_by_ref("Stand>Lua Scripts>[SPH] " .. original_name)
-    util.yield(100)
-    trigger_command_by_ref("Stand>Lua Scripts")
-    util.yield(100)
     trigger_command_by_ref("Stand>Lua Scripts>ProfileHelper")
     util.yield(100)
 
