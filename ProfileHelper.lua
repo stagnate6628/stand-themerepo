@@ -56,6 +56,7 @@ local auto_update_config = {
         source_url = "https://raw.githubusercontent.com/stagnate6628/stand-profile-helper/main/lib/downloader.lua",
         script_relpath = "lib/downloader.lua",
         verify_file_begins_with = "function",
+        check_interval = 604800,
         is_required = true
     }}
 }
