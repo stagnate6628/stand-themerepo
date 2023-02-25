@@ -382,7 +382,7 @@ function download_theme(theme_name, dependencies)
                 copy_file(resource_script_path, script_path)
                 log("Copied Lua Scripts/" .. script)
             else
-                download_file(dep_url_path, {filesystem.scripts_dir() .. script})
+                download_file(dep_url_path, {resource_script_path, filesystem.scripts_dir() .. script})
                 log("Downloaded Lua Scripts/" .. script)
             end
         end
