@@ -209,6 +209,7 @@ end
 download_themes()
 
 function download_theme(theme_name, dependencies)
+    io.makedirs(resource_dir .. theme_name .. "\\Lua Scripts")
     io.makedirs(resource_dir .. theme_name .. "\\Custom Header")
     io.makedirs(resource_dir .. theme_name .. "\\Theme\\Custom")
     io.makedirs(resource_dir .. theme_name .. "\\Theme\\Tabs")
@@ -374,8 +375,15 @@ function download_theme(theme_name, dependencies)
     for _, script in dependencies do
         local dep_url_path = "Dependencies/" .. script
         if does_remote_file_exist(dep_url_path) then
-            download_file(dep_url_path, {filesystem.scripts_dir() .. script})
-            log("Downloaded dependency " .. script)
+            local script_path = filesystem.scripts_dir() .. script
+            local resource_script_path = get_resource_dir_by_name(theme_name, "Lua Scripts\\" .. script)
+            if io.exists(resource_script_path) and prevent_redownloads then
+                copy_file(resource_script_path, script_path)
+                log("Copied Lua Scripts/" .. script)
+            else
+                download_file(dep_url_path, {filesystem.scripts_dir() .. script})
+                log("Downloaded Lua Scripts/" .. script)
+            end
         end
     end
 
