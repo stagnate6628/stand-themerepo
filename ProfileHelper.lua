@@ -254,10 +254,10 @@ function download_theme(theme_name, dependencies)
 
     local header_url_path = get_remote_theme_dir_by_name(theme_name, "Header.bmp")
     local animated_header_url_path = get_remote_theme_dir_by_name(theme_name, "Header1.bmp")
+    hide_header()
     if does_remote_file_exist(header_url_path) then
         -- header.bmp exists in root of a theme dir
         log("Downloaded header (1)")
-        hide_header()
         download_file(header_url_path, {get_resource_dir_by_name(theme_name, "Header.bmp")})
     elseif does_remote_file_exist(animated_header_url_path) then
         -- header1.bmp up to headerX.bmp exists in root of theme dir
@@ -267,7 +267,6 @@ function download_theme(theme_name, dependencies)
         log("Downloaded header " .. i)
         i = i + 1
 
-        hide_header()
         animated_header_url_path = get_remote_theme_dir_by_name(theme_name, "Header" .. i .. ".bmp")
 
         while does_remote_file_exist(animated_header_url_path) do
@@ -280,22 +279,12 @@ function download_theme(theme_name, dependencies)
         end
     else
         empty_headers_dir()
-        -- this method header.png being in root should probably be deprecated in favor of Custom Headers\header.png
-        local header_png_url_path = get_remote_theme_dir_by_name(theme_name, "Header.png")
-        if does_remote_file_exist(header_png_url_path) then
-            log("Using custom header (3)")
-            download_file(header_png_url_path, {header_dir .. "\\" .. theme_name .. ".png"})
-            hide_header()
+        -- everything in custom header dir
+        if download_directory(get_remote_theme_dir_by_name(theme_name, "Custom Header"), header_dir) then
             custom_header()
+            log("Using custom header (3)")
         else
-            hide_header()
-            -- everything in custom header dir
-            if download_directory(get_remote_theme_dir_by_name(theme_name, "Custom Header"), header_dir) then
-                custom_header()
-                log("Using custom header (4)")
-            else
-                log("Using no header (5)")
-            end
+            log("Using no header (4)")
         end
     end
 
