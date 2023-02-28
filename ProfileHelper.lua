@@ -41,6 +41,7 @@ if not status then
     end
     auto_updater = require("auto-updater")
 end
+
 if auto_updater == true then
     error("Invalid auto-updater lib. Please delete your Stand/Lua Scripts/lib/auto-updater.lua and try again")
 end
@@ -55,12 +56,14 @@ local auto_update_config = {
         name = "downloader",
         source_url = "https://raw.githubusercontent.com/stagnate6628/stand-profile-helper/main/lib/downloader.lua",
         script_relpath = "lib/downloader.lua",
-        verify_file_begins_with = "function",
+        verify_file_begins_with = "-- sph-downloader.lua",
         check_interval = 604800,
         is_required = true
     }}
 }
+local inspect = require("lib/inspect")
 auto_updater.run_auto_update(auto_update_config)
+
 for _, dependency in auto_update_config.dependencies do
     if dependency.is_required then
         if dependency.loaded_lib == nil then
@@ -83,7 +86,7 @@ local tag_names<const> = table.freeze({"00.png", "01.png", "02.png", "03.png", "
 local tab_names<const> = table.freeze({"Self.png", "Vehicle.png", "Online.png", "Players.png", "World.png", "Game.png",
                                        "Stand.png"})
 -- local map<const> = {
---     ["texture"] = texture_names,
+--     ["texture"] = theme_files,
 --     ["tag"] = tag_names,
 --     ["tabs"] = tab_names
 -- }
@@ -94,56 +97,59 @@ local header_dir = stand_dir .. "Headers\\Custom Header"
 local resource_dir = filesystem.resources_dir() .. "ProfileHelper\\"
 
 local home = menu.my_root()
-local themes = home:list("Themes", {}, "")
-local settings = home:list("Settings", {}, "")
+local themes = home:list("Themes", {}, "List of pre-made themes from the repository")
+local script_utils = home:list("Script Utilities", {}, "")
 
 local is_downloading = false
 local prevent_redownloads = true
 local combine_profiles = false
 local show_logs = true
-settings:toggle("Re-Use Local Assets", {},
+script_utils:toggle("Re-Use Local Assets", {},
     "Re-uses downloaded assets and prevents any extra downloads if they exist. Note that if these files are not what they are supposed to be, then obviously the theme will look different or you may encounter issues. As long as you do not tamper with the files, this should be fine to leave enabled.",
     function(state)
         prevent_redownloads = state
     end, true)
-settings:toggle("Combine Profiles", {},
+script_utils:toggle("Combine Profiles", {},
     "Experimental: Attempts to combine relevant settings from the downloaded profile with the active profile (%appdata%\\Stand\\Meta State.txt). There will still be a clean copy of the downloaded theme inside the Profiles folder. Should not cause any issues but still recommended to leave this off in the event you lose any data.",
     function(state)
         combine_profiles = state
     end, false)
-settings:toggle("Download Status", {}, "Display the download status with toasts", function(state)
+script_utils:toggle("Download Status", {}, "Display the download status with toasts", function(state)
     show_logs = state
 end, true)
-settings:action("Update Themes", {},
+script_utils:action("Update Themes", {},
     "Updates the list of available themes to download. If there were no changes, then you may need to wait for the API to update or there were truly no changes.",
     function()
         download_themes()
     end)
-settings:hyperlink("Open Themes Folder", "file:///" .. theme_dir)
-settings:hyperlink("Open Profiles Folder", "file:///" .. stand_dir .. "Profiles")
-settings:hyperlink("Open Custom Header Folder", "file:///" .. header_dir)
-settings:hyperlink("Open Lua Scripts Folder", "file:///" .. filesystem.scripts_dir())
-settings:hyperlink("Open Script Resources Folder", "file:///" .. resource_dir)
-settings:action("Empty Script Log", {}, "", function()
+script_utils:hyperlink("Open Themes Folder", "file:///" .. theme_dir)
+script_utils:hyperlink("Open Profiles Folder", "file:///" .. stand_dir .. "Profiles")
+script_utils:hyperlink("Open Custom Header Folder", "file:///" .. header_dir)
+script_utils:hyperlink("Open Lua Scripts Folder", "file:///" .. filesystem.scripts_dir())
+script_utils:hyperlink("Open Script Resources Folder", "file:///" .. resource_dir)
+script_utils:action("Empty Script Log", {}, "", function()
     local log_path = resource_dir .. "\\log.txt"
     local log_file = io.open(log_path, "wb")
     log_file:write("")
     log_file:close()
 end)
-settings:action("Update Script", {}, "", function()
+script_utils:action("Update Script", {}, "", function()
     auto_update_config.check_interval = 0
     log("Checking for script updates")
     auto_updater.run_auto_update(auto_update_config)
 end)
-settings:action("Restart Script", {}, "", function()
+script_utils:action("Restart Script", {}, "", function()
     util.restart_script()
 end)
 
-if SCRIPT_MANUAL_START and not SCRIPT_SILENT_START then
-    util.toast("It is recommended to backup any profiles, textures, and headers before selecting a theme.")
+local function check_ratelimit(status_code)
+    if status_code == 403 then
+        util.toast("You are currently ratelimited by Github. You can let it expire or a use a vpn.")
+        util.stop_script()
+    end
 end
 
-function download_themes()
+local function download_themes()
     local children = menu.get_children(themes)
     if #children > 0 then
         for _, child in children do
@@ -154,10 +160,7 @@ function download_themes()
     local downloading = true
     async_http.init("raw.githubusercontent.com", "/stagnate6628/stand-profile-helper/main/credits.txt",
         function(res, _, status_code)
-            if body == "API rate limit exceeded" or status_code == 429 then
-                util.toast("You are currently ratelimited by Github. You can let it expire or a use a vpn.")
-                util.stop_script()
-            end
+            check_ratelimit(res, status_code)
 
             local profile = res:split("\n")
             for _, v in pairs(profile) do
@@ -207,7 +210,50 @@ function download_themes()
         util.yield()
     end
 end
-download_themes()
+
+local function headers_handle_on_click()
+    local downloading
+    async_http.init("https://api.github.com", "/repos/stagnate6628/stand-profile-helper/contents/Headers",
+        function(res, _, status_code)
+            check_ratelimit(status_code)
+
+            local status, json = pcall(soup.json.decode, res)
+            if not status then
+                log("Failed to parse json")
+                return
+            end
+
+            for _, v in json do
+                headers:action(v.name, {}, "", function()
+                    log("Downloading " .. v.name .. ". Note that animated headers will take longer than usual.")
+                    move_headers()
+                    util.yield(100)
+                    empty_headers_dir()
+                    download_directory(v.path, header_dir)
+
+                    local ref = menu.ref_by_path("Stand>Settings>Appearance>Header>Header", 44)
+                    -- 0=be gone 200=custom
+                    if menu.get_value(ref) == 200 then
+                        hide_header()
+                    end
+                    use_custom_header()
+                end)
+            end
+
+            downloading = true
+        end, function()
+            log("Failed to download headers list")
+            downloading = true
+        end)
+    async_http.dispatch()
+
+    repeat
+        util.yield()
+    until downloading
+end
+
+headers = home:list("Headers", {},
+    "List of pre-made headers that aren't necessarily part of a theme from the repository", headers_handle_on_click)
 
 function download_theme(theme_name, dependencies)
     io.makedirs(resource_dir .. theme_name .. "\\Lua Scripts")
@@ -281,7 +327,7 @@ function download_theme(theme_name, dependencies)
         empty_headers_dir()
         -- everything in custom header dir
         if download_directory(get_remote_theme_dir_by_name(theme_name, "Custom Header"), header_dir) then
-            custom_header()
+            use_custom_header()
             log("Using custom header (3)")
         else
             log("Using no header (4)")
@@ -397,7 +443,7 @@ function hide_header()
     trigger_command_by_ref("Stand>Settings>Appearance>Header>Header>Be Gone")
 end
 
-function custom_header()
+function use_custom_header()
     trigger_command_by_ref("Stand>Settings>Appearance>Header>Header>Custom")
 end
 
@@ -457,16 +503,14 @@ function get_active_profile_name()
     local meta_state_path = filesystem.stand_dir() .. "Meta State.txt"
     local file = io.open(meta_state_path, "rb")
 
-    if file == nil then
-        return file
-    end
+    if file ~= nil then
+        local str = file:read("*a")
+        file:close()
 
-    local str = file:read("*a")
-    file:close()
-
-    if str:startswith("Active Profile:") then
-        local active_profile_name = str:gsub("[\n\r]", ""):split(": ")[2]
-        return active_profile_name
+        if str:startswith("Active Profile:") then
+            local active_profile_name = str:gsub("[\n\r]", ""):split(": ")[2]
+            return active_profile_name
+        end
     end
 
     return nil
@@ -490,14 +534,18 @@ function get_resource_dir_by_name(theme_name, file_name)
     return str .. "\\" .. file_name
 end
 
-function does_profile_exist_by_name(profile_name)
-    local profile_path = get_profile_path_by_name(profile_name)
-    return filesystem.exists(profile_path) and filesystem.is_regular_file(profile_path)
-end
-
 function empty_headers_dir()
     for _, path in io.listdir(header_dir) do
         io.remove(path)
+    end
+end
+
+function move_headers()
+    local temp_dir = stand_dir .. "Headers\\sph-temp"
+    io.makedirs(temp_dir)
+
+    for _, path in io.listdir(header_dir) do
+        io.copyto(path, temp_dir)
     end
 end
 
@@ -523,6 +571,11 @@ function trigger_command_by_ref(path, args)
     end
 
     return true
+end
+
+if SCRIPT_MANUAL_START and not SCRIPT_SILENT_START then
+    util.toast("It is recommended to backup any profiles, textures, and headers before selecting a theme.")
+    download_themes()
 end
 
 util.keep_running()
