@@ -96,56 +96,44 @@ local theme_dir = stand_dir .. "Theme\\"
 local header_dir = stand_dir .. "Headers\\Custom Header"
 local resource_dir = filesystem.resources_dir() .. "ProfileHelper\\"
 
-local headers = menu.list(menu.my_root(), "Headers", {}, "")
-local themes = menu.list(menu.my_root(), "Themes", {}, "")
-local script_utils = menu.list(menu.my_root(), "Script Utilities", {}, "")
-
 local is_downloading = false
 local prevent_redownloads = true
 local combine_profiles = false
 local show_logs = true
-script_utils:toggle("Re-Use Local Assets", {},
-    "Re-uses downloaded assets and prevents any extra downloads if they exist. Note that if these files are not what they are supposed to be, then obviously the theme will look different or you may encounter issues. As long as you do not tamper with the files, this should be fine to leave enabled.",
-    function(state)
-        prevent_redownloads = state
+
+local headers = menu.list(menu.my_root(), "Headers", {}, "")
+local themes = menu.list(menu.my_root(), "Themes", {}, "")
+local theme_cfg = themes:list("Theme Configuration", {}, "")
+theme_cfg:toggle("Reuse Local Assets", {}, "Reuse downloaded assets and prevent extra downloads if available.",
+    function(s)
+        prevent_redownloads = s
     end, true)
-script_utils:toggle("Combine Profiles", {},
-    "Experimental: Attempts to combine relevant settings from the downloaded profile with the active profile (%appdata%\\Stand\\Meta State.txt). There will still be a clean copy of the downloaded theme inside the Profiles folder. Should not cause any issues but still recommended to leave this off in the event you lose any data.",
-    function(state)
-        combine_profiles = state
+theme_cfg:toggle("Combine Profiles", {},
+    "Experimental: Attempts to apply only appearance commands to the current active profile.", function(s)
+        combine_profiles = s
     end, false)
-script_utils:toggle("Download Status", {}, "Display the download status with toasts", function(state)
-    show_logs = state
-end, true)
-script_utils:action("Update Themes", {},
-    "Updates the list of available themes to download. If there were no changes, then you may need to wait for the API to update or there were truly no changes.",
-    function()
-        download_themes()
-    end)
-script_utils:action("Update Headers", {}, "", function()
-    download_headers()
-end)
-script_utils:action("Reset Header", {}, "", function()
-    empty_headers_dir()
-    hide_header()
-end)
-script_utils:hyperlink("Open Themes Folder", "file:///" .. theme_dir)
-script_utils:hyperlink("Open Profiles Folder", "file:///" .. stand_dir .. "Profiles")
-script_utils:hyperlink("Open Custom Header Folder", "file:///" .. header_dir)
-script_utils:hyperlink("Open Lua Scripts Folder", "file:///" .. filesystem.scripts_dir())
-script_utils:hyperlink("Open Script Resources Folder", "file:///" .. resource_dir)
-script_utils:action("Empty Script Log", {}, "", function()
+-- theme_cfg:action("Update Theme List", {}, "Updates the list of themes from the repository.", function()
+--     download_themes()
+-- end)
+theme_cfg:hyperlink("Open Themes Folder", "file:///" .. theme_dir)
+theme_cfg:hyperlink("Open Profiles Folder", "file:///" .. stand_dir .. "Profiles")
+theme_cfg:hyperlink("Open Custom Header Folder", "file:///" .. header_dir)
+theme_cfg:hyperlink("Open Lua Scripts Folder", "file:///" .. filesystem.scripts_dir())
+theme_cfg:hyperlink("Open Script Resources Folder", "file:///" .. resource_dir)
+
+local script_util = menu.list(menu.my_root(), "Script Utility", {}, "")
+script_util:action("Empty Script Log", {}, "", function()
     local log_path = resource_dir .. "\\log.txt"
     local log_file = io.open(log_path, "wb")
     log_file:write("")
     log_file:close()
 end)
-script_utils:action("Update Script", {}, "", function()
+script_util:action("Update Script", {}, "", function()
+    util.toast("Checking for script updates. The script will automatically restart if any updates are found.")
     auto_update_config.check_interval = 0
-    log("Checking for script updates")
     auto_updater.run_auto_update(auto_update_config)
 end)
-script_utils:action("Restart Script", {}, "", function()
+script_util:action("Restart Script", {}, "", function()
     util.restart_script()
 end)
 
@@ -156,16 +144,18 @@ local function check_ratelimit(status_code)
     end
 end
 
-local function download_themes()
-    local children = menu.get_children(themes)
-    if #children > 0 then
-        for _, child in children do
-            child:delete()
-        end
-    end
+function download_themes()
+    -- local children = menu.get_children(themes)
+    -- if #children > 0 then
+    --     for _, child in children do
+    --         if child.menu_name ~= "Theme Configuration" then
+    --             child:delete()
+    --         end
+    --     end
+    -- end
 
     local downloading = true
-    async_http.init("raw.githubusercontent.com", "/stagnate6628/stand-profile-helper/main/credits.txt",
+    async_http.init("https://raw.githubusercontent.com", "/stagnate6628/stand-profile-helper/main/credits.txt",
         function(res, _, status_code)
             check_ratelimit(res, status_code)
 
@@ -390,10 +380,10 @@ function download_theme(theme_name, dependencies)
 end
 
 local function download_headers()
-    local children = menu.get_children(headers)
-    if #children > 0 then
-        return
-    end
+    -- local children = menu.get_children(headers)
+    -- if #children > 0 then
+    --     return
+    -- end
 
     local downloading
     async_http.init("https://api.github.com", "/repos/stagnate6628/stand-profile-helper/contents/Headers",
