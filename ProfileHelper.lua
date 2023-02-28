@@ -65,13 +65,11 @@ local auto_update_config = {
 auto_updater.run_auto_update(auto_update_config)
 
 for _, dependency in auto_update_config.dependencies do
-    if dependency.is_required then
-        if dependency.loaded_lib == nil then
-            util.toast("Error loading lib " .. dependency.name, TOAST_ALL)
-        else
-            local var_name = dependency.name
-            _G[var_name] = dependency.loaded_lib
-        end
+    if dependency.loaded_lib == nil then
+        util.toast("Error loading lib " .. dependency.name, TOAST_ALL)
+    else
+        local var_name = dependency.name
+        _G[var_name] = dependency.loaded_lib
     end
 end
 
@@ -103,37 +101,37 @@ local show_logs = true
 
 local headers = menu.list(menu.my_root(), "Headers", {}, "")
 local themes = menu.list(menu.my_root(), "Themes", {}, "")
-local theme_cfg = themes:list("Theme Configuration", {}, "")
-theme_cfg:toggle("Reuse Local Assets", {}, "Reuse downloaded assets and prevent extra downloads if available.",
+local theme_settings = themes:list("Settings", {}, "")
+theme_settings:toggle("Reuse Local Assets", {}, "Reuse downloaded assets and prevent extra downloads if possible.",
     function(s)
         prevent_redownloads = s
     end, true)
-theme_cfg:toggle("Combine Profiles", {},
+theme_settings:toggle("Combine Profiles", {},
     "Experimental: Attempts to apply only appearance commands to the current active profile.", function(s)
         combine_profiles = s
     end, false)
--- theme_cfg:action("Update Theme List", {}, "Updates the list of themes from the repository.", function()
---     download_themes()
--- end)
-theme_cfg:hyperlink("Open Themes Folder", "file:///" .. theme_dir)
-theme_cfg:hyperlink("Open Profiles Folder", "file:///" .. stand_dir .. "Profiles")
-theme_cfg:hyperlink("Open Custom Header Folder", "file:///" .. header_dir)
-theme_cfg:hyperlink("Open Lua Scripts Folder", "file:///" .. filesystem.scripts_dir())
-theme_cfg:hyperlink("Open Script Resources Folder", "file:///" .. resource_dir)
+theme_settings:action("Update Theme List", {}, "Updates the list of themes from the repository.", function()
+    download_themes()
+end)
+theme_settings:hyperlink("Open Themes Folder", "file:///" .. theme_dir)
+theme_settings:hyperlink("Open Profiles Folder", "file:///" .. stand_dir .. "Profiles")
+theme_settings:hyperlink("Open Custom Header Folder", "file:///" .. header_dir)
+theme_settings:hyperlink("Open Lua Scripts Folder", "file:///" .. filesystem.scripts_dir())
+theme_settings:hyperlink("Open Script Resources Folder", "file:///" .. resource_dir)
 
-local script_util = menu.list(menu.my_root(), "Script Utility", {}, "")
-script_util:action("Empty Script Log", {}, "", function()
+local script_tools = menu.list(menu.my_root(), "Script Tools", {}, "")
+script_tools:action("Empty Script Log", {}, "", function()
     local log_path = resource_dir .. "\\log.txt"
     local log_file = io.open(log_path, "wb")
     log_file:write("")
     log_file:close()
 end)
-script_util:action("Update Script", {}, "", function()
+script_tools:action("Update Script", {}, "", function()
     util.toast("Checking for script updates. The script will automatically restart if any updates are found.")
     auto_update_config.check_interval = 0
     auto_updater.run_auto_update(auto_update_config)
 end)
-script_util:action("Restart Script", {}, "", function()
+script_tools:action("Restart Script", {}, "", function()
     util.restart_script()
 end)
 
@@ -145,14 +143,14 @@ local function check_ratelimit(status_code)
 end
 
 function download_themes()
-    -- local children = menu.get_children(themes)
-    -- if #children > 0 then
-    --     for _, child in children do
-    --         if child.menu_name ~= "Theme Configuration" then
-    --             child:delete()
-    --         end
-    --     end
-    -- end
+    local children = menu.get_children(themes)
+    if #children > 2 then
+        for _, child in children do
+            if child.menu_name ~= "Settings" then
+                child:delete()
+            end
+        end
+    end
 
     local downloading = true
     async_http.init("https://raw.githubusercontent.com", "/stagnate6628/stand-profile-helper/main/credits.txt",
@@ -167,7 +165,7 @@ function download_themes()
 
                 local parts = v:split(";")
                 local theme_name = parts[1]
-                local theme_author = parts[2] or "unknown"
+                local theme_author = "Made by " .. parts[2]
                 local deps = {}
 
                 if parts[3] and type(parts[3]) == "string" then
@@ -180,7 +178,7 @@ function download_themes()
                     end
                 end
 
-                themes:action(theme_name, {}, "Made by " .. theme_author, function(click_type)
+                themes:action(theme_name, {}, theme_author, function(click_type)
                     if is_downloading then
                         menu.show_warning(themes, click_type,
                             "It appears that a download has already started. Note that some themes may be bundled with larger assets, so they will take longer to download (most notably fonts and animated headers). Unless you know what you are doing, it is recommended to wait. Otherwise, click to proceed.",
@@ -380,11 +378,6 @@ function download_theme(theme_name, dependencies)
 end
 
 local function download_headers()
-    -- local children = menu.get_children(headers)
-    -- if #children > 0 then
-    --     return
-    -- end
-
     local downloading
     async_http.init("https://api.github.com", "/repos/stagnate6628/stand-profile-helper/contents/Headers",
         function(res, _, status_code)
