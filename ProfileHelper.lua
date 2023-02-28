@@ -212,6 +212,11 @@ local function download_themes()
 end
 
 local function headers_handle_on_click()
+    local children = headers:get_children()
+    if #children > 0 then 
+        return
+    end
+
     local downloading
     async_http.init("https://api.github.com", "/repos/stagnate6628/stand-profile-helper/contents/Headers",
         function(res, _, status_code)
