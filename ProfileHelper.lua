@@ -61,6 +61,7 @@ local auto_update_config = {
         is_required = true
     }}
 }
+
 local inspect = require("lib/inspect")
 auto_updater.run_auto_update(auto_update_config)
 
@@ -96,9 +97,9 @@ local theme_dir = stand_dir .. "Theme\\"
 local header_dir = stand_dir .. "Headers\\Custom Header"
 local resource_dir = filesystem.resources_dir() .. "ProfileHelper\\"
 
-local home = menu.my_root()
-local themes = home:list("Themes", {}, "List of pre-made themes from the repository")
-local script_utils = home:list("Script Utilities", {}, "")
+local headers = menu.list(menu.my_root(), "Headers", {}, "")
+local themes = menu.list(menu.my_root(), "Themes", {}, "")
+local script_utils = menu.list(menu.my_root(), "Script Utilities", {}, "")
 
 local is_downloading = false
 local prevent_redownloads = true
@@ -211,55 +212,6 @@ local function download_themes()
     end
 end
 
-local function headers_handle_on_click()
-    local children = headers:get_children()
-    if #children > 0 then 
-        return
-    end
-
-    local downloading
-    async_http.init("https://api.github.com", "/repos/stagnate6628/stand-profile-helper/contents/Headers",
-        function(res, _, status_code)
-            check_ratelimit(status_code)
-
-            local status, json = pcall(soup.json.decode, res)
-            if not status then
-                log("Failed to parse json")
-                return
-            end
-
-            for _, v in json do
-                headers:action(v.name, {}, "", function()
-                    log("Downloading " .. v.name .. ". Note that animated headers will take longer than usual.")
-                    move_headers()
-                    util.yield(100)
-                    empty_headers_dir()
-                    download_directory(v.path, header_dir)
-
-                    local ref = menu.ref_by_path("Stand>Settings>Appearance>Header>Header", 44)
-                    -- 0=be gone 200=custom
-                    if menu.get_value(ref) == 200 then
-                        hide_header()
-                    end
-                    use_custom_header()
-                end)
-            end
-
-            downloading = true
-        end, function()
-            log("Failed to download headers list")
-            downloading = true
-        end)
-    async_http.dispatch()
-
-    repeat
-        util.yield()
-    until downloading
-end
-
-headers = home:list("Headers", {},
-    "List of pre-made headers that aren't necessarily part of a theme from the repository", headers_handle_on_click)
-
 function download_theme(theme_name, dependencies)
     io.makedirs(resource_dir .. theme_name .. "\\Lua Scripts")
     io.makedirs(resource_dir .. theme_name .. "\\Custom Header")
@@ -312,7 +264,7 @@ function download_theme(theme_name, dependencies)
         download_file(header_url_path, {get_resource_dir_by_name(theme_name, "Header.bmp")})
     elseif does_remote_file_exist(animated_header_url_path) then
         -- header1.bmp up to headerX.bmp exists in root of theme dir
-        log("Downloaded header (2)")
+        -- log("Downloaded header (2)")
         local i = 1
         download_file(animated_header_url_path, {get_resource_dir_by_name(theme_name, "Header1.bmp")})
         log("Downloaded header " .. i)
@@ -329,9 +281,9 @@ function download_theme(theme_name, dependencies)
             util.yield(100)
         end
     else
-        empty_headers_dir()
         -- everything in custom header dir
         if download_directory(get_remote_theme_dir_by_name(theme_name, "Custom Header"), header_dir) then
+            empty_headers_dir()
             use_custom_header()
             log("Using custom header (3)")
         else
@@ -429,6 +381,53 @@ function download_theme(theme_name, dependencies)
     end
 
     load_profile(theme_name)
+end
+
+local function download_headers()
+    local children = menu.get_children(headers)
+    if #children > 0 then
+        return
+    end
+
+    local downloading
+    async_http.init("https://api.github.com", "/repos/stagnate6628/stand-profile-helper/contents/Headers",
+        function(res, _, status_code)
+            check_ratelimit(status_code)
+
+            local status, json = pcall(soup.json.decode, res)
+            if not status then
+                log("Failed to parse json")
+                return
+            end
+
+            for _, v in json do
+                headers:action(v.name, {}, "", function()
+                    log("Downloading " .. v.name .. ". Note that animated headers will take longer than usual.")
+                    move_headers()
+                    util.yield(100)
+                    empty_headers_dir()
+                    download_directory(v.path, header_dir)
+
+                    local ref = menu.ref_by_path("Stand>Settings>Appearance>Header>Header", 44)
+                    -- 0=be gone 200=custom
+                    if menu.get_value(ref) == 200 then
+                        hide_header()
+                    end
+                    use_custom_header()
+                    downloaded_header = true
+                end)
+            end
+
+            downloading = true
+        end, function()
+            log("Failed to download headers list")
+            downloading = true
+        end)
+    async_http.dispatch()
+
+    repeat
+        util.yield()
+    until downloading
 end
 
 function log(msg)
@@ -550,7 +549,9 @@ function move_headers()
     io.makedirs(temp_dir)
 
     for _, path in io.listdir(header_dir) do
-        io.copyto(path, temp_dir)
+        local split = path:split("\\")
+        local file_name = split[#split]
+        io.copyto(path, temp_dir .. "\\" .. file_name)
     end
 end
 
@@ -581,6 +582,7 @@ end
 if SCRIPT_MANUAL_START and not SCRIPT_SILENT_START then
     util.toast("It is recommended to backup any profiles, textures, and headers before selecting a theme.")
     download_themes()
+    download_headers()
 end
 
 util.keep_running()
