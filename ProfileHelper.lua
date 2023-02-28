@@ -62,7 +62,6 @@ local auto_update_config = {
     }}
 }
 
-local inspect = require("lib/inspect")
 auto_updater.run_auto_update(auto_update_config)
 
 for _, dependency in auto_update_config.dependencies do
