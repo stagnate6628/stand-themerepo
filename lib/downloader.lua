@@ -1,15 +1,21 @@
+-- sph-downloader.lua
+local function check_ratelimit(status_code)
+    if status_code == 403 then
+        util.toast("You are currently ratelimited by Github. You can let it expire or a use a vpn.")
+        util.stop_script()
+    end
+end
+
 function does_remote_file_exist(url_path)
     local downloading = true
     local exists
 
     async_http.init("https://raw.githubusercontent.com", "/stagnate6628/stand-profile-helper/main/" .. url_path,
         function(body, headers, status_code)
+            check_ratelimit(status_code)
             downloading = false
-            if body == "API rate limit exceeded" or status_code == 429 then
-                util.toast(
-                    "You are currently being ratelimited by GitHub. You can let the duration expire or a use a vpn.")
-                util.stop_script()
-            elseif body:match("404: Not Found") or status_code == 404 then
+
+            if body:match("404: Not Found") or status_code == 404 then
                 exists = false
             else
                 exists = true
@@ -31,13 +37,18 @@ function download_file(url_path, file_paths)
     local downloading = true
     local exists
 
+    local function write_file(path, body)
+        io.makedirs(get_dirname_from_path(path))
+
+        local file = io.open(path, "wb")
+        file:write(body)
+        file:close()
+    end
+
     async_http.init("https://raw.githubusercontent.com", "/stagnate6628/stand-profile-helper/main/" .. url_path,
         function(body, headers, status_code)
-            if body == "API rate limit exceeded" or status_code == 429 then
-                util.toast(
-                    "You are currently being ratelimited by GitHub. You can let the duration expire or a use a vpn.")
-                util.stop_script()
-            elseif body:match("404: Not Found") or status_code == 404 then
+            check_ratelimit()
+            if body:match("404: Not Found") or status_code == 404 then
                 exists = false
             else
                 exists = true
@@ -45,13 +56,13 @@ function download_file(url_path, file_paths)
 
             downloading = false
 
-            if exists and file_paths and type(file_paths) == "table" then
-                for _, path in file_paths do
-                    io.makedirs(get_dirname_from_path(path))
-                    local file = io.open(path, "wb")
-                    if file ~= nil then
-                        file:write(body)
-                        file:close()
+            if exists then
+                if type(file_paths) == "string" then
+                    write_file(file_paths, body)
+                elseif type(file_paths) == "table" then
+                    for _, path in file_paths do
+                        write_file(path, body)
+
                     end
                 end
             end
@@ -68,22 +79,20 @@ end
 
 function download_directory(url_path, dump_directory)
     io.makedirs(get_dirname_from_path(dump_directory))
-    
+
     local downloading = true
     local exists
     async_http.init("https://api.github.com", "/repos/stagnate6628/stand-profile-helper/contents/" .. url_path,
         function(body, headers, status_code)
-            if body == "API rate limit exceeded" or status_code == 429 then
-                util.toast("You are currently ratelimited by Github. You can let it expire or a use a vpn.")
-                util.stop_script()
-            elseif body == "404: Not Found" or status_code == 404 then
+            check_ratelimit(status_code)
+            if body == "404: Not Found" or status_code == 404 then
                 exists = false
             else
                 exists = true
                 body = soup.json.decode(body)
 
                 for k, v in body do
-                    download_file(v.path, {dump_directory .. "\\" .. v.name})
+                    download_file(v.path, dump_directory .. "\\" .. v.name)
                 end
             end
             downloading = false
