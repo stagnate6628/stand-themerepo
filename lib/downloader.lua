@@ -97,3 +97,5 @@ end
 function downloader:copy_file(from, to)
 		io.copyto(from, to)
 end
+
+return downloader
