@@ -4,7 +4,7 @@ Understands Sliders: Yes
 Understands Profiles: Yes
 Understands Context Menu: Yes
 Understands Command Chaining: Yes
-Tree Compatibility Version: 43
+Tree Compatibility Version: 44
 Stand
 	Settings
 		Appearance
@@ -15,9 +15,6 @@ Stand
 				Focused Texture Colour: 000000FF
 				Background Colour: 00000096
 			Position: 1266, 221
-			Header
-				Header: Custom
-				Frame Interval: 30
 			Address Bar
 				Address Bar: Off
 			Cursor
@@ -48,5 +45,5 @@ Stand
 			Spacer Size: 0
 			Background Blur: 0
 	Lua Scripts
-		[SPH] 2Take1: On
 		ProfileHelper: On
+		[SPH] 2Take1: On
