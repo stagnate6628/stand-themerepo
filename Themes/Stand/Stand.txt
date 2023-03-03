@@ -4,7 +4,7 @@ Understands Sliders: Yes
 Understands Profiles: Yes
 Understands Context Menu: Yes
 Understands Command Chaining: Yes
-Tree Compatibility Version: 43
+Tree Compatibility Version: 44
 Stand
 	Lua Scripts
 		ProfileHelper: On
