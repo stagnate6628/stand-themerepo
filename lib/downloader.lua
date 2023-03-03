@@ -69,7 +69,6 @@ function downloader:download_directory(url_path, dump_directory)
 	async_http.init('https://api.github.com', '/repos/stagnate6628/stand-profile-helper/contents/' .. url_path,
 	                function(body, headers, status_code)
 		handle_ratelimit(status_code)
-		downloading = false
 
 		if is_404(status_code) then
 			exists = false
@@ -84,6 +83,7 @@ function downloader:download_directory(url_path, dump_directory)
 				downloader:download_file(v.path, dump_directory .. '\\' .. v.name)
 			end
 		end
+		downloading = false
 	end, function()
 		exists = false
 		downloading = false
