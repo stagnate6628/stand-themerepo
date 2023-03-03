@@ -65,11 +65,13 @@ local auto_update_config = {
 auto_updater.run_auto_update(auto_update_config)
 
 for _, dependency in auto_update_config.dependencies do
-		if dependency.loaded_lib == nil then
-				util.toast('Error loading lib ' .. dependency.name, TOAST_ALL)
-		else
-				local var_name = dependency.name
-				_G[var_name] = dependency.loaded_lib
+		if dependency.is_required then
+				if dependency.loaded_lib == nil then
+						util.toast('Error loading lib ' .. dependency.name, TOAST_ALL)
+				else
+						local var_name = dependency.name
+						_G[var_name] = dependency.loaded_lib
+				end
 		end
 end
 
@@ -464,7 +466,7 @@ local function download_themes(update)
 		end
 
 		local function download_list()
-				downloader:download_file('credits.txt', {}, function(body, headers, status_code)
+				downloader.download_file('credits.txt', {}, function(body, headers, status_code)
 						log('Creating theme cache')
 
 						local file = io.open(dirs['resources'] .. '\\themes.txt', 'wb')
