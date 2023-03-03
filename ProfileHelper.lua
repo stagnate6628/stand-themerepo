@@ -51,29 +51,29 @@ local auto_update_config = {
 	verify_file_begins_with = '--',
 	check_interval = 86400
 	-- silent_updates = true,
-	-- dependencies = {{
-	-- 	name = 'downloader',
-	-- 	source_url = 'https://raw.githubusercontent.com/stagnate6628/stand-profile-helper/main/lib/downloader.lua',
-	-- 	script_relpath = 'lib/downloader.lua',
-	-- 	verify_file_begins_with = '-- sph-downloader.lua',
-	-- 	check_interval = 604800,
-	-- 	is_required = true
-	-- }}
+	dependencies = {{
+		name = 'downloader',
+		source_url = 'https://raw.githubusercontent.com/stagnate6628/stand-profile-helper/main/lib/downloader.lua',
+		script_relpath = 'lib/downloader.lua',
+		verify_file_begins_with = '-- sph-downloader.lua',
+		check_interval = 604800,
+		is_required = true
+	}}
 }
 
 auto_updater.run_auto_update(auto_update_config)
-require('lib/downloader')
+-- require('lib/downloader')
 
--- for _, dependency in auto_update_config.dependencies do
--- 	if dependency.is_required then
--- 		if dependency.loaded_lib == nil then
--- 			util.toast('Error loading lib ' .. dependency.name, TOAST_ALL)
--- 		else
--- 			local var_name = dependency.name
--- 			_G[var_name] = dependency.loaded_lib
--- 		end
--- 	end
--- end
+for _, dependency in auto_update_config.dependencies do
+	if dependency.is_required then
+		if dependency.loaded_lib == nil then
+			util.toast('Error loading lib ' .. dependency.name, TOAST_ALL)
+		else
+			local var_name = dependency.name
+			_G[var_name] = dependency.loaded_lib
+		end
+	end
+end
 
 local texture_names<const> = table.freeze({'Disabled.png', 'Edit.png', 'Enabled.png', 'Font.spritefont', 'Friends.png',
                                            'Header Loading.png', 'Link.png', 'List.png', 'Search.png', 'Toggle Off Auto.png',
