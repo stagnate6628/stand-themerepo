@@ -62,12 +62,7 @@ local auto_update_config = {
 }
 
 auto_updater.run_auto_update(auto_update_config)
-local downloader = auto_updater.require_with_auto_update({
-	source_url = 'https://raw.githubusercontent.com/stagnate6628/stand-profile-helper/main/lib/downloader.lua',
-	script_relpath = 'lib/downloader.lua',
-	verify_file_begins_with = '-- sph-downloader.lua'
-})
--- require('lib/downloader')
+require('lib/downloader')
 
 -- for _, dependency in auto_update_config.dependencies do
 -- 	if dependency.is_required then
