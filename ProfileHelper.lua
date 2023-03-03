@@ -465,8 +465,8 @@ local function download_themes(update)
 		end
 	end
 
-	local function download_list()
-		downloader.download_file('credits.txt', {}, function(body, headers, status_code)
+	function download_list()
+		downloader:download_file('credits.txt', {}, function(body, headers, status_code)
 			log('Creating theme cache')
 
 			local file = io.open(dirs['resources'] .. '\\themes.txt', 'wb')
