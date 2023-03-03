@@ -424,9 +424,7 @@ local function download_theme(theme_name, deps)
 
 	load_profile(theme_name)
 end
-menu.action(menu.my_root(), 'test', {}, '', function()
-	download_theme('Stand', {})
-end)
+
 local function download_themes(update)
 	local function parse_list(out)
 		local list = out:split('\n')
