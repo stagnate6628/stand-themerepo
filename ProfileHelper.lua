@@ -62,7 +62,6 @@ local auto_update_config = {
 }
 
 auto_updater.run_auto_update(auto_update_config)
--- require('lib/downloader')
 
 for _, dependency in auto_update_config.dependencies do
 	if dependency.is_required then
@@ -107,7 +106,7 @@ end, false)
 themes:divider('Theme List')
 
 local settings_root = menu.list(menu.my_root(), 'Settings', {}, '')
-settings_root:toggle('Verbose', {}, '', function(s)
+settings_root:toggle('Download Status', {}, '', function(s)
 	bools['verbose'] = s
 end, false)
 settings_root:action('Restart Script', {}, '', util.restart_script)
@@ -232,7 +231,7 @@ local function clean_profile_name(profile_name)
 	return string.gsub(string.gsub(profile_name, '%-', ''), ' ', ''):lower()
 end
 local function get_active_profile_name()
-	local meta_state_path = filesystem.stand_dir() .. 'Meta State.txt'
+	local meta_state_path = dirs['stand'] .. 'Meta State.txt'
 	local file = io.open(meta_state_path, 'rb')
 
 	if file == nil then
@@ -384,7 +383,7 @@ local function download_theme(theme_name, deps)
 
 		for k2, v2 in v1 do
 			local paths = {get_resource_dir_by_name(theme_name, convert_path(url_path, true) .. v2),
-                  filesystem.stand_dir() .. convert_path(url_path, true) .. v2}
+                  dirs['stand'] .. convert_path(url_path, true) .. v2}
 			if should_copy(paths[1]) then
 				downloader:copy_file(paths[1], paths[2])
 				log(k1 .. ': copied ' .. v2)
@@ -465,7 +464,7 @@ local function download_themes(update)
 	end
 
 	local function download_list()
-		downloader:download_file('credits.txt', {}, function(body, headers, status_code)
+		downloader:download_file('themes.txt', {}, function(body, headers, status_code)
 			log('Creating theme cache')
 
 			local file = io.open(dirs['resources'] .. '\\themes.txt', 'wb')
