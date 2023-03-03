@@ -5,7 +5,7 @@ if not status then
 	util.toast('Installing auto-updater...', TOAST_ALL)
 	async_http.init('raw.githubusercontent.com', '/hexarobi/stand-lua-auto-updater/main/auto-updater.lua',
 	                function(result, headers, status_code)
-		function parse_auto_update_result(result, headers, status_code)
+		local function parse_auto_update_result(result, headers, status_code)
 			local error_prefix = 'Error downloading auto-updater: '
 			if status_code ~= 200 then
 				util.toast(error_prefix .. status_code, TOAST_ALL)
@@ -41,7 +41,6 @@ if not status then
 	end
 	auto_updater = require('auto-updater')
 end
-
 if auto_updater == true then
 	error('Invalid auto-updater lib. Please delete your Stand/Lua Scripts/lib/auto-updater.lua and try again')
 end
@@ -64,16 +63,18 @@ local auto_update_config = {
 
 auto_updater.run_auto_update(auto_update_config)
 
-for _, dependency in auto_update_config.dependencies do
-	if dependency.is_required then
-		if dependency.loaded_lib == nil then
-			util.toast('Error loading lib ' .. dependency.name, TOAST_ALL)
-		else
-			local var_name = dependency.name
-			_G[var_name] = dependency.loaded_lib
-		end
-	end
-end
+require('lib/downloader')
+
+-- for _, dependency in auto_update_config.dependencies do
+-- 	if dependency.is_required then
+-- 		if dependency.loaded_lib == nil then
+-- 			util.toast('Error loading lib ' .. dependency.name, TOAST_ALL)
+-- 		else
+-- 			local var_name = dependency.name
+-- 			_G[var_name] = dependency.loaded_lib
+-- 		end
+-- 	end
+-- end
 
 local texture_names<const> = table.freeze({'Disabled.png', 'Edit.png', 'Enabled.png', 'Font.spritefont', 'Friends.png',
                                            'Header Loading.png', 'Link.png', 'List.png', 'Search.png', 'Toggle Off Auto.png',
@@ -423,7 +424,9 @@ local function download_theme(theme_name, deps)
 
 	load_profile(theme_name)
 end
-
+menu.action(menu.my_root(), 'test', {}, '', function()
+	download_theme('Stand', {})
+end)
 local function download_themes(update)
 	local function parse_list(out)
 		local list = out:split('\n')
@@ -465,7 +468,7 @@ local function download_themes(update)
 		end
 	end
 
-	function download_list()
+	local function download_list()
 		downloader:download_file('credits.txt', {}, function(body, headers, status_code)
 			log('Creating theme cache')
 
@@ -511,7 +514,6 @@ if not SCRIPT_SILENT_START then
 	util.toast('Please be mindful to maintain backups of profiles and textures as needed.')
 	io.makedirs(dirs['resources'])
 	download_themes()
-
 end
 
 util.keep_running()
