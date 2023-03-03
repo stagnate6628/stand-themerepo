@@ -49,21 +49,25 @@ local auto_update_config = {
 	source_url = 'https://raw.githubusercontent.com/stagnate6628/stand-profile-helper/main/ProfileHelper.lua',
 	script_relpath = SCRIPT_RELPATH,
 	verify_file_begins_with = '--',
-	check_interval = 86400,
-	silent_updates = true,
-	dependencies = {{
-		name = 'downloader',
-		source_url = 'https://raw.githubusercontent.com/stagnate6628/stand-profile-helper/main/lib/downloader.lua',
-		script_relpath = 'lib/downloader.lua',
-		verify_file_begins_with = '-- sph-downloader.lua',
-		check_interval = 604800,
-		is_required = true
-	}}
+	check_interval = 86400
+	-- silent_updates = true,
+	-- dependencies = {{
+	-- 	name = 'downloader',
+	-- 	source_url = 'https://raw.githubusercontent.com/stagnate6628/stand-profile-helper/main/lib/downloader.lua',
+	-- 	script_relpath = 'lib/downloader.lua',
+	-- 	verify_file_begins_with = '-- sph-downloader.lua',
+	-- 	check_interval = 604800,
+	-- 	is_required = true
+	-- }}
 }
 
 auto_updater.run_auto_update(auto_update_config)
-
-require('lib/downloader')
+local downloader = auto_updater.require_with_auto_update({
+	source_url = 'https://raw.githubusercontent.com/stagnate6628/stand-profile-helper/main/lib/downloader.lua',
+	script_relpath = 'lib/downloader.lua',
+	verify_file_begins_with = '-- sph-downloader.lua'
+})
+-- require('lib/downloader')
 
 -- for _, dependency in auto_update_config.dependencies do
 -- 	if dependency.is_required then
@@ -508,10 +512,8 @@ menu.action(theme_config, 'Update List', {}, '', function()
 	download_themes(true)
 end)
 
-if not SCRIPT_SILENT_START then
-	util.toast('Please be mindful to maintain backups of profiles and textures as needed.')
-	io.makedirs(dirs['resources'])
-	download_themes()
-end
+util.toast('Please be mindful to maintain backups of profiles and textures as needed.')
+io.makedirs(dirs['resources'])
+download_themes()
 
 util.keep_running()
