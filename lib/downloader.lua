@@ -8,12 +8,6 @@ end
 local function is_404(status_code)
 	return status_code == 404
 end
-local function write_file(path, body)
-	-- io.makedirs(get_dirname_from_path(path))
-	local file = io.open(path, 'wb')
-	file:write(body)
-	file:close()
-end
 -- https://stackoverflow.com/questions/9102126/lua-return-directory-path-from-path
 local function get_dirname_from_path(path)
 	if type(path) ~= 'string' then
@@ -21,6 +15,12 @@ local function get_dirname_from_path(path)
 	end
 
 	return path:match('(.*[/\\])')
+end
+local function write_file(path, body)
+	io.makedirs(get_dirname_from_path(path))
+	local file = io.open(path, 'wb')
+	file:write(body)
+	file:close()
 end
 
 downloader = {}
