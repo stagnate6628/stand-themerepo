@@ -524,8 +524,6 @@ local function download_headers(update)
 					util.yield()
 				end
 
-				util.toast('not blocked from downloading')
-
 				bools['is_header_downloading'] = true
 
 				clear_headers()
@@ -543,7 +541,11 @@ local function download_headers(update)
 			end
 
 			local ref = headers:action(v, {}, '', cb)
-			menu.on_focus(ref, cb)
+			menu.on_focus(ref, function()
+				if bools.preview then
+					cb()
+				end
+			end)
 
 			::continue::
 		end
@@ -586,19 +588,6 @@ local function download_headers(update)
 	else
 		download_list()
 	end
-
-	--[[
-		for _, v in pairs(options)
-do
-    menu.on_focus(v, function()
-        focused_opt = v
-    end)
-end
-
-local function is_focused(CommandRef)
-    return CommandRef == focused_opt
-end
-	]]
 end
 
 util.toast('Please be mindful to maintain backups of profiles and textures as needed.')
