@@ -47,5 +47,5 @@ Stand
 			Spacer Size: 0
 			Background Blur: 0
 	Lua Scripts
-		[SPH] Luna: On
 		ProfileHelper: On
+		[SPH] Luna: On

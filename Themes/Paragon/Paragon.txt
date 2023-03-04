@@ -49,5 +49,5 @@ Stand
 			Spacer Size: 0
 			Background Blur: 0
 	Lua Scripts
+    	ProfileHelper: On
 		[SPH] Paragon: On
-    		ProfileHelper: On

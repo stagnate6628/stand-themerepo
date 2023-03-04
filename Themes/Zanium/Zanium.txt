@@ -50,5 +50,5 @@ Stand
 					X Offset: 0
 					Y Offset: 5
 	Lua Scripts
-		[SPH] Zanium: On
 		ProfileHelper: On
+		[SPH] Zanium: On
