@@ -132,8 +132,9 @@ local dirs<const> = {
 local make_dirs<const> = {'Lua Scripts', 'Custom Header', 'Theme\\Custom', 'Theme\\Tabs'}
 
 local function log(msg)
-	util.toast(msg)
 	if bools['verbose'] then
+		util.toast(msg)
+
 		local log_path = dirs['resources'] .. '\\log.txt'
 		local log_file = io.open(log_path, 'a+')
 		log_file:write('[' .. os.date('%x %I:%M:%S %p') .. '] ' .. msg .. '\n')
@@ -291,7 +292,6 @@ local function load_profile(profile_name)
 		util.yield(1000)
 	end
 
-	util.toast('we are here')
 	trigger_command_by_ref('Stand>Lua Scripts')
 	util.yield(250)
 	trigger_command_by_ref('Stand>Lua Scripts>ProfileHelper')
@@ -310,10 +310,10 @@ local function download_theme(theme_name, deps)
 	local resource_profile_path = get_local_path(theme_name, 'profile')
 	if should_copy(resource_profile_path) then
 		downloader:copy_file(resource_profile_path, profile_path)
-		log('Profile: copied')
+		util.toast('Profile: copied')
 	else
 		downloader:download_file(get_req_path(theme_name, theme_name .. '.txt'), {profile_path, resource_profile_path}, function()
-			log('Profile: downloaded')
+			util.toast('Profile: downloaded')
 		end)
 	end
 
@@ -322,7 +322,7 @@ local function download_theme(theme_name, deps)
 		-- log('Footer: copied')
 	else
 		downloader:download_file(get_theme_url_path(theme_name, 'Footer.bmp'), {resource_footer_path}, function()
-			log('Footer: downloaded')
+			util.toast('Footer: downloaded')
 		end, nil, nil)
 	end
 	util.yield(250)
@@ -332,7 +332,7 @@ local function download_theme(theme_name, deps)
 		-- log('Subheader: copied')
 	else
 		downloader:download_file(get_theme_url_path(theme_name, 'Subheader.bmp'), {resource_subheader_path}, function()
-			log('Subheader: downloaded')
+			util.toast('Subheader: downloaded')
 		end, nil, nil)
 	end
 	util.yield(250)
@@ -344,7 +344,7 @@ local function download_theme(theme_name, deps)
 	else
 		hide_header()
 		downloader:download_file(get_theme_url_path(theme_name, 'Header.bmp'), {header_path}, function()
-			log('Header: downloaded')
+			util.toast('Header: downloaded (1)')
 		end, nil, function()
 			-- headerX.bmp
 			header_path = get_resource_dir_by_name(theme_name, 'Header1.bmp')
@@ -361,6 +361,7 @@ local function download_theme(theme_name, deps)
 					end)
 					i = i + 1
 				end
+				util.toast('Header: downloaded (2)')
 			end, nil, function()
 				-- custom headers dir
 				-- todo: store headers in resource dir when using this method
@@ -405,7 +406,7 @@ local function download_theme(theme_name, deps)
 				d = d + 1
 			end
 		end
-		log(string.format('%s: %d downloaded, %d copied', k1, d, c))
+		util.toast(string.format('%s: %d downloaded, %d copied', k1, d, c))
 		util.yield(250)
 	end
 
@@ -417,7 +418,7 @@ local function download_theme(theme_name, deps)
 				d = d + 1
 			end)
 		end
-		log(string.format('Lua Scripts: %d downloaded', d))
+		util.toast(string.format('Lua Scripts: %d downloaded', d))
 	end
 
 	util.yield(1000)
