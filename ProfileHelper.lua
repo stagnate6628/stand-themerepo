@@ -93,20 +93,27 @@ local bools = {
 	['is_downloading'] = false,
 	['prevent_redownloads'] = true,
 	['verbose'] = false,
-	['combine_profiles'] = false
+	['combine_profiles'] = false,
+	['preview'] = false,
+	['is_header_downloading'] = false
 }
 
 local headers = menu.list(menu.my_root(), 'Headers', {}, '')
+local headers_config = menu.list(headers, 'Configuration', {}, '')
+headers_config:toggle('Preview', {},
+                      'Download and display the selected header. Note that you will experience issues if you focus another Header while one is still downloading.',
+                      function(s)
+	bools['preview'] = s
+end, false)
 local themes = menu.list(menu.my_root(), 'Themes', {}, '')
 local theme_config = menu.list(themes, 'Configuration', {}, '')
 theme_config:toggle('Combine Profiles', {},
                     'Allows you to save the current state of the active profile with a clean version of a theme.', function(s)
 	bools['combine_profiles'] = s
 end, false)
-themes:divider('Theme List')
 
 local settings_root = menu.list(menu.my_root(), 'Settings', {}, '')
-settings_root:toggle('Download Status', {}, '', function(s)
+settings_root:toggle('Verbose Download Status', {}, '', function(s)
 	bools['verbose'] = s
 end, false)
 settings_root:action('Restart Script', {}, '', util.restart_script)
@@ -125,13 +132,12 @@ local dirs<const> = {
 local make_dirs<const> = {'Lua Scripts', 'Custom Header', 'Theme\\Custom', 'Theme\\Tabs'}
 
 local function log(msg)
+	util.toast(msg)
 	if bools['verbose'] then
-		util.toast(msg)
-
-		-- local log_path = dirs['resources'] .. '\\log.txt'
-		-- local log_file = io.open(log_path, 'a+')
-		-- log_file:write('[' .. os.date('%x %I:%M:%S %p') .. '] ' .. msg .. '\n')
-		-- log_file:close()
+		local log_path = dirs['resources'] .. '\\log.txt'
+		local log_file = io.open(log_path, 'a+')
+		log_file:write('[' .. os.date('%x %I:%M:%S %p') .. '] ' .. msg .. '\n')
+		log_file:close()
 	end
 end
 local function get_resource_dir_by_name(theme_name, file_path)
@@ -357,7 +363,7 @@ local function download_theme(theme_name, deps)
 				end
 			end, nil, function()
 				-- custom headers dir
-				-- todo: store headers locally when using this method
+				-- todo: store headers in resource dir when using this method
 				clear_headers()
 				util.yield(250)
 				if downloader:download_directory(get_theme_url_path(theme_name, 'Custom Header'), dirs['header']) then
@@ -505,8 +511,99 @@ menu.action(theme_config, 'Update List', {}, '', function()
 	download_themes(true)
 end)
 
+local function download_headers(update)
+	local function parse_list(out)
+		local list = out:split('\n')
+		for _, v in list do
+			if v == '' then
+				goto continue
+			end
+
+			local function cb()
+				while bools['is_header_downloading'] do
+					util.yield()
+				end
+
+				util.toast('not blocked from downloading')
+
+				bools['is_header_downloading'] = true
+
+				clear_headers()
+				util.yield(1000)
+				if downloader:download_directory('Headers/' .. v, dirs['header']) then
+					util.toast('Downloading ' .. v .. ' headers')
+					-- 0=be gone 200=custom
+					if menu.get_value(menu.ref_by_path('Stand>Settings>Appearance>Header>Header', 44)) == 200 then
+						hide_header()
+					end
+					use_custom_header()
+				end
+
+				bools['is_header_downloading'] = false
+			end
+
+			local ref = headers:action(v, {}, '', cb)
+			menu.on_focus(ref, cb)
+
+			::continue::
+		end
+	end
+
+	local function download_list()
+		downloader:download_file('headers.txt', {}, function(body, headers, status_code)
+			log('Creating headers cache')
+
+			local file = io.open(dirs['resources'] .. '\\headers.txt', 'wb')
+			file:write(body)
+			file:close()
+
+			pcall(parse_list, body)
+		end, function()
+			log('Failed to download headers list.')
+		end)
+	end
+
+	local file = io.open(dirs['resources'] .. '\\headers.txt', 'r')
+	if file ~= nil then
+		if update then
+			local children = menu.get_children(headers)
+			for k, v in children do
+				if v.menu_name == 'Configuration' then
+					goto continue
+				end
+
+				v:delete()
+				::continue::
+			end
+
+			download_list()
+			return
+		end
+
+		-- log('Found local header cache')
+		parse_list(file:read('*a'))
+		file:close()
+	else
+		download_list()
+	end
+
+	--[[
+		for _, v in pairs(options)
+do
+    menu.on_focus(v, function()
+        focused_opt = v
+    end)
+end
+
+local function is_focused(CommandRef)
+    return CommandRef == focused_opt
+end
+	]]
+end
+
 util.toast('Please be mindful to maintain backups of profiles and textures as needed.')
 io.makedirs(dirs['resources'])
 download_themes()
+download_headers()
 
 util.keep_running()
