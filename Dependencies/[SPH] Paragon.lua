@@ -1,4 +1,4 @@
-local status, err = pcall(require, "downloader")
+local status = pcall(require, "downloader")
 
 local header_path = filesystem.resources_dir() .. "ProfileHelper\\Paragon\\Header.bmp"
 local subheader_path = filesystem.resources_dir() .. "ProfileHelper\\Paragon\\Subheader.bmp"
@@ -12,7 +12,7 @@ if not io.exists(header_path) then
     end
 
     util.toast("[SPH] Header not found, attempting download. The script will automatically restart when finished.")
-    download_file("Themes/Paragon/Header.bmp", {header_path})
+    downloader:download_file("Themes/Paragon/Header.bmp", {header_path})
     util.toast("[SPH] Restarting")
     util.restart_script()
 end
@@ -25,7 +25,7 @@ if not io.exists(footer_path) then
     end
 
     util.toast("[SPH] Footer not found, attempting download. The script will automatically restart when finished.")
-    download_file("Themes/Paragon/Footer.bmp", {footer_path})
+    downloader:download_file("Themes/Paragon/Footer.bmp", {footer_path})
     util.toast("[SPH] Restarting")
     util.restart_script()
 end
@@ -38,7 +38,7 @@ if not io.exists(subheader_path) then
     end
 
     util.toast("[SPH] Footer not found, attempting download. The script will automatically restart when finished.")
-    download_file("Themes/Paragon/Subheader.bmp", {subheader_path})
+    downloader:download_file("Themes/Paragon/Subheader.bmp", {subheader_path})
     util.toast("[SPH] Restarting")
     util.restart_script()
 end

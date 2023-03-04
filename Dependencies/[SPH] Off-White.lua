@@ -1,4 +1,4 @@
-local status, err = pcall(require, "downloader")
+local status = pcall(require, "downloader")
 
 local header_path = filesystem.resources_dir() .. "ProfileHelper\\Off-White\\Header.bmp"
 
@@ -10,7 +10,7 @@ if not io.exists(header_path) then
     end
 
     util.toast("[SPH] Header not found, attempting download. The script will automatically restart when finished.")
-    download_file("Themes/Off-White/Header.bmp", {header_path})
+    downloader:download_file("Themes/Off-White/Header.bmp", {header_path})
     util.toast("[SPH] Restarting")
     util.restart_script()
 end

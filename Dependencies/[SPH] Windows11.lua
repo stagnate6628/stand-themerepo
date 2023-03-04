@@ -1,4 +1,4 @@
-local status, err = pcall(require, "downloader")
+local status = pcall(require, "downloader")
 
 local background_path = filesystem.resources_dir() .. "\\ProfileHelper\\Windows11\\Background.png"
 local profile_path = filesystem.resources_dir() .. "\\ProfileHelper\\Windows11\\Profile.png"
@@ -11,7 +11,7 @@ if not io.exists(background_path) then
     end
 
     util.toast("[SPH] Background not found, attempting download. The script will automatically restart when finished.")
-    download_file("Themes/Windows11/Background.png", {background_path})
+    downloader:download_file("Themes/Windows11/Background.png", {background_path})
     util.toast("[SPH] Restarting")
     util.restart_script()
 end
@@ -24,7 +24,7 @@ if not io.exists(profile_path) then
     end
 
     util.toast("[SPH] ProfileIcon not found, attempting download. The script will automatically restart when finished.")
-    download_file("Themes/Windows11/Profile.png", {profile_path})
+    downloader:download_file("Themes/Windows11/Profile.png", {profile_path})
     util.toast("[SPH] Restarting")
     util.restart_script()
 end

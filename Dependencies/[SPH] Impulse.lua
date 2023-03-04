@@ -1,4 +1,4 @@
-local status, err = pcall(require, "downloader")
+local status = pcall(require, "downloader")
 
 local header_path = filesystem.resources_dir() .. "ProfileHelper\\Impulse\\Header1.bmp"
 local footer_path = filesystem.resources_dir() .. "ProfileHelper\\Impulse\\Footer.bmp"
@@ -19,20 +19,24 @@ if not io.exists(header_path) then
 
     local i = 1
     util.toast("[SPH] Downloaded header " .. i)
-    download_file("Themes/Impulse/Header1.bmp", {filesystem.resources_dir() .. "ProfileHelper\\Impulse\\Header1.bmp"})
+    downloader:download_file("Themes/Impulse/Header1.bmp", {filesystem.resources_dir() .. "ProfileHelper\\Impulse\\Header1.bmp"})
 
     i = i + 1
     local url_path = "Themes/Impulse/Header" .. i .. ".bmp"
 
-    while does_remote_file_exist(url_path) do
-        util.toast("[SPH] Downloaded header " .. i)
-        download_file("Themes/Impulse/Header" .. i .. ".bmp",
-            {filesystem.resources_dir() .. "ProfileHelper\\Impulse\\Header" .. i .. ".bmp"})
-        i = i + 1
-
-        url_path = "Themes/Impulse/Header" .. i .. ".bmp"
-        util.yield(100)
-    end
+    downloader:download_file("Themes/Impulse/Header1.bmp", {filesystem.resources_dir() .. "ProfileHelper\\Impulse\\Header1.bmp"}, function()
+        local exists = true
+        local i = 2
+        while exists do
+            util.yield(100)
+            downloader:download_file("Themes/Impulse/Header" .. i .. ".bmp",
+                    {filesystem.resources_dir() .. "ProfileHelper\\Impulse\\Header1.bmp"}, function()
+                util.toast("[SPH] Downloaded header " .. i)
+            end, nil, function()
+                exists = false
+            end)
+            i = i + 1
+        end
 
     util.toast("[SPH] Restarting")
     util.restart_script()
@@ -46,7 +50,7 @@ if not io.exists(footer_path) then
     end
 
     util.toast("[SPH] Footer not found, attempting download. The script will automatically restart when finished.")
-    download_file("Themes/Impulse/Footer.bmp", {footer_path})
+    downloader:download_file("Themes/Impulse/Footer.bmp", {footer_path})
     util.toast("[SPH] Restarting")
     util.restart_script()
 end
@@ -59,7 +63,7 @@ if not io.exists(subheader_path) then
     end
 
     util.toast("[SPH] Subheader not found, attempting download. The script will automatically restart when finished.")
-    download_file("Themes/Impulse/Subheader.bmp", {subheader_path})
+    downloader:download_file("Themes/Impulse/Subheader.bmp", {subheader_path})
     util.toast("[SPH] Restarting")
     util.restart_script()
 end
