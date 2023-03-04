@@ -11,7 +11,7 @@ if not io.exists(header_path) then
     end
 
     util.toast("[SPH] Header not found, attempting download. The script will automatically restart when finished.")
-    download_file("Themes/2Take1/Header.bmp", {header_path})
+    downloader:download_file("Themes/2Take1/Header.bmp", {header_path})
     util.toast("[SPH] Restarting")
     util.restart_script()
 end
@@ -24,7 +24,7 @@ if not io.exists(footer_path) then
     end
 
     util.toast("[SPH] Footer not found, attempting download. The script will automatically restart when finished.")
-    download_file("Themes/2Take1/Footer.bmp", {footer_path})
+    downloader:download_file("Themes/2Take1/Footer.bmp", {footer_path})
     util.toast("[SPH] Restarting")
     util.restart_script()
 end
