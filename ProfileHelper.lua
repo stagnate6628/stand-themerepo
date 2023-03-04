@@ -595,6 +595,9 @@ local function download_headers(update)
 		download_list()
 	end
 end
+menu.action(headers_config, 'Update List', {}, '', function()
+	download_headers(true)
+end)
 
 util.toast('Please be mindful to maintain backups of profiles and textures as needed.')
 io.makedirs(dirs['resources'])
