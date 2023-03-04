@@ -51,5 +51,5 @@ Stand
 			Spacer Size: 0
 			Background Blur: 0
 	Lua Scripts
-		[SPH] Circuit: On
 		ProfileHelper: On
+		[SPH] Circuit: On
