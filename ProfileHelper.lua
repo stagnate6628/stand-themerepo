@@ -295,7 +295,12 @@ local function load_profile(profile_name)
 	trigger_command_by_ref('Stand>Lua Scripts')
 	util.yield(250)
 	trigger_command_by_ref('Stand>Lua Scripts>ProfileHelper')
+	util.yield(100)
 	trigger_command('clearstandnotifys')
+	util.yield(100)
+	trigger_command('reloadtextures')
+	util.yield(100)
+	trigger_command('reloadfont')
 
 	if math.random() > 0.5 and not bools.combine_profiles then
 		util.toast('Tip: Set the ' .. profile_name .. ' as active to have it load on startup. (Stand>Profiles>' .. original_name ..
