@@ -1,4 +1,4 @@
-local status, err = pcall(require, "downloader")
+local status = pcall(require, "downloader")
 
 local header_path = filesystem.resources_dir() .. 'ProfileHelper\\Epsilon\\Header.bmp'
 local footer_path = filesystem.resources_dir() .. 'ProfileHelper\\Epsilon\\Footer.bmp'
@@ -16,7 +16,7 @@ if not io.exists(header_path) then
     end
 
     util.toast("[SPH] Header not found, attempting download. The script will automatically restart when finished.")
-    download_file("Themes/Epsilon/Header.bmp", {header_path})
+    downloader:download_file("Themes/Epsilon/Header.bmp", {header_path})
     util.toast("[SPH] Restarting")
     util.restart_script()
 end
@@ -24,7 +24,7 @@ end
 for i = 1, 18 do
     if not io.exists(interaction_header_path(i)) then
         util.toast("[SPH] Downloaded globe header " .. i .. "/18")
-        download_file("Themes/Epsilon/Interaction Header/Header" .. i .. ".bmp", {interaction_header_path(i)})
+        downloader:download_file("Themes/Epsilon/Interaction Header/Header" .. i .. ".bmp", {interaction_header_path(i)})
     end
 end
 
@@ -49,7 +49,7 @@ if not io.exists(subheader_path) then
     end
 
     util.toast("[SPH] Subheader not found, attempting download. The script will automatically restart when finished.")
-    download_file("Themes/Epsilon/Subheader.bmp", {subheader_path})
+    downloader:download_file("Themes/Epsilon/Subheader.bmp", {subheader_path})
     util.toast("[SPH] Restarting")
     util.restart_script()
 end
