@@ -604,4 +604,26 @@ io.makedirs(dirs['resources'])
 download_themes()
 download_headers()
 
+local reset_root = menu.list(settings_root, 'Reset', {}, '')
+reset_root:action('Default Textures and Font', {}, '', function()
+	for _, path in io.listdir(dirs['theme']) do
+		if io.isfile(path) then
+			io.remove(path)
+		end
+
+		if io.isdir(path) then
+			for _, path2 in io.listdir(path) do 
+				io.remove(path2)
+			end
+		end
+	end
+	util.yield(100)
+	trigger_command('reloadtextures')
+	trigger_command('reloadfont')
+end)
+reset_root:action('Default Headers', {}, '', function()
+	clear_headers()
+	hide_header()
+end)
+
 util.keep_running()
