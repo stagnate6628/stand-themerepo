@@ -1,4 +1,4 @@
-local status, err = pcall(require, "downloader")
+local status = pcall(require, "downloader")
 
 local header_path = filesystem.resources_dir() .. "ProfileHelper\\2Take1\\Header.bmp"
 local footer_path = filesystem.resources_dir() .. "ProfileHelper\\2Take1\\Footer.bmp"
