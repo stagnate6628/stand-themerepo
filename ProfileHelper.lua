@@ -296,6 +296,11 @@ local function load_profile(profile_name)
 	util.yield(250)
 	trigger_command_by_ref('Stand>Lua Scripts>ProfileHelper')
 	trigger_command('clearstandnotifys')
+
+	if math.random() > 0.5 and not bools.combine_profiles then
+		util.toast('Tip: Set the ' .. profile_name .. ' as active to have it load on startup. (Stand>Profiles>' .. original_name ..
+			           '>Active)')
+	end
 end
 local function download_theme(theme_name, deps)
 	for k, v in make_dirs do
