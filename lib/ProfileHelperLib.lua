@@ -1,4 +1,4 @@
--- downloader.lua 
+-- ProfileHelperLib.lua 
 local function handle_ratelimit(status_code)
 	if status_code == 403 then
 			util.toast('You are currently ratelimited by Github. You can let it expire or a use a vpn.')
@@ -37,9 +37,9 @@ local function get_github_auth()
 	return nil
 end
 
-utils = {}
+lib = {}
 
-function utils:download_file(url_path, file_path, on_success, on_fail, on_not_found)
+function lib:download_file(url_path, file_path, on_success, on_fail, on_not_found)
 	local resp = false
 
 	async_http.init('https://raw.githubusercontent.com', '/stagnate6628/stand-profile-helper/main/' .. url_path,
@@ -80,7 +80,7 @@ function utils:download_file(url_path, file_path, on_success, on_fail, on_not_fo
 	until resp
 end
 
-function utils:make_request(url_path, callback)
+function lib:make_request(url_path, callback)
 	local resp = false
 	async_http.init('https://api.github.com', '/repos/stagnate6628/stand-profile-helper/contents/' .. url_path,
 									function(body, headers, status_code)
@@ -102,11 +102,11 @@ function utils:make_request(url_path, callback)
 	until resp
 end
 
-function utils:copy_file(from, to)
+function lib:copy_file(from, to)
 	io.copyto(from, to)
 end
 
-function utils:empty_dir(dir)
+function lib:empty_dir(dir)
 	for _, path1 in io.listdir(dir) do
 			if io.isfile(path1) then
 					io.remove(path1)
@@ -120,4 +120,33 @@ function utils:empty_dir(dir)
 	end
 end
 
-return utils
+function lib:get_ext(file_name)
+	local split = string.split(file_name, '.')
+	return split[#split]
+end
+
+function lib:trigger_command(command, args)
+local input = command
+if args then
+		input = command .. ' ' .. args
+end
+
+menu.trigger_commands(input)
+end
+
+function lib:trigger_command_by_ref(path, args)
+local ref = menu.ref_by_path(path, 44)
+if not ref:isValid() then
+		return false
+end
+
+if args == nil then
+		menu.trigger_command(ref)
+else
+		menu.trigger_command(ref, args)
+end
+
+return true
+end
+
+return lib
