@@ -1,8 +1,8 @@
--- sph-downloader.lua
+-- downloader.lua 
 local function handle_ratelimit(status_code)
 	if status_code == 403 then
-		util.toast('You are currently ratelimited by Github. You can let it expire or a use a vpn.')
-		util.stop_script()
+			util.toast('You are currently ratelimited by Github. You can let it expire or a use a vpn.')
+			return
 	end
 end
 local function is_404(status_code)
@@ -11,94 +11,99 @@ end
 -- https://stackoverflow.com/questions/9102126/lua-return-directory-path-from-path
 local function get_dirname_from_path(path)
 	if type(path) ~= 'string' then
-		return nil
+			return nil
 	end
 
 	return path:match('(.*[/\\])')
 end
 local function write_file(path, body)
 	io.makedirs(get_dirname_from_path(path))
+
+	-- todo: check for size ?
+
 	local file = io.open(path, 'wb')
 	file:write(body)
 	file:close()
 end
+local function get_github_auth()
+local file = io.open(filesystem.resources_dir() .. 'ProfileHelper\\.github', 'r')
+local token = file:read('a')
+file:close()
 
-downloader = {}
+if type(token) == 'string' and token:startswith('ghp_') and token:len() == 40 then
+		return token
+end
 
-function downloader:download_file(url_path, file_path, on_success, on_fail, on_not_found)
-	local downloading = true
+return nil
+end
+
+utils = {}
+
+function utils:download_file(url_path, file_path, on_success, on_fail, on_not_found)
+	local resp = false
 
 	async_http.init('https://raw.githubusercontent.com', '/stagnate6628/stand-profile-helper/main/' .. url_path,
-	                function(body, headers, status_code)
-		handle_ratelimit(status_code)
-		downloading = false
+									function(body, headers, status_code)
+			resp = true
+			handle_ratelimit(status_code)
 
-		if is_404(status_code) then
-			pcall(on_not_found)
-			return
-		end
-
-		if type(file_path) == 'string' then
-			file_path = {file_path}
-		end
-
-		if type(file_path) == 'table' and #file_path > 0 then
-			for _, path in file_path do
-				pcall(write_file, path, body)
-				pcall(on_success, body, headers, status_code)
+			if is_404(status_code) then
+					pcall(on_not_found)
+					return
 			end
-		else
-			pcall(on_success, body, headers, status_code)
-		end
-	end, function()
-		downloading = false
-		pcall(on_fail)
-	end)
-	async_http.dispatch()
 
-	while downloading do
-		util.yield()
+			if type(file_path) == 'string' then
+					file_path = {file_path}
+			end
+
+			if type(file_path) == 'table' and #file_path > 0 then
+					for _, path in file_path do
+							pcall(write_file, path, body)
+							pcall(on_success, body, headers, status_code)
+					end
+			else
+					pcall(on_success, body, headers, status_code)
+			end
+	end, function()
+			resp = true
+			pcall(on_fail)
+	end)
+	local token = get_github_auth()
+	if token then
+			async_http.add_header('Authorization', 'Bearer ' .. token)
 	end
+
+	async_http.dispatch()
+	
+	repeat
+			util.yield()
+	until resp
 end
 
-function downloader:download_directory(url_path, dump_directory)
-	io.makedirs(get_dirname_from_path(dump_directory))
-
-	local downloading = true
-	local exists
+function utils:make_request(url_path, callback)
+	local resp = false
 	async_http.init('https://api.github.com', '/repos/stagnate6628/stand-profile-helper/contents/' .. url_path,
-	                function(body, headers, status_code)
-		handle_ratelimit(status_code)
+									function(body, headers, status_code)
+			resp = true
+			handle_ratelimit(status_code)
 
-		if is_404(status_code) then
-			exists = false
-			return
-		end
-
-		exists = true
-		success, body = pcall(soup.json.decode, body)
-
-		if success then
-			for _, v in body do
-				downloader:download_file(v.path, dump_directory .. '\\' .. v.name)
-			end
-		end
-		downloading = false
-	end, function()
-		exists = false
-		downloading = false
+			pcall(callback, body, headers, status_code)
 	end)
-	async_http.dispatch()
 
-	while downloading do
-		util.yield()
+	local token = get_github_auth()
+	if token then
+			async_http.add_header('Authorization', 'Bearer ' .. token)
 	end
 
-	return exists
+	async_http.dispatch()
+
+	repeat
+			util.yield()
+	until resp
 end
 
-function downloader:copy_file(from, to)
+function utils:copy_file(from, to)
 	io.copyto(from, to)
 end
 
-return downloader
+return utils
