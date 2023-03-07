@@ -26,15 +26,15 @@ local function write_file(path, body)
 	file:close()
 end
 local function get_github_auth()
-local file = io.open(filesystem.resources_dir() .. 'ProfileHelper\\.github', 'r')
-local token = file:read('a')
-file:close()
+	local file = io.open(filesystem.resources_dir() .. 'ProfileHelper\\.github', 'r')
+	local token = file:read('a')
+	file:close()
 
-if type(token) == 'string' and token:startswith('ghp_') and token:len() == 40 then
-		return token
-end
+	if type(token) == 'string' and token:startswith('ghp_') and token:len() == 40 then
+			return token
+	end
 
-return nil
+	return nil
 end
 
 utils = {}
@@ -74,7 +74,7 @@ function utils:download_file(url_path, file_path, on_success, on_fail, on_not_fo
 	end
 
 	async_http.dispatch()
-	
+
 	repeat
 			util.yield()
 	until resp
@@ -104,6 +104,20 @@ end
 
 function utils:copy_file(from, to)
 	io.copyto(from, to)
+end
+
+function utils:empty_dir(dir)
+	for _, path1 in io.listdir(dir) do
+			if io.isfile(path1) then
+					io.remove(path1)
+			end
+
+			if io.isdir(path) then
+					for _, path2 in io.listdir(path1) do
+							io.remove(path2)
+					end
+			end
+	end
 end
 
 return utils
