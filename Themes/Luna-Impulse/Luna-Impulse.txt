@@ -8,39 +8,40 @@ Tree Compatibility Version: 44
 Players
 	Settings
 		InfOverlay Settings
-			X\:: 3.16
-			Y\:: 2.41
+			X\:: 516
+			Y\:: 261
 			Overlay colours
-				Title Bar Colour: B21C97FF
+				Title Bar Colour: AF1C97FF
 				Background Colour: 080A07FF
 				Name Colour: 1CFFFFFF
 				Label Colour: E223BEFF
 				Info Colour: 1CFFFFFF
 			Element Sizing & Spacing
-				Overlay Width: 14
-				Padding: 6
+				Overlay Width: 183
+				Padding: 5
 				Spacing: 0
+				Bar Width Multiplier: 1.30
 			Text Sizing & Spacing
 				Name: 0.62
-				Info Text: 0.42
-				Line Spacing: 35
+				Info Text: 0.52
+				Line Spacing: 14
 			Border
-				Colour: FF007BFF
+				Colour: B21C97FF
 			Background Blur: 0
 Stand
 	Settings
 		Appearance
 			Colours
 				Primary Colour: B21C97FF
-				Focused Text Colour: 00FFFAFF
+				Focused Text Colour: 1CFFFFFF
 				Focused Right-Bound Text Colour: 1CECFFFF
-				Background Colour: 0A0C09FF
+				Background Colour: 080A07FF
 				Unfocused Text Colour: 1CFFFFFF
 				Unfocused Right-Bound Text Colour: 1CFFFFFF
 				HUD Colour: 4947E5FF
 				AR Colour: 4947E5FF
 				Minigame Colour: 4947E5FF
-			Position: 1120, 260
+			Position: 1118, 261
 			Header
 				Header: Custom
 				Frame Interval: 50
@@ -68,12 +69,12 @@ Stand
 				Border Colour: A7298EFF
 			Border
 				Rounded: On
-			Max Visible Commands: 8
+			Max Visible Commands: 10
 			List Width: 462
 			Spacer Size: 0
 		Info Text
 			Position: 1907, 81
 			Scale: 17
 	Lua Scripts
-		InfOverlay: On
 		ProfileHelper: On
+		InfOverlay: On
