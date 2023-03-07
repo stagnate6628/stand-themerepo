@@ -112,7 +112,7 @@ function utils:empty_dir(dir)
 					io.remove(path1)
 			end
 
-			if io.isdir(path) then
+			if io.isdir(path1) then
 					for _, path2 in io.listdir(path1) do
 							io.remove(path2)
 					end
