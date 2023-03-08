@@ -32,7 +32,9 @@ local root = menu.my_root()
 -- headers
 local header_root = menu.list(root, 'Headers', {}, '')
 local header_config = menu.list(header_root, 'Configuration', {}, '')
-
+menu.toggle(header_config, 'Preview on Focus', {}, '', function(s)
+		bools['preview'] = s
+end, false)
 -- themes
 
 local theme_root = menu.list(root, 'Themes', {}, '')
@@ -387,9 +389,9 @@ local function download_themes(update)
 
 						theme_root:action(theme_name, {}, theme_author, function(click_type)
 								if bools['is_downloading'] then
-										theme_root:show_warning(click_type,
-										                        'A download has already started. You may need to wait for the theme to finish downloading. Proceed?',
-										                        function()
+										menu.show_warning(theme_root, click_type,
+										                  'A download has already started. You may need to wait for the theme to finish downloading. Proceed?',
+										                  function()
 												bools['is_downloading'] = false
 										end)
 										return
@@ -447,10 +449,101 @@ menu.action(theme_config, 'Update List', {}, '', function()
 		download_themes(true)
 end)
 
-io.makedirs(dirs['resources'])
-download_themes()
+local function download_headers(update)
+		local function parse_list(out)
+				local list = out:split('\n')
+				for _, v in list do
+						if v == '' then
+								goto continue
+						end
 
-util.keep_running()
+						local function cb()
+								while bools['is_header_downloading'] do
+										util.yield()
+								end
+
+								bools['is_header_downloading'] = true
+
+								clear_headers()
+								lib:make_request('Headers/' .. v, function(body, headers, status_code)
+										body = soup.json.decode(body)
+
+										local i = 1
+										for k, v in body do
+												lib:download_file(v.path, dirs['header'] .. v.name, function()
+														log('Downloaded header ' .. v.name .. ' (' .. i .. '/' .. #body .. ')')
+												end)
+										end
+
+										local ref = menu.ref_by_path('Stand>Settings>Appearance>Header>Header', 44)
+										if menu.get_value(ref) == 200 then
+												hide_header()
+										end
+										use_custom_header()
+
+										bools['is_header_downloading'] = false
+								end)
+						end
+
+						local ref = menu.action(header_root, v, {}, '', cb)
+						menu.on_focus(ref, function()
+								if bools['preview'] then
+										cb()
+								end
+						end)
+						menu.on_blur(ref, function()
+								if bools['preview'] then
+										clear_headers()
+										hide_header()
+								end
+						end)
+
+						::continue::
+				end
+		end
+
+		local function download_list()
+				downloader:download_file('headers.txt', {}, function(body, headers, status_code)
+						log('Creating headers cache')
+
+						local file = io.open(dirs['resources'] .. '\\headers.txt', 'wb')
+						file:write(body)
+						file:close()
+
+						pcall(parse_list, body)
+				end, function()
+						log('Failed to download headers list.')
+				end)
+		end
+
+		local file = io.open(dirs['resources'] .. '\\headers.txt', 'r')
+		if file ~= nil then
+				if update then
+						local children = menu.get_children(header_root)
+						for k, v in children do
+								if v.menu_name == 'Configuration' then
+										goto continue
+								end
+
+								v:delete()
+								::continue::
+						end
+
+						download_list()
+						return
+				end
+
+				log('Found local header cache')
+				parse_list(file:read('*a'))
+				file:close()
+		else
+				download_list()
+		end
+end
+
+menu.action(header_config, 'Update List', {}, '', function()
+		download_headers(true)
+end)
 
 local helpers = menu.list(menu.my_root(), 'Helpers', {}, '')
 local reset = helpers:list('Reset', {}, '')
@@ -472,3 +565,12 @@ reset:action('Default Headers', {}, '', function()
 		clear_headers()
 		hide_header()
 end)
+
+-- 
+if SCRIPT_MANUAL_START or SCRIPT_SILENT_START then
+		io.makedirs(dirs['resources'])
+		download_themes()
+		download_headers()
+end
+
+util.keep_running()
