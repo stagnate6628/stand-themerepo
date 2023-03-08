@@ -400,6 +400,10 @@ local function download_headers(update)
 												util.yield()
 										until bools['is_header_downloading'] == false
 								end)
+
+								if math.random() > 0.5 then
+									util.toast('Make sure to save the current profile to load the Custom Header on start.')
+								end
 						end)
 
 						::continue::
