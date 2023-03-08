@@ -48,10 +48,10 @@ end, false)
 
 local make_dirs<const> = {'Lua Scripts', 'Custom Header', 'Theme\\Custom', 'Theme\\Tabs'}
 
-local function log(msg)
+local function log(msg, force_debug)
 		local prefix = '[ProfileHelper] '
 
-		if not bools.verbose then
+		if not bools.verbose or not force_debug then
 				util.toast(prefix .. msg)
 				return
 		end
@@ -164,8 +164,8 @@ local function load_profile(profile_name)
 		reload_font()
 
 		if math.random() > 0.5 and not bools.combine_profiles then
-				util.toast('Tip: Mark the ' .. original_name .. ' as Active to have it load on startup. (Stand>Profiles>' .. original_name ..
-					           '>Active)')
+				util.toast('Tip: Mark the ' .. original_name .. ' profile as Active to have it load on startup. (Stand>Profiles>' ..
+					           original_name .. '>Active)')
 		end
 
 		util.toast('Done!')
@@ -179,187 +179,201 @@ local function download_theme(theme_name, deps)
 				::continue::
 		end
 
-		local function does_json_exist()
-				return io.exists(dirs.resources .. 'Themes\\' .. theme_name .. '\\theme.json')
+		local function traverse_dir(dir, cb)
+				lib:make_request(dir, cb)
 		end
 
-		local function write_json(json)
-				log('Writing json')
-				local file, err = io.open(dirs.resources .. 'Themes\\' .. theme_name .. '\\theme.json', 'wb')
-				if err then
-						log('Failed to read file')
-						return
-				end
-
-				local _, err = file:write(json)
-				if err then
-						log('Failed to write file')
-						return
-				end
-
-				local success, err = file:close()
-				if not success and err then
-						log('Failed to close file handle')
-						return
-				end
-
-				return
+		local function reload_assets()
+				reload_textures()
+				reload_font()
 		end
 
-		local function read_json()
-				local file = io.open(dirs.resources .. 'Themes\\' .. theme_name .. '\\theme.json', 'r')
-				local json = file:read('a')
-				file:close()
-				return json
-		end
-
-		local dir_list = {}
-		if not does_json_exist() then
-				lib:make_request('Themes/' .. theme_name, function(body, headers, status_code)
-						local success, body = pcall(soup.json.decode, body)
-						if not success then
-								log('Failed to decode json [1]')
-								return
-						end
-
-						for k, v in body do
-								if v.type == 'dir' or v.size == 0 then
-										table.insert(dir_list, v.path)
-										table.remove(body, k)
-										log('Inserting ' .. v.path)
-								end
-						end
-
-						write_json(soup.json.encode(body, true))
-				end)
-		end
-
-		if #dir_list > 0 then
-				-- traverse a dir and get files
-				local function combine_json(old_json, new_json)
-						if type(old_json) == 'string' then
-								log('Decoding old json')
-								old_json = soup.json.decode(old_json)
-						end
-
-						if type(new_json) == 'string' then
-								log('Decoding new json')
-								new_json = soup.json.decode(new_json)
-						end
-
-						for k, v in new_json do
-								table.insert(old_json, v)
-						end
-
-						return old_json
-				end
-
-				for k, v in dir_list do
-						lib:make_request(v, function(body, headers, status_code)
-								local success, body = pcall(soup.json.decode, body)
-								if not success then
-										util.toast('Failed to decode json [3]')
-										return
-								end
-
-								for k, v in body do
-										if v.type == 'dir' or v.size == 0 then
-												table.insert(dir_list, v.path)
-												table.remove(body, k)
-												log('Inserting (2) ' .. v.path)
-										end
-								end
-
-								local json = combine_json(read_json(), body)
-								write_json(soup.json.encode(json, true))
-						end)
-				end
-
-				log('Compiled json list')
-		end
-
-		local success, json = pcall(soup.json.decode, read_json())
-		if not success then
-				log('Failed to decode json [2]')
-				return
-		end
-
-		log('Starting json parse')
-
+		lib:empty_dir(dirs['theme'])
 		clear_headers()
-		log('Emptied headers')
-		hide_header()
 
-		local i = 0
-		for k, v in json do
-				local ext = lib:get_ext(v.name)
-				local paths = {dirs['resources'] .. convert_path(v.path, true)}
-
-				-- TODO: push fix for deps not downloading since lua scripts rework
-				if v.path:contains('Custom Header') and (ext == 'png' or ext == 'gif') then
-						local paths = {dirs.header .. v.name, get_theme_dir(theme_name, 'Custom Header\\' .. v.name)}
-						if should_copy(paths[1]) then
-								lib:copy_file(paths[1], paths[2])
-								log('COPIED ' .. paths[1] .. ' to ' .. paths[2])
-						else
-								lib:download_file(v.path, paths, function()
-										log('Downloaded header ' .. v.name)
-								end)
-						end
-				elseif table.contains(texture_names, v.name) ~= nil then
-						table.insert(paths, dirs['theme'] .. v.name)
-						if should_copy(paths[1]) then
-								lib:copy_file(paths[1], paths[2])
-								log('COPIED ' .. paths[1] .. ' to ' .. paths[2])
-						else
-								lib:download_file(v.path, paths, function()
-										log('Downloaded custom texture ' .. v.name)
-								end)
-						end
-				elseif table.contains(tag_names, v.name) ~= nil then
-						table.insert(paths, dirs['theme'] .. 'Custom\\' .. v.name)
-						if should_copy(paths[1]) then
-								lib:copy_file(paths[1], paths[2])
-								log('COPIED ' .. paths[1] .. ' to ' .. paths[2])
-						else
-								lib:download_file(v.path, paths, function()
-										log('Downloaded custom tag ' .. v.name)
-								end)
-						end
-				elseif table.contains(tab_names, v.name) ~= nil then
-						table.insert(paths, dirs['theme'] .. 'Tabs\\' .. v.name)
-						if should_copy(paths[1]) then
-								lib:copy_file(paths[1], paths[2])
-								log('COPIED ' .. paths[1] .. ' to ' .. paths[2])
-						else
-								lib:download_file(v.path, paths, function()
-										log('Downloaded custom tab ' .. v.name)
-								end)
-						end
-				elseif ext == 'txt' then
-						table.insert(paths, dirs['stand'] .. 'Profiles\\' .. v.name)
-						if should_copy(paths[1]) then
-								lib:copy_file(paths[1], paths[2])
-								log('COPIED ' .. paths[1] .. ' to ' .. paths[2])
-						else
-								lib:download_file(v.path, paths, function()
-										log('Downloaded profile ' .. v.name)
-								end)
-						end
-				else
-						log('Dont know what to do with ' .. v.name .. ' at ' .. v.path)
+		lib:make_request('Themes/' .. theme_name, function(body, headers, status_code)
+				local success, json = pcall(soup.json.decode, body)
+				if not success then
+						util.toast('Failed to parse json response [1]')
+						return
 				end
 
-				i = i + 1
-		end
+				for k, v in json do
+						local paths = {dirs['resources'] .. convert_path(v.path, true)}
 
-		repeat
-				util.yield()
-		until i == #json
+						if v.type == 'file' and v.size > 0 then
+								if table.contains({'Header.bmp', 'Footer.bmp', 'Subheader.bmp'}, v.name) ~= nil then
+										lib:download_file(v.path, paths)
+								end
 
-		reload_textures()
-		reload_font()
+								if v.name == theme_name .. '.txt' then
+										table.insert(paths, dirs['stand'] .. 'Profiles\\' .. v.name)
+										lib:download_file(v.path, paths, function()
+												-- util.log('Downloaded ' .. v.name)
+										end)
+								end
+
+						elseif v.type == 'dir' and v.size == 0 then
+								lib:make_request(v.path, function(body, headers, status_code)
+										local success, body = pcall(soup.json.decode, body)
+										if not success then
+												util.toast('Failed to decode json response [2]')
+										end
+
+										if v.name == 'Theme' then
+												for k2, v2 in body do
+														local d = 0
+														if v2.type == 'dir' then
+																traverse_dir(v2.path, function(body, headers, status_code)
+																		local success, body = pcall(soup.json.decode, body)
+																		if not success then
+																				util.toast('Failed to decode json response [3]')
+																				return
+																		end
+
+																		--[[
+																			Theme/Custom
+																			Theme/Tabs
+																		]]
+																		local c = #body
+																		for k3, v3 in body do
+																				local paths = {dirs['theme'] .. 'Tabs\\' .. v3.name,
+                                   dirs['resources'] .. 'Themes\\' .. theme_name .. '\\Theme\\Tabs\\' .. v3.name}
+
+																				if v2.name == 'Custom' then
+																						paths = {dirs['theme'] .. 'Custom\\' .. v3.name,
+                               dirs['resources'] .. 'Themes\\' .. theme_name .. '\\Theme\\Custom\\' .. v3.name}
+																				end
+																				lib:download_file(v3.path, paths, function()
+																						d = d + 1
+																				end)
+																		end
+
+																		repeat
+																				util.yield()
+																				util.log('YIELD')
+																		until d == c
+																end)
+														else
+																-- Theme/
+																lib:download_file(v2.path, {dirs['theme'] .. v2.name,
+                                            dirs['resources'] .. 'Themes\\' .. theme_name .. '\\Theme' .. v2.name})
+														end
+												end
+
+												reload_assets()
+										end
+
+										if v.name == 'Lua Scripts' then
+												for k2, v2 in body do
+														lib:download_file(v2.path, filesystem.scripts_dir() .. v2.name, function()
+																-- util.log('Downloaded lua script ' .. v2.name)
+														end)
+												end
+										end
+
+										if v.name == 'Custom Header' then
+												traverse_dir(v.path, function(body, headers, status_code)
+														local success, body = pcall(soup.json.decode, body)
+														if not success then
+																util.toast('Failed to decode json response [4]')
+																return
+														end
+
+														for k, v in body do
+																lib:download_file(v.path, dirs['header'] .. v.name)
+														end
+												end)
+										end
+								end)
+						end
+				end
+		end)
+
 		load_profile(theme_name)
+
+		-- log('Starting json parse')
+
+		-- clear_headers()
+		-- log('Emptied headers')
+		-- hide_header()
+
+		-- local i = 0
+		-- for k, v in json do
+		-- 		local ext = lib:get_ext(v.name)
+		-- 		local paths = {dirs['resources'] .. convert_path(v.path, true)}
+
+		-- 		-- TODO: push fix for deps not downloading since lua scripts rework
+		-- 		if v.path:contains('Custom Header') and (ext == 'png' or ext == 'gif') then
+		-- 				local paths = {dirs.header .. v.name, get_theme_dir(theme_name, 'Custom Header\\' .. v.name)}
+		-- 				if should_copy(paths[1]) then
+		-- 						lib:copy_file(paths[1], paths[2])
+		-- 						log('COPIED ' .. paths[1] .. ' to ' .. paths[2])
+		-- 				else
+		-- 						lib:download_file(v.path, paths, function()
+		-- 								log('Downloaded header ' .. v.name)
+		-- 						end)
+		-- 				end
+		-- 		elseif table.contains(texture_names, v.name) ~= nil then
+		-- 				table.insert(paths, dirs['theme'] .. v.name)
+		-- 				if should_copy(paths[1]) then
+		-- 						lib:copy_file(paths[1], paths[2])
+		-- 						log('COPIED ' .. paths[1] .. ' to ' .. paths[2])
+		-- 				else
+		-- 						lib:download_file(v.path, paths, function()
+		-- 								log('Downloaded custom texture ' .. v.name)
+		-- 						end)
+		-- 				end
+		-- 		elseif table.contains(tag_names, v.name) ~= nil then
+		-- 				table.insert(paths, dirs['theme'] .. 'Custom\\' .. v.name)
+		-- 				if should_copy(paths[1]) then
+		-- 						lib:copy_file(paths[1], paths[2])
+		-- 						log('COPIED ' .. paths[1] .. ' to ' .. paths[2])
+		-- 				else
+		-- 						lib:download_file(v.path, paths, function()
+		-- 								log('Downloaded custom tag ' .. v.name)
+		-- 						end)
+		-- 				end
+		-- 		elseif table.contains(tab_names, v.name) ~= nil then
+		-- 				table.insert(paths, dirs['theme'] .. 'Tabs\\' .. v.name)
+		-- 				if should_copy(paths[1]) then
+		-- 						lib:copy_file(paths[1], paths[2])
+		-- 						log('COPIED ' .. paths[1] .. ' to ' .. paths[2])
+		-- 				else
+		-- 						lib:download_file(v.path, paths, function()
+		-- 								log('Downloaded custom tab ' .. v.name)
+		-- 						end)
+		-- 				end
+		-- 		elseif ext == 'txt' then
+		-- 				table.insert(paths, dirs['stand'] .. 'Profiles\\' .. v.name)
+		-- 				if should_copy(paths[1]) then
+		-- 						lib:copy_file(paths[1], paths[2])
+		-- 						log('COPIED ' .. paths[1] .. ' to ' .. paths[2])
+		-- 				else
+		-- 						lib:download_file(v.path, paths, function()
+		-- 								log('Downloaded profile ' .. v.name)
+		-- 						end)
+		-- 				end
+		-- 		elseif ext == 'lua' then
+		-- 				table.insert(paths, filesystem.scripts_dir() .. v.name)
+		-- 				lib:download_file(v.path, paths, function()
+		-- 						log('Downloaded lua script ' .. v.name)
+		-- 				end)
+		-- 		else
+		-- 				lib:download_file(v.path, paths, function()
+		-- 						log('Downloaded extra file ' .. v.name)
+		-- 				end)
+		-- 		end
+
+		-- 		i = i + 1
+		-- end
+
+		-- repeat
+		-- 		util.yield()
+		-- until i == #json
+
+		-- load_profile(theme_name)
+		util.log('Done with init')
 end
 
 local function download_themes(update)
@@ -552,7 +566,7 @@ helpers:toggle('Debug Logging', {}, '', function(s)
 end, false)
 helpers:action('Restart Script', {}, '', util.restart_script)
 helpers:action('Update Script', {}, '', function()
-	-- todo: re-add when merged
+		-- todo: re-add when merged
 end)
 
 reset:action('Default Textures and Font', {}, '', function()
