@@ -32,10 +32,17 @@ local root = menu.my_root()
 -- headers
 local header_root = menu.list(root, 'Headers', {}, '')
 local header_config = menu.list(header_root, 'Configuration', {}, '')
+
 -- themes
 
 local theme_root = menu.list(root, 'Themes', {}, '')
 local theme_config = menu.list(theme_root, 'Configuration', {}, '')
+theme_config:toggle('Re-use Local Assets', {}, '', function(s)
+		bools['prevent_redownloads'] = s
+end, true)
+theme_config:toggle('Combine Profiles', {}, '', function(s)
+		bools['combine_profiles'] = s
+end, false)
 
 local make_dirs<const> = {'Lua Scripts', 'Custom Header', 'Theme\\Custom', 'Theme\\Tabs'}
 
@@ -286,31 +293,57 @@ local function download_theme(theme_name, deps)
 				local ext = lib:get_ext(v.name)
 				local paths = {dirs['resources'] .. convert_path(v.path, true)}
 
+				-- TODO: push fix for deps not downloading since lua scripts rework
 				if v.path:contains('Custom Header') and (ext == 'png' or ext == 'gif') then
 						local paths = {dirs.header .. v.name, get_theme_dir(theme_name, 'Custom Header\\' .. v.name)}
-						lib:download_file(v.path, paths, function()
-								util.log('Downloaded header ' .. v.name)
-						end)
+						if should_copy(paths[1]) then
+								lib:copy_file(paths[1], paths[2])
+								util.log('COPIED ' .. paths[1] .. ' to ' .. paths[2])
+						else
+								lib:download_file(v.path, paths, function()
+										util.log('Downloaded header ' .. v.name)
+								end)
+						end
 				elseif table.contains(texture_names, v.name) ~= nil then
 						table.insert(paths, dirs['theme'] .. v.name)
-						lib:download_file(v.path, paths, function()
-								util.log('Downloaded custom texture ' .. v.name)
-						end)
+						if should_copy(paths[1]) then
+								lib:copy_file(paths[1], paths[2])
+								util.log('COPIED ' .. paths[1] .. ' to ' .. paths[2])
+						else
+								lib:download_file(v.path, paths, function()
+										util.log('Downloaded custom texture ' .. v.name)
+								end)
+						end
 				elseif table.contains(tag_names, v.name) ~= nil then
 						table.insert(paths, dirs['theme'] .. 'Custom\\' .. v.name)
-						lib:download_file(v.path, paths, function()
-								util.log('Downloaded custom tag ' .. v.name)
-						end)
+						if should_copy(paths[1]) then
+								lib:copy_file(paths[1], paths[2])
+								util.log('COPIED ' .. paths[1] .. ' to ' .. paths[2])
+						else
+								lib:download_file(v.path, paths, function()
+										util.log('Downloaded custom tag ' .. v.name)
+								end)
+						end
 				elseif table.contains(tab_names, v.name) ~= nil then
 						table.insert(paths, dirs['theme'] .. 'Tabs\\' .. v.name)
-						lib:download_file(v.path, paths, function()
-								util.log('Downloaded custom tab ' .. v.name)
-						end)
+						if should_copy(paths[1]) then
+								lib:copy_file(paths[1], paths[2])
+								util.log('COPIED ' .. paths[1] .. ' to ' .. paths[2])
+						else
+								lib:download_file(v.path, paths, function()
+										util.log('Downloaded custom tab ' .. v.name)
+								end)
+						end
 				elseif ext == 'txt' then
 						table.insert(paths, dirs['stand'] .. 'Profiles\\' .. v.name)
-						lib:download_file(v.path, paths, function()
-								util.log('Downloaded profile ' .. v.name)
-						end)
+						if should_copy(paths[1]) then
+								lib:copy_file(paths[1], paths[2])
+								util.log('COPIED ' .. paths[1] .. ' to ' .. paths[2])
+						else
+								lib:download_file(v.path, paths, function()
+										util.log('Downloaded profile ' .. v.name)
+								end)
+						end
 				else
 						util.log('Dont know what to do with ' .. v.name .. ' at ' .. v.path)
 				end
@@ -422,17 +455,20 @@ util.keep_running()
 local helpers = menu.list(menu.my_root(), 'Helpers', {}, '')
 local reset = helpers:list('Reset', {}, '')
 
+helpers:toggle('Debug Logging', {}, '', function(s)
+		bools['verbose'] = s
+end, false)
 helpers:action('Restart Script', {}, '', util.restart_script)
 helpers:action('Update Script', {}, '', function()
 
 end)
 
 reset:action('Default Textures and Font', {}, '', function()
-	lib:empty_dir(dirs['theme'])
-	reload_textures()
-	reload_font()
+		lib:empty_dir(dirs['theme'])
+		reload_textures()
+		reload_font()
 end)
 reset:action('Default Headers', {}, '', function()
-	clear_headers()
-	hide_header()
+		clear_headers()
+		hide_header()
 end)
