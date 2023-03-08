@@ -471,6 +471,7 @@ local function download_headers(update)
 												lib:download_file(v.path, dirs['header'] .. v.name, function()
 														log('Downloaded header ' .. v.name .. ' (' .. i .. '/' .. #body .. ')')
 												end)
+												i = i + 1
 										end
 
 										local ref = menu.ref_by_path('Stand>Settings>Appearance>Header>Header', 44)
