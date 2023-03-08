@@ -184,22 +184,22 @@ local function download_theme(theme_name, deps)
 		end
 
 		local function write_json(json)
-				util.log('Writing json')
+				log('Writing json')
 				local file, err = io.open(dirs.resources .. 'Themes\\' .. theme_name .. '\\theme.json', 'wb')
 				if err then
-						util.log('Failed to read file')
+						log('Failed to read file')
 						return
 				end
 
 				local _, err = file:write(json)
 				if err then
-						util.log('Failed to write file')
+						log('Failed to write file')
 						return
 				end
 
 				local success, err = file:close()
 				if not success and err then
-						util.log('Failed to close file handle')
+						log('Failed to close file handle')
 						return
 				end
 
@@ -218,7 +218,7 @@ local function download_theme(theme_name, deps)
 				lib:make_request('Themes/' .. theme_name, function(body, headers, status_code)
 						local success, body = pcall(soup.json.decode, body)
 						if not success then
-								util.log('Failed to decode json [1]')
+								log('Failed to decode json [1]')
 								return
 						end
 
@@ -226,7 +226,7 @@ local function download_theme(theme_name, deps)
 								if v.type == 'dir' or v.size == 0 then
 										table.insert(dir_list, v.path)
 										table.remove(body, k)
-										util.log('Inserting ' .. v.path)
+										log('Inserting ' .. v.path)
 								end
 						end
 
@@ -238,12 +238,12 @@ local function download_theme(theme_name, deps)
 				-- traverse a dir and get files
 				local function combine_json(old_json, new_json)
 						if type(old_json) == 'string' then
-								util.log('Decoding old json')
+								log('Decoding old json')
 								old_json = soup.json.decode(old_json)
 						end
 
 						if type(new_json) == 'string' then
-								util.log('Decoding new json')
+								log('Decoding new json')
 								new_json = soup.json.decode(new_json)
 						end
 
@@ -266,7 +266,7 @@ local function download_theme(theme_name, deps)
 										if v.type == 'dir' or v.size == 0 then
 												table.insert(dir_list, v.path)
 												table.remove(body, k)
-												util.log('Inserting (2) ' .. v.path)
+												log('Inserting (2) ' .. v.path)
 										end
 								end
 
@@ -300,54 +300,54 @@ local function download_theme(theme_name, deps)
 						local paths = {dirs.header .. v.name, get_theme_dir(theme_name, 'Custom Header\\' .. v.name)}
 						if should_copy(paths[1]) then
 								lib:copy_file(paths[1], paths[2])
-								util.log('COPIED ' .. paths[1] .. ' to ' .. paths[2])
+								log('COPIED ' .. paths[1] .. ' to ' .. paths[2])
 						else
 								lib:download_file(v.path, paths, function()
-										util.log('Downloaded header ' .. v.name)
+										log('Downloaded header ' .. v.name)
 								end)
 						end
 				elseif table.contains(texture_names, v.name) ~= nil then
 						table.insert(paths, dirs['theme'] .. v.name)
 						if should_copy(paths[1]) then
 								lib:copy_file(paths[1], paths[2])
-								util.log('COPIED ' .. paths[1] .. ' to ' .. paths[2])
+								log('COPIED ' .. paths[1] .. ' to ' .. paths[2])
 						else
 								lib:download_file(v.path, paths, function()
-										util.log('Downloaded custom texture ' .. v.name)
+										log('Downloaded custom texture ' .. v.name)
 								end)
 						end
 				elseif table.contains(tag_names, v.name) ~= nil then
 						table.insert(paths, dirs['theme'] .. 'Custom\\' .. v.name)
 						if should_copy(paths[1]) then
 								lib:copy_file(paths[1], paths[2])
-								util.log('COPIED ' .. paths[1] .. ' to ' .. paths[2])
+								log('COPIED ' .. paths[1] .. ' to ' .. paths[2])
 						else
 								lib:download_file(v.path, paths, function()
-										util.log('Downloaded custom tag ' .. v.name)
+										log('Downloaded custom tag ' .. v.name)
 								end)
 						end
 				elseif table.contains(tab_names, v.name) ~= nil then
 						table.insert(paths, dirs['theme'] .. 'Tabs\\' .. v.name)
 						if should_copy(paths[1]) then
 								lib:copy_file(paths[1], paths[2])
-								util.log('COPIED ' .. paths[1] .. ' to ' .. paths[2])
+								log('COPIED ' .. paths[1] .. ' to ' .. paths[2])
 						else
 								lib:download_file(v.path, paths, function()
-										util.log('Downloaded custom tab ' .. v.name)
+										log('Downloaded custom tab ' .. v.name)
 								end)
 						end
 				elseif ext == 'txt' then
 						table.insert(paths, dirs['stand'] .. 'Profiles\\' .. v.name)
 						if should_copy(paths[1]) then
 								lib:copy_file(paths[1], paths[2])
-								util.log('COPIED ' .. paths[1] .. ' to ' .. paths[2])
+								log('COPIED ' .. paths[1] .. ' to ' .. paths[2])
 						else
 								lib:download_file(v.path, paths, function()
-										util.log('Downloaded profile ' .. v.name)
+										log('Downloaded profile ' .. v.name)
 								end)
 						end
 				else
-						util.log('Dont know what to do with ' .. v.name .. ' at ' .. v.path)
+						log('Dont know what to do with ' .. v.name .. ' at ' .. v.path)
 				end
 
 				i = i + 1
@@ -360,8 +360,6 @@ local function download_theme(theme_name, deps)
 		reload_textures()
 		reload_font()
 		load_profile(theme_name)
-
-		util.toast('Looks like we are done downloading everything!')
 end
 
 local function download_themes(update)
@@ -512,7 +510,7 @@ local function download_headers(update)
 
 						pcall(parse_list, body)
 				end, function()
-						log('Failed to download headers list.')
+						log('Failed to download headers list')
 				end)
 		end
 
@@ -553,7 +551,7 @@ helpers:toggle('Debug Logging', {}, '', function(s)
 end, false)
 helpers:action('Restart Script', {}, '', util.restart_script)
 helpers:action('Update Script', {}, '', function()
-
+	-- todo: re-add when merged
 end)
 
 reset:action('Default Textures and Font', {}, '', function()
