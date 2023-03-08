@@ -16,8 +16,6 @@ local bools = {
 		['prevent_redownloads'] = true,
 		['verbose'] = false,
 		['combine_profiles'] = false,
-		['preview'] = false,
-		['is_header_downloading'] = false
 }
 
 local dirs<const> = {
@@ -32,9 +30,6 @@ local root = menu.my_root()
 -- headers
 local header_root = menu.list(root, 'Headers', {}, '')
 local header_config = menu.list(header_root, 'Configuration', {}, '')
-menu.toggle(header_config, 'Preview on Focus', {}, '', function(s)
-		bools['preview'] = s
-end, false)
 -- themes
 
 local theme_root = menu.list(root, 'Themes', {}, '')
@@ -51,7 +46,7 @@ local make_dirs<const> = {'Lua Scripts', 'Custom Header', 'Theme\\Custom', 'Them
 local function log(msg, force_debug)
 		local prefix = '[ProfileHelper] '
 
-		if not bools.verbose or not force_debug then
+		if not bools['verbose'] or not force_debug then
 				util.toast(prefix .. msg)
 				return
 		end
@@ -163,7 +158,7 @@ local function load_profile(profile_name)
 		reload_textures()
 		reload_font()
 
-		if math.random() > 0.5 and not bools.combine_profiles then
+		if math.random() > 0.5 and not bools['combine_profiles'] then
 				util.toast('Tip: Mark the ' .. original_name .. ' profile as Active to have it load on startup. (Stand>Profiles>' ..
 					           original_name .. '>Active)')
 		end
@@ -248,11 +243,6 @@ local function download_theme(theme_name, deps)
 																						d = d + 1
 																				end)
 																		end
-
-																		repeat
-																				util.yield()
-																				util.log('YIELD')
-																		until d == c
 																end)
 														else
 																-- Theme/
@@ -469,13 +459,8 @@ local function download_headers(update)
 								goto continue
 						end
 
-						local function cb()
-								while bools['is_header_downloading'] do
-										util.yield()
-								end
-
+						local ref = menu.action(header_root, v, {}, '', function()
 								bools['is_header_downloading'] = true
-
 								clear_headers()
 								lib:make_request('Headers/' .. v, function(body, headers, status_code)
 										body = soup.json.decode(body)
@@ -494,21 +479,10 @@ local function download_headers(update)
 										end
 										use_custom_header()
 
-										bools['is_header_downloading'] = false
+										repeat
+												util.yield()
+										until bools['is_header_downloading'] == false
 								end)
-						end
-
-						local ref = menu.action(header_root, v, {}, '', cb)
-						menu.on_focus(ref, function()
-								if bools['preview'] then
-										cb()
-								end
-						end)
-						menu.on_blur(ref, function()
-								if bools['preview'] then
-										clear_headers()
-										hide_header()
-								end
 						end)
 
 						::continue::
