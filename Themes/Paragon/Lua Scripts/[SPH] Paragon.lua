@@ -1,50 +1,23 @@
-local status = pcall(require, "downloader")
+require('ProfileHelperLib')
 
-local header_path = filesystem.resources_dir() .. "ProfileHelper\\Paragon\\Header.bmp"
-local subheader_path = filesystem.resources_dir() .. "ProfileHelper\\Paragon\\Subheader.bmp"
-local footer_path = filesystem.resources_dir() .. "ProfileHelper\\Paragon\\Footer.bmp"
+local header_path = filesystem.resources_dir() .. "ProfileHelper\\Themes\\Paragon\\Header.bmp"
+local subheader_path = filesystem.resources_dir() .. "ProfileHelper\\Themes\\Paragon\\Subheader.bmp"
+local footer_path = filesystem.resources_dir() .. "ProfileHelper\\Themes\\Paragon\\Footer.bmp"
 
 if not io.exists(header_path) then
-    if not status then
-        util.toast("[SPH] Header not found, you may need to manually download this file.")
-        should_exit = true
-        return
-    end
-
-    util.toast("[SPH] Header not found, attempting download. The script will automatically restart when finished.")
-    downloader:download_file("Themes/Paragon/Header.bmp", {header_path})
-    util.toast("[SPH] Restarting")
-    util.restart_script()
+    util.toast("[SPH] Header not found, attempting download.")
+    lib:download_file("Themes/Paragon/Header.bmp", {header_path})
 end
 
 if not io.exists(footer_path) then
-    if not status then
-        util.toast("[SPH] Could not find footer, you may need to manually download this file.")
-        should_exit = true
-        return
-    end
+    util.toast("[SPH] Footer not found, attempting download.")
+    lib:download_file("Themes/Paragon/Footer.bmp", {footer_path})
 
-    util.toast("[SPH] Footer not found, attempting download. The script will automatically restart when finished.")
-    downloader:download_file("Themes/Paragon/Footer.bmp", {footer_path})
-    util.toast("[SPH] Restarting")
-    util.restart_script()
 end
 
 if not io.exists(subheader_path) then
-    if not status then
-        util.toast("[SPH] Could not find footer, you may need to manually download this file.")
-        should_exit = true
-        return
-    end
-
-    util.toast("[SPH] Footer not found, attempting download. The script will automatically restart when finished.")
-    downloader:download_file("Themes/Paragon/Subheader.bmp", {subheader_path})
-    util.toast("[SPH] Restarting")
-    util.restart_script()
-end
-
-if should_exit then
-    util.stop_script()
+    util.toast("[SPH] Footer not found, attempting download.")
+    lib:download_file("Themes/Paragon/Subheader.bmp", {subheader_path})
 end
 
 local header = directx.create_texture(header_path)

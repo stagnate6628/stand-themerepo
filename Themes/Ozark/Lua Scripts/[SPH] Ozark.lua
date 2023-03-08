@@ -1,47 +1,27 @@
-local status = pcall(require, "downloader")
+require('ProfileHelperLib')
 
-local header_path = filesystem.resources_dir() .. "ProfileHelper\\Ozark\\Header.bmp"
-local subheader_path = filesystem.resources_dir() .. "ProfileHelper\\Ozark\\Subheader.bmp"
+local header_path = filesystem.resources_dir() .. "ProfileHelper\\Themes\\Ozark\\Header.bmp"
+local subheader_path = filesystem.resources_dir() .. "ProfileHelper\\Themes\\Ozark\\Subheader.bmp"
 
 local interaction_header_path = function(i)
-    return filesystem.resources_dir() .. 'ProfileHelper\\Ozark\\Interaction Header\\Header' .. i .. ".bmp"
+    return filesystem.resources_dir() .. 'ProfileHelper\\Themes\\Ozark\\Interaction Header\\Header' .. i .. ".bmp"
 end
 
 if not io.exists(header_path) then
-    if not status then
-        util.toast("[SPH] Header not found, you may need to manually download this file.")
-        should_exit = true
-        return
-    end
-
-    util.toast("[SPH] Header not found, attempting download. The script will automatically restart when finished.")
-    downloader:download_file("Themes/Ozark/Header.bmp", {header_path})
-    util.toast("[SPH] Restarting")
-    util.restart_script()
+    util.toast("[SPH] Header not found, attempting download.")
+    lib:download_file("Themes/Ozark/Header.bmp", {header_path})
 end
 
 for i = 1, 18 do
     if not io.exists(interaction_header_path(i)) then
         util.toast("[SPH] Downloaded globe header " .. i .. "/18")
-        downloader:download_file("Themes/Ozark/Interaction Header/Header" .. i .. ".bmp", {interaction_header_path(i)})
+        lib:download_file("Themes/Ozark/Interaction Header/Header" .. i .. ".bmp", {interaction_header_path(i)})
     end
 end
 
 if not io.exists(subheader_path) then
-    if not status then
-        util.toast("[SPH] Could not find footer, you may need to manually download this file.")
-        should_exit = true
-        return
-    end
-
-    util.toast("[SPH] Footer not found, attempting download. The script will automatically restart when finished.")
-    downloader:download_file("Themes/Ozark/Subheader.bmp", {subheader_path})
-    util.toast("[SPH] Restarting")
-    util.restart_script()
-end
-
-if should_exit then
-    util.stop_script()
+    util.toast("[SPH] Footer not found, attempting download.")
+    lib:download_file("Themes/Ozark/Subheader.bmp", {subheader_path})
 end
 
 local header = directx.create_texture(header_path)

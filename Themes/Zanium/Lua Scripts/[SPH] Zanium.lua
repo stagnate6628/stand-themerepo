@@ -1,36 +1,17 @@
-local status = pcall(require, "downloader")
+require('ProfileHelperLib')
 
-local background_path = filesystem.resources_dir() .. "\\ProfileHelper\\Zanium\\Background.png"
-local logo_path = filesystem.resources_dir() .. "\\ProfileHelper\\Zanium\\Logo.png"
+local background_path = filesystem.resources_dir() .. "ProfileHelper\\Themes\\Zanium\\Background.png"
+local logo_path = filesystem.resources_dir() .. "ProfileHelper\\Themes\\Zanium\\Logo.png"
 
 if not io.exists(background_path) then
-    if not status then
-        util.toast("[SPH] Background not found, you may need to manually download this file.")
-        should_exit = true
-        return
-    end
+    util.toast("[SPH] Background not found, attempting download.")
+    lib:download_file("Themes/Zanium/Background.png", {background_path})
 
-    util.toast("[SPH] Background not found, attempting download. The script will automatically restart when finished.")
-    downloader:download_file("Themes/Zanium/Background.png", {background_path})
-    util.toast("[SPH] Restarting")
-    util.restart_script()
 end
 
 if not io.exists(logo_path) then
-    if not status then
-        util.toast("[SPH] Logo not found, you may need to manually download this file.")
-        should_exit = true
-        return
-    end
-
-    util.toast("[SPH] Logo not found, attempting download. The script will automatically restart when finished.")
-    downloader:download_file("Themes/Zanium/Logo.png", {logo_path})
-    util.toast("[SPH] Restarting")
-    util.restart_script()
-end
-
-if should_exit then
-    util.stop_script()
+    util.toast("[SPH] Logo not found, attempting download.")
+    lib:download_file("Themes/Zanium/Logo.png", {logo_path})
 end
 
 local logo = directx.create_texture(logo_path)
