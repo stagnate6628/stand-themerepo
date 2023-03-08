@@ -30,8 +30,8 @@ local root = menu.my_root()
 -- headers
 local header_root = menu.list(root, 'Headers', {}, '')
 local header_config = menu.list(header_root, 'Configuration', {}, '')
--- themes
 
+-- themes
 local theme_root = menu.list(root, 'Themes', {}, '')
 local theme_config = menu.list(theme_root, 'Configuration', {}, '')
 theme_config:toggle('Re-use Local Assets', {}, '', function(s)
