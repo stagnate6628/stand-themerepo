@@ -25,6 +25,9 @@ local function write_file(path, body)
 end
 local function get_github_auth()
 		local file = io.open(filesystem.resources_dir() .. 'ProfileHelper\\.github', 'r')
+		if file == nil then
+			return nil
+		end
 		local token = file:read('a')
 		file:close()
 
