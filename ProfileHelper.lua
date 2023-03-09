@@ -586,7 +586,9 @@ helpers:action('Restart Script', {}, '', function()
 		util.restart_script()
 end)
 helpers:action('Update Script', {}, '', function()
-		-- todo: re-add when merged
+		auto_update_config.check_interval = 0
+		util.toast('Checking for updates')
+		auto_updater.run_auto_update(auto_update_config)
 end)
 
 reset:action('Default Textures and Font', {}, '', function()
