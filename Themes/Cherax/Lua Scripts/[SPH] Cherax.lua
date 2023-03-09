@@ -1,6 +1,6 @@
 require('ProfileHelperLib')
 
-local header_path = filesystem.resources_dir() .. 'ProfileHelper\\Theme\\Cherax\\Header.bmp'
+local header_path = filesystem.resources_dir() .. 'ProfileHelper\\Themes\\Cherax\\Header.bmp'
 
 if not io.exists(header_path) then
 		util.toast('[SPH] Header not found, attempting download.')
