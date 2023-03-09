@@ -116,24 +116,19 @@ local make_dirs<const> = {'Lua Scripts', 'Custom Header', 'Theme\\Custom', 'Them
 local function log(msg)
 		local prefix = '[ProfileHelper] '
 
-		if force_debug == nil then
-				force_debug = false
-		end
+		util.toast(prefix .. msg)
 
-		if not bools['verbose'] then
-				util.toast(prefix .. msg)
-				return
-		end
+		if bools['verbose'] then
+				local log_path = dirs['resources'] .. '\\log.txt'
+				if not io.exists(log_path) then
+						local file = io.open(log_path, 'wb')
+						file:close()
+				end
 
-		local log_path = dirs['resources'] .. '\\log.txt'
-		if not io.exists(log_path) then
-				local file = io.open(log_path, 'wb')
-				file:close()
+				local log_file = io.open(log_path, 'a+')
+				log_file:write('[' .. os.date('%x %I:%M:%S %p') .. '] ' .. msg .. '\n')
+				log_file:close()
 		end
-
-		local log_file = io.open(log_path, 'a+')
-		log_file:write('[' .. os.date('%x %I:%M:%S %p') .. '] ' .. msg .. '\n')
-		log_file:close()
 end
 local function should_copy(file_path)
 		return io.exists(file_path) and io.isfile(file_path) and bools['prevent_redownloads']
