@@ -30,8 +30,8 @@ local root = menu.my_root()
 -- headers
 local header_root = menu.list(root, 'Headers', {}, '')
 local header_config = menu.list(header_root, 'Configuration', {}, '')
-
 -- themes
+
 local theme_root = menu.list(root, 'Themes', {}, '')
 local theme_config = menu.list(theme_root, 'Configuration', {}, '')
 theme_config:toggle('Re-use Local Assets', {}, '', function(s)
@@ -411,7 +411,7 @@ local function download_headers(update)
 		end
 
 		local function download_list()
-				downloader:download_file('headers.txt', {}, function(body, headers, status_code)
+				lib:download_file('headers.txt', {}, function(body, headers, status_code)
 						log('Creating headers cache')
 
 						local file = io.open(dirs['resources'] .. '\\headers.txt', 'wb')
