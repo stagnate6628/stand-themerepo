@@ -389,10 +389,8 @@ local function download_theme(theme_name, deps)
 		reload_font()
 		reload_textures()
 
-		local inspect = require('lib/inspect')
 		lib:make_request(base_path .. '/Lua Scripts', function(body, headers, status_code)
 				body = soup.json.decode(body)
-				util.log('BODY=' .. inspect(body))
 				for k, v in body do
 						lib:download_file(v.path, filesystem.scripts_dir() .. v.name, function()
 								log('Downloaded lua script ' .. v.name)
