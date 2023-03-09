@@ -18,6 +18,7 @@ Mercyyy;Mercury#1773
 Midari Ikishima;Hkk#9327
 Midnight Violet;Chr1stian#4130
 Minimalistic;Prisuhm#5253;Pulsive.lua
+Minimalistic Black & White;Isolate.exe#4569
 Netflix;Weiss le boug aberrant#2157;Pulsive.lua
 Off-White;Maddy#6666
 Old UI;huara#0100
