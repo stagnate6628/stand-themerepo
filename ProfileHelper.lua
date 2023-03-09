@@ -84,7 +84,7 @@ local tab_names<const> = table.freeze({'Self.png', 'Vehicle.png', 'Online.png', 
 local bools = {
 		['is_downloading'] = false,
 		['prevent_redownloads'] = true,
-		['verbose'] = false,
+		['verbose'] = true,
 		['combine_profiles'] = false
 }
 
@@ -113,15 +113,24 @@ end, false)
 
 local make_dirs<const> = {'Lua Scripts', 'Custom Header', 'Theme\\Custom', 'Theme\\Tabs'}
 
-local function log(msg, force_debug)
+local function log(msg)
 		local prefix = '[ProfileHelper] '
 
-		if not bools['verbose'] or not force_debug then
+		if force_debug == nil then
+				force_debug = false
+		end
+
+		if not bools['verbose'] then
 				util.toast(prefix .. msg)
 				return
 		end
 
 		local log_path = dirs['resources'] .. '\\log.txt'
+		if not io.exists(log_path) then
+				local file = io.open(log_path, 'wb')
+				file:close()
+		end
+
 		local log_file = io.open(log_path, 'a+')
 		log_file:write('[' .. os.date('%x %I:%M:%S %p') .. '] ' .. msg .. '\n')
 		log_file:close()
@@ -157,9 +166,18 @@ local function reload_textures()
 		lib:trigger_command_by_ref('Stand>Settings>Appearance>Textures>Reload Textures')
 end
 local function clear_headers()
-		for _, path in io.listdir(dirs['header']) do
-				io.remove(path)
+		local files = io.listdir(dirs['header'])
+		local count = #files
+
+		for k, v in files do
+				io.remove(v)
+				count = count - 1
+				util.yield(5)
 		end
+
+		repeat
+				util.yield()
+		until count == 0
 end
 local function clean_profile_name(profile_name)
 		return profile_name:gsub('%-', ''):gsub(' ', ''):lower()
@@ -228,10 +246,10 @@ local function load_profile(profile_name)
 		reload_textures()
 		reload_font()
 
-		if math.random() > 0.5 and not bools['combine_profiles'] then
-				util.toast('Tip: Mark the ' .. original_name .. ' profile as Active to have it load on startup. (Stand>Profiles>' ..
-					           original_name .. '>Active)')
-		end
+		-- if math.random() > 0.5 and not bools['combine_profiles'] then
+		-- 		util.toast('Tip: Mark the ' .. original_name .. ' profile as Active to have it load on startup. (Stand>Profiles>' ..
+		-- 			           original_name .. '>Active)')
+		-- end
 
 		util.toast('Done!')
 end
@@ -244,112 +262,153 @@ local function download_theme(theme_name, deps)
 				::continue::
 		end
 
-		local function traverse_dir(dir, cb)
-				lib:make_request(dir, cb)
-		end
-
-		local function reload_assets()
-				reload_textures()
-				reload_font()
-		end
-
 		lib:empty_dir(dirs['theme'])
 		clear_headers()
 
-		lib:make_request('Themes/' .. theme_name, function(body, headers, status_code)
-				local success, json = pcall(soup.json.decode, body)
-				if not success then
-						util.toast('Failed to parse json response [1]')
-						return
-				end
+		local base_path = 'Themes/' .. theme_name
+		lib:make_request(base_path, function(body, headers, status_code)
+				body = soup.json.decode(body)
 
-				for k, v in json do
+				for k, v in body do
+						if v.type ~= 'file' then
+								goto continue
+						end
+
 						local paths = {dirs['resources'] .. convert_path(v.path, true)}
-
-						if v.type == 'file' and v.size > 0 then
-								if table.contains({'Header.bmp', 'Footer.bmp', 'Subheader.bmp'}, v.name) ~= nil then
-										lib:download_file(v.path, paths)
-								end
-
-								if v.name == theme_name .. '.txt' then
-										table.insert(paths, dirs['stand'] .. 'Profiles\\' .. v.name)
+						if v.name == theme_name .. '.txt' then
+								table.insert(paths, dirs['stand'] .. 'Profiles\\' .. v.name)
+								if should_copy(paths[1]) then
+										lib:copy_file(paths[1], paths[2])
+										log('Copied ' .. theme_name .. '.txt')
+								else
 										lib:download_file(v.path, paths, function()
-												-- util.log('Downloaded ' .. v.name)
+												log('Downloaded ' .. theme_name .. '.txt')
 										end)
 								end
+						else
+								if should_copy(paths[1]) then
+										log('Skipped download for ' .. v.name)
+										goto continue
+								else
+										lib:download_file(v.path, paths, function()
+												log('Downloaded ' .. v.name)
+										end)
+								end
+						end
 
-						elseif v.type == 'dir' and v.size == 0 then
-								lib:make_request(v.path, function(body, headers, status_code)
-										local success, body = pcall(soup.json.decode, body)
-										if not success then
-												util.toast('Failed to decode json response [2]')
-										end
+						::continue::
+				end
+		end)
 
-										if v.name == 'Theme' then
-												for k2, v2 in body do
-														local d = 0
-														if v2.type == 'dir' then
-																traverse_dir(v2.path, function(body, headers, status_code)
-																		local success, body = pcall(soup.json.decode, body)
-																		if not success then
-																				util.toast('Failed to decode json response [3]')
-																				return
-																		end
+		lib:make_request(base_path .. '/Custom Header', function(body, headers, status_code)
+				body = soup.json.decode(body)
 
-																		--[[
-																			Theme/Custom
-																			Theme/Tabs
-																		]]
-																		local c = #body
-																		for k3, v3 in body do
-																				local paths = {dirs['theme'] .. 'Tabs\\' .. v3.name,
-                                   dirs['resources'] .. 'Themes\\' .. theme_name .. '\\Theme\\Tabs\\' .. v3.name}
+				hide_header()
 
-																				if v2.name == 'Custom' then
-																						paths = {dirs['theme'] .. 'Custom\\' .. v3.name,
-                               dirs['resources'] .. 'Themes\\' .. theme_name .. '\\Theme\\Custom\\' .. v3.name}
-																				end
-																				lib:download_file(v3.path, paths, function()
-																						d = d + 1
-																				end)
-																		end
-																end)
-														else
-																-- Theme/
-																lib:download_file(v2.path, {dirs['theme'] .. v2.name,
-                                            dirs['resources'] .. 'Themes\\' .. theme_name .. '\\Theme' .. v2.name})
-														end
-												end
+				for k, v in body do
+						local paths = {dirs['resources'] .. convert_path(v.path, true), dirs['header'] .. v.name}
+						if should_copy(paths[1]) then
+								lib:copy_file(paths[1], paths[2])
+								log('Copied header ' .. v.name)
+						else
+								lib:download_file(v.path, paths, function()
+										log('Downloaded header ' .. v.name)
 
-												reload_assets()
-										end
-
-										if v.name == 'Lua Scripts' then
-												for k2, v2 in body do
-														lib:download_file(v2.path, filesystem.scripts_dir() .. v2.name, function()
-																-- util.log('Downloaded lua script ' .. v2.name)
-														end)
-												end
-										end
-
-										if v.name == 'Custom Header' then
-												traverse_dir(v.path, function(body, headers, status_code)
-														local success, body = pcall(soup.json.decode, body)
-														if not success then
-																util.toast('Failed to decode json response [4]')
-																return
-														end
-
-														for k, v in body do
-																lib:download_file(v.path, dirs['header'] .. v.name)
-														end
-												end)
-										end
+										-- 		local exists = filesystem.is_regular_file(paths[1]) or filesystem.is_regular_file(paths[2])
+										-- 		while not exists do
+										-- 				util.log('YIELDING B?C NOT EXISTS')
+										-- 				exists = not filesystem.is_regular_file(paths[1]) or not filesystem.is_regular_file(paths[2])
+										-- 				util.yield()
+										-- 				if exists then
+										-- 						break
+										-- 				end
+										-- 		end
 								end)
 						end
 				end
 		end)
 
+		-- util.yield(1000)
+
+		for k, v in texture_names do
+				local path = base_path .. '/Theme/' .. v
+				local paths = {dirs['resources'] .. convert_path(path, true), dirs['theme'] .. v}
+
+				if should_copy(paths[1]) then
+						lib:copy_file(paths[1], paths[2])
+						log('Copied texture ' .. v)
+				else
+						lib:download_file(path, paths, function(body, headers, status_code)
+								log('Downloaded texture ' .. v)
+						end, nil, function()
+								log('Texture ' .. v .. ' is not provided by ' .. theme_name)
+						end)
+				end
+				-- util.yield(250)
+		end
+
+		-- util.yield(1000)
+
+		for k, v in tag_names do
+				local path = base_path .. '/Theme/Custom/' .. v
+				local paths = {dirs['resources'] .. convert_path(path, true), dirs['theme'] .. 'Custom\\' .. v}
+
+				if should_copy(paths[1]) then
+						lib:copy_file(paths[1], paths[2])
+						log('Copied tag ' .. v)
+				else
+						lib:download_file(path, paths, function(body, headers, status_code)
+								log('Downloaded tag ' .. v)
+						end, nil, function()
+								log('Tag ' .. v .. ' is not provided by ' .. theme_name)
+						end)
+				end
+				-- util.yield(250)
+		end
+
+		-- util.yield(1000)
+
+		for k, v in tab_names do
+				local path = base_path .. '/Theme/Tabs/' .. v
+				local paths = {dirs['resources'] .. convert_path(path, true), dirs['theme'] .. 'Tabs\\' .. v}
+				if should_copy(paths[1]) then
+						lib:copy_file(paths[1], paths[2])
+						log('Copied tab ' .. v)
+				else
+						lib:download_file(path, paths, function(body, headers, status_code)
+								log('Downloaded Tab ' .. v)
+						end, nil, function()
+								log('Tab ' .. v .. ' is not provided by ' .. theme_name)
+						end)
+				end
+				-- util.yield(250)
+		end
+
+		-- util.yield(1000)
+
+		reload_font()
+		reload_textures()
+
+		local inspect = require('lib/inspect')
+		lib:make_request(base_path .. '/Lua Scripts', function(body, headers, status_code)
+				body = soup.json.decode(body)
+				util.log('BODY=' .. inspect(body))
+				for k, v in body do
+						lib:download_file(v.path, filesystem.scripts_dir() .. v.name, function()
+								log('Downloaded lua script ' .. v.name)
+						end)
+				end
+		end)
+
+		if #deps > 0 then
+				for k, v in deps do
+						lib:download_file('Dependencies/' .. v, filesystem.scripts_dir() .. v, function()
+								log('Downloaded dependency ' .. v)
+						end)
+				end
+		end
+
+		util.toast('Looks like everything is done!')
 		load_profile(theme_name)
 end
 
@@ -481,10 +540,11 @@ local function download_headers(update)
 		end
 
 		local function download_list()
-				lib:download_file('headers.txt', {}, function(body, headers, status_code)
+				local path = dirs['resources'] .. 'headers.txt'
+				lib:download_file('headers.txt', path, function(body, headers, status_code)
 						log('Creating headers cache')
 
-						local file = io.open(dirs['resources'] .. '\\headers.txt', 'wb')
+						local file = io.open(path, 'wb')
 						file:write(body)
 						file:close()
 
@@ -528,8 +588,11 @@ local reset = helpers:list('Reset', {}, '')
 
 helpers:toggle('Debug Logging', {}, '', function(s)
 		bools['verbose'] = s
-end, false)
-helpers:action('Restart Script', {}, '', util.restart_script)
+end, true)
+helpers:action('Restart Script', {}, '', function()
+		lib:trigger_command('emptylog')
+		util.restart_script()
+end)
 helpers:action('Update Script', {}, '', function()
 		-- todo: re-add when merged
 end)

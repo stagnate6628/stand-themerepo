@@ -7,11 +7,11 @@ Epsilon;ukn;
 Fragment;ukn;
 Gradient Pulsive;Sk;Pulsive.lua
 Hexy;Colonel BeiRay_UwU#0290 and Fish.#6108
-Kiddions;Sk;[SPH] Kiddions.lua
-Impulse;ukn;[SPH] Impulse.lua
+Kiddions;Sk;
+Impulse;ukn
 Kokushibo;DANO#4903
 Luna-Impulse;Millennium#0001;InfOverlay.lua
-Luna;ukn;[SPH] Luna.lua
+Luna;ukn;
 Matrix;Silas#3784
 Menyoo;Cloudys#1244
 Mercyyy;Mercury#1773
