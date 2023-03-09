@@ -1,10 +1,10 @@
-2Take1;ukn;[SPH] 2Take1.lua
+2Take1;ukn;
 BlackNWhite;Snub#8646
-Cherax;CocoW#3060;[SPH] Cherax.lua
-Circuit;ukn;[SPH] Circuit.lua
+Cherax;CocoW#3060;
+Circuit;ukn;
 Discord;lev
-Epsilon;ukn;[SPH] Epsilon.lua
-Fragment;ukn;[SPH] Fragment.lua
+Epsilon;ukn;
+Fragment;ukn;
 Gradient Pulsive;Sk;Pulsive.lua
 Hexy;Colonel BeiRay_UwU#0290 and Fish.#6108
 Kiddions;Sk;[SPH] Kiddions.lua
@@ -15,27 +15,28 @@ Luna;ukn;[SPH] Luna.lua
 Matrix;Silas#3784
 Menyoo;Cloudys#1244
 Mercyyy;Mercury#1773
+Midari Ikishima;Hkk#9327
 Midnight Violet;Chr1stian#4130
 Minimalistic;Prisuhm#5253;Pulsive.lua
 Netflix;Weiss le boug aberrant#2157;Pulsive.lua
-Off-White;Maddy#6666;[SPH] Off-White.lua
+Off-White;Maddy#6666
 Old UI;huara#0100
 Optimum;IvanV#6270
-Ozark;ukn;[SPH] Ozark.lua
-Paragon;ukn;[SPH] Paragon.lua
+Ozark;ukn;
+Paragon;ukn;
 Paragone;IceDoomfist#0001
-Phantom X;ukn;[SPH] Phantom X.lua
+Phantom X;ukn;
 Pink Animated;slides#2137
-Rebound;ukn;[SPH] Rebound.lua
+Rebound;ukn;
 Rockstar Admin Tools;Nanomachines Son#6969 and Jimmy!#9444
 Roses;𝐫𝐞𝐳#1000
 Space;
 Spotify;Weiss le boug aberrant#2157;Pulsive.lua
 Sunset;hypertack#3121
 The Purge;ukn
-Windows11;CocoW#3060;[SPH] Windows11.lua
-X-Force;ukn;[SPH] X-Force.lua
-XCheats;ukn;[SPH] XCheats.lua
+Windows11;CocoW#3060;
+X-Force;ukn;
+XCheats;ukn;
 Youtube;lev
-Zanium;CocoW#3060;[SPH] Zanium.lua
+Zanium;CocoW#3060;
 Zenitsu;D1abllloe#6034
