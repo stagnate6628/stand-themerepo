@@ -84,7 +84,7 @@ local tab_names<const> = table.freeze({'Self.png', 'Vehicle.png', 'Online.png', 
 local bools = {
 		['is_downloading'] = false,
 		['prevent_redownloads'] = true,
-		['verbose'] = true,
+		['verbose'] = false,
 		['combine_profiles'] = false
 }
 
@@ -581,9 +581,8 @@ local reset = helpers:list('Reset', {}, '')
 
 helpers:toggle('Debug Logging', {}, '', function(s)
 		bools['verbose'] = s
-end, true)
+end, false)
 helpers:action('Restart Script', {}, '', function()
-		lib:trigger_command('emptylog')
 		util.restart_script()
 end)
 helpers:action('Update Script', {}, '', function()
