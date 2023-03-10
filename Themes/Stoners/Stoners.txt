@@ -5,6 +5,7 @@ Understands Profiles: Yes
 Understands Context Menu: Yes
 Understands Command Chaining: Yes
 Tree Compatibility Version: 44
+Stand
 	Settings
 		Appearance
 			Colours
@@ -52,8 +53,8 @@ Tree Compatibility Version: 44
 			Font & Text
 				Small Text
 					Y Offset: 1
-			Stream-Proof Rendering: On
 		Info Text
 			Position: 1891, 19
 			Scale: 12
-		Menu Navigation Reminders: Off
+	Lua Scripts
+		ProfileHelper: On
