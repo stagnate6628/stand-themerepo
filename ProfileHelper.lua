@@ -89,7 +89,7 @@ local file_map<const> = {
 local bools = {
 		['is_downloading'] = false,
 		['prevent_redownloads'] = true,
-		['verbose'] = true,
+		['verbose'] = false,
 		['combine_profiles'] = false
 }
 
@@ -590,7 +590,7 @@ local reset = helpers:list('Reset', {}, '')
 
 helpers:toggle('Debug Logging', {}, '', function(s)
 		bools['verbose'] = s
-end, true)
+end, false)
 helpers:action('Restart Script', {}, '', util.restart_script)
 helpers:action('Update Script', {}, '', function()
 		auto_update_config.check_interval = 0
