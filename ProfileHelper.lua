@@ -507,7 +507,6 @@ local function download_headers(update)
 										local i = 0
 										for _, v2 in body do
 												local paths = {dirs['resources'] .. 'Headers\\' .. v .. '\\' .. v2.name, dirs['header'] .. v2.name}
-												util.log(inspect(paths))
 												if should_copy(paths[1]) then
 														lib:copy_file(paths[1], paths[2])
 														log(string.format('Copied header %s (%d/%d)', v2.name, i + 1, #body))
