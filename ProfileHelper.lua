@@ -483,19 +483,36 @@ local function download_headers(update)
 								goto continue
 						end
 
-						local ref = menu.action(header_root, v, {}, '', function()
+						menu.action(header_root, v, {}, '', function(click_type)
+								if bools['is_header_downloading'] then
+										menu.show_warning(header_root, click_type,
+										                  'A download has already started. You may need to wait for the header to finish downloading. Proceed?',
+										                  function()
+												bools['is_header_downloading'] = false
+										end)
+										return
+								end
+
 								bools['is_header_downloading'] = true
 								clear_headers()
 								lib:make_request('Headers/' .. v, function(body, headers, status_code)
-										body = soup.json.decode(body)
-
+										local success, body = pcall(soup.json.decode,body)
+										if not success then
+											log('Failed to decode json response [5]')
+											return
+										end
+				
 										local i = 0
 										for k, v in body do
 												lib:download_file(v.path, dirs['header'] .. v.name, function()
 														log(string.format('Downloaded header %s (%d/%d)', v.name, i + 1, #body))
+														i = i + 1
 												end)
-												i = i + 1
 										end
+
+										repeat
+												util.yield(250)
+										until i == #body
 
 										local ref = menu.ref_by_path('Stand>Settings>Appearance>Header>Header', 44)
 										if menu.get_value(ref) == 200 then
@@ -503,14 +520,12 @@ local function download_headers(update)
 										end
 										use_custom_header()
 
-										repeat
-												util.yield()
-										until not bools['is_header_downloading']
-								end)
+										bools['is_header_downloading'] = false
 
-								if math.random() > 0.5 then
-										util.toast('Tip: Make sure to save the current profile to load the Custom Header on start.')
-								end
+										if math.random() > 0.5 then
+												util.toast('Tip: Make sure to save the current profile to load the Custom Header on start.')
+										end
+								end)
 						end)
 
 						::continue::
@@ -567,10 +582,7 @@ local reset = helpers:list('Reset', {}, '')
 helpers:toggle('Debug Logging', {}, '', function(s)
 		bools['verbose'] = s
 end, true)
-helpers:action('Restart Script', {}, '', function()
-		lib:trigger_command('emptylog')
-		util.restart_script()
-end)
+helpers:action('Restart Script', {}, '', util.restart_script)
 helpers:action('Update Script', {}, '', function()
 		auto_update_config.check_interval = 0
 		util.toast('Checking for updates')
@@ -587,7 +599,6 @@ reset:action('Default Headers', {}, '', function()
 		hide_header()
 end)
 
--- 
 if SCRIPT_MANUAL_START or SCRIPT_SILENT_START then
 		io.makedirs(dirs['resources'])
 		download_themes()
