@@ -475,7 +475,6 @@ menu.action(theme_config, 'Update List', {}, '', function()
 		download_themes(true)
 end)
 
-local inspect = require('lib/inspect')
 local function download_headers(update)
 		local function parse_list(out)
 				local list = out:split('\n')
