@@ -475,6 +475,7 @@ menu.action(theme_config, 'Update List', {}, '', function()
 		download_themes(true)
 end)
 
+local inspect = require('lib/inspect')
 local function download_headers(update)
 		local function parse_list(out)
 				local list = out:split('\n')
@@ -496,18 +497,27 @@ local function download_headers(update)
 								bools['is_header_downloading'] = true
 								clear_headers()
 								lib:make_request('Headers/' .. v, function(body, headers, status_code)
-										local success, body = pcall(soup.json.decode,body)
+										local success, body = pcall(soup.json.decode, body)
 										if not success then
-											log('Failed to decode json response [5]')
-											return
+												log('Failed to decode json response [5]')
+												return
 										end
-				
+
+										io.makedirs(dirs['resources'] .. 'Headers\\' .. v .. '\\')
+
 										local i = 0
-										for k, v in body do
-												lib:download_file(v.path, dirs['header'] .. v.name, function()
-														log(string.format('Downloaded header %s (%d/%d)', v.name, i + 1, #body))
-														i = i + 1
-												end)
+										for _, v2 in body do
+												local paths = {dirs['resources'] .. 'Headers\\' .. v .. '\\' .. v2.name, dirs['header'] .. v2.name}
+												util.log(inspect(paths))
+												if should_copy(paths[1]) then
+														lib:copy_file(paths[1], paths[2])
+														log(string.format('Copied header %s (%d/%d)', v2.name, i + 1, #body))
+												else
+														lib:download_file(v2.path, paths, function()
+																log(string.format('Downloaded header %s (%d/%d)', v2.name, i + 1, #body))
+																i = i + 1
+														end)
+												end
 										end
 
 										repeat
@@ -601,6 +611,9 @@ end)
 
 if SCRIPT_MANUAL_START or SCRIPT_SILENT_START then
 		io.makedirs(dirs['resources'])
+		io.makedirs(dirs['resources'] .. '\\Themes')
+		io.makedirs(dirs['resources'] .. '\\Headers')
+
 		download_themes()
 		download_headers()
 end
