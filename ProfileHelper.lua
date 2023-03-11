@@ -181,7 +181,7 @@ local function clear_headers()
   until count == 0
 end
 local function clean_profile_name(profile_name)
-  return profile_name:gsub('%-', ''):gsub(' ', ''):lower()
+  return profile_name:gsub('%-', ''):gsub('&', ''):gsub(' ', ''):lower()
 end
 local function get_active_profile_name()
   local meta_state_path = dirs['stand'] .. 'Meta State.txt'
