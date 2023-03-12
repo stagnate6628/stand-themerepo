@@ -1,14 +1,11 @@
 # ProfileHelper
 Lua script to help apply themes blazingly fast for Stand
 
-# Installation
-https://github.com/stagnate6628/stand-profile-helper/wiki/Installation
-
-# Creating Themes
-https://github.com/stagnate6628/stand-profile-helper/wiki/Creating-Themes
-
-# Theme List / Previews
-https://github.com/stagnate6628/stand-profile-helper/wiki/Themes
+# Contents
+- [Creating themes](https://github.com/stagnate6628/stand-profile-helper/wiki/Creating-Themes)
+- [Installation](https://github.com/stagnate6628/stand-profile-helper/wiki/Installation)
+- [Theme list/previews](https://github.com/stagnate6628/stand-profile-helper/wiki/Themes)
+- [Troubleshooting](https://github.com/stagnate6628/stand-profile-helper/wiki/Troubleshooting)
 
 # Credits
 - https://github.com/ukn-repos/rtl
