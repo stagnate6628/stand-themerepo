@@ -20,6 +20,7 @@ Midnight Violet;Chr1stian#4130
 Minimalistic;Prisuhm#5253;Pulsive.lua
 Minimalistic Black & White;Isolate.exe#4569
 Netflix;Weiss le boug aberrant#2157;Pulsive.lua
+NowiryPulsive;Nowiry,aarroonn,The Milk Man
 Off-White;Maddy#6666
 Old UI;huara#0100
 Optimum;IvanV#6270

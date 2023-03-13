@@ -1,0 +1,87 @@
+Finished Tutorial: Yes
+Understands Commands: Yes
+Understands Sliders: Yes
+Understands Profiles: Yes
+Understands Context Menu: Yes
+Understands Command Chaining: Yes
+Tree Compatibility Version: 44
+Players
+	Settings
+		Tags
+			Brackets: STD
+			Self: 
+			Friend: 
+			Crew Member: 
+			In Timeout: 
+			Modder: 
+			Modder or Admin: 
+			Admin: 
+			Likely Modder: 
+			Attacked You: 
+			Host: 
+			Next Host: 
+			Script Host: 
+			Invulnerable: 
+			Indestructible Vehicle: 
+			RC Vehicle: 
+			Off The Radar: 
+			In An Interior: 
+			Spectating: 
+			Typing: 
+			Dead: 
+			VPN: 
+Stand
+	Settings
+		Appearance
+			Colours
+				Primary Colour: 00000000
+				Focused Text Colour: A854F4FF
+				Focused Right-Bound Text Colour: D4D5D7FF
+				Focused Texture Colour: B854F2FF
+				Background Colour: 191919FF
+				Unfocused Text Colour: 98989BFF
+				Unfocused Right-Bound Text Colour: 98999BFF
+				Unfocused Texture Colour: 98989CFF
+				HUD Colour: D4D5D7FF
+				AR Colour: D4D5D7FF
+			Position: 1331, 271
+			Header
+				Header: Custom
+				Frame Interval: 65
+				Legacy Positioning: Off
+			Address Bar
+				Address Bar: Off
+				Address Separator: Stand/Online
+				Show Cursor Position: On
+			Cursor
+				Scroll Gap: 5
+				Rounded: On
+			Tabs
+				Width: 61
+				Position: Top
+				Text Alignment: Centre
+			Scrollbar
+				Scrollbar: Disabled
+				Width: 1
+			Command Info Text
+				Position: Bottom
+				Width: 255
+			Notifications
+				Type: Game
+				Border Colour: 1A1A1AFF
+			Border
+				Width: 1
+				Rounded: On
+				Colour: 191919FF
+			Max Visible Commands: 16
+			List Width: 427
+			Spacer Size: 0
+			Smooth Scrolling: 100
+			Background Blur: 0
+		Info Text
+			Position: 330, 865
+			Alignment: Top Left
+			Scale: 16
+	Lua Scripts
+		ProfileHelper: On
+		Pulsive: On
