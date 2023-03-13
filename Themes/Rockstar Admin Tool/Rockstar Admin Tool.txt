@@ -1,0 +1,59 @@
+Finished Tutorial: Yes
+Understands Commands: Yes
+Understands Sliders: Yes
+Understands Profiles: Yes
+Understands Context Menu: Yes
+Understands Command Chaining: Yes
+Tree Compatibility Version: 44
+Stand
+	Settings
+		Appearance
+			Colours
+				Primary Colour: 070707FF
+				Background Colour: 0A0A0AC8
+			Position: 1420, 195
+			Header
+				Header: Custom
+			Address Bar
+				Show Current List Only: On
+				Height: 35
+				Text
+					Y Offset: 10
+				Show Cursor Position: On
+			Cursor
+				Rounded: On
+				Colour: 000000FF
+			Tabs
+				Tabs: Off
+				Width: 66
+				Height: 35
+				Position: Top
+				Text
+					Scale: 17
+					X Offset: 0
+					Y Offset: 0
+				Text Alignment: Centre
+				Show Icon Left: On
+				Show Name: Off
+			Scrollbar
+				Scrollbar: Disabled
+				Width: 15
+			Command Info Text
+				Position: Below Tabs
+				Show Help Text: Off
+				Show Command Syntax: Off
+				Indicate Slider Behaviour: Off
+				Indicate If Usable By Other Players: Off
+			Commands
+				Text
+					Scale: 13
+					X Offset: 0
+					Y Offset: 6
+			Max Visible Commands: 15
+			List Width: 462
+			List Height: 35
+			Spacer Size: 0
+			Smooth Scrolling: 120
+			Background Blur: 0
+	Lua Scripts
+		ProfileHelper: On
