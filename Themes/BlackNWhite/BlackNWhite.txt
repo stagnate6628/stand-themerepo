@@ -14,7 +14,7 @@ Stand
 				Focused Right-Bound Text Colour: 000000FF
 				Focused Texture Colour: 000000FF
 				Background Colour: 00000064
-				HUD Colour: 00FF2AFF
+				HUD Colour: 8CFF00FF
 					Rainbow Mode: 25
 				AR Colour: 00FFE9FF
 				Minigame Colour: 002EFFFF
@@ -35,9 +35,6 @@ Stand
 			Tabs
 				Width: 45
 				Height: 30
-				Position: Top
-				Text
-					X Offset: -3
 				Text Alignment: Centre
 				Show Name: Off
 				Show Icon Right: On
@@ -53,9 +50,9 @@ Stand
 				Indicate If Usable By Other Players: Off
 			Notifications
 				Width: 370
-				Border Colour: FF00E5FF
+				Border Colour: 00FFBBFF
 					Rainbow Mode: 20
-				Flash Colour: D800FF4B
+				Flash Colour: 00FFBB4B
 					Rainbow Mode: 20
 				Background Colour: 14141996
 			Commands
