@@ -1,4 +1,5 @@
 2Take1;ukn;
+Anime;Adorena30#6319, lxverez#1000
 BlackNWhite;Snub#8646
 Cherax;CocoW#3060;
 Circuit;ukn;
@@ -20,7 +21,7 @@ Midnight Violet;Chr1stian#4130
 Minimalistic;Prisuhm#5253;Pulsive.lua
 Minimalistic Black & White;Isolate.exe#4569
 Netflix;Weiss le boug aberrant#2157;Pulsive.lua
-NowiryPulsive;Nowiry,aarroonn,The Milk Man
+NowiryPulsive;Nowiry, aarroonn, The Milk Man
 Off-White;Maddy#6666
 Old UI;huara#0100
 Optimum;IvanV#6270
@@ -31,7 +32,7 @@ Phantom X;ukn;
 Pink Animated;slides#2137
 Rebound;ukn;
 Rockstar Admin Tool;Slycote#6185
-Rockstar Admin Tools;Nanomachines Son#6969 and Jimmy!#9444
+Rockstar Admin Tools;Nanomachines Son#6969, Jimmy!#9444
 Roses;𝐫𝐞𝐳#1000
 Space;
 Spotify;Weiss le boug aberrant#2157;Pulsive.lua
