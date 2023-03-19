@@ -525,10 +525,7 @@ helpers:toggle('Debug', {}, 'Logs more detailed output and enables the developer
   
   bools['debug'] = s
 end, false)
-helpers:action('Restart Script', {}, '', function()
-  lib:trigger_command('emptylog')
-  util.restart_script()
-end)
+helpers:action('Restart Script', {}, '', util.restart_script)
 helpers:action('Update Script', {}, '', function()
   util.toast('Checking for updates')
   auto_update_config.check_interval = 0
