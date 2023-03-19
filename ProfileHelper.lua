@@ -87,15 +87,13 @@ local dirs<const> = {
   ['resources'] = filesystem.resources_dir() .. 'ProfileHelper\\'
 }
 
-local root = menu.my_root()
-
 -- headers
-local header_root = menu.list(root, 'Headers', {}, '')
+local header_root = menu.list(menu.my_root(), 'Headers', {}, '')
 local header_config = menu.list(header_root, 'Configuration', {}, '')
 -- themes
-
-local theme_root = menu.list(root, 'Themes', {}, '')
+local theme_root = menu.list(menu.my_root(), 'Themes', {}, '')
 local theme_config = menu.list(theme_root, 'Configuration', {}, '')
+
 theme_config:toggle('Re-use Local Assets', {}, '', function(s)
   bools['prevent_redownloads'] = s
 end, true)
@@ -230,7 +228,6 @@ local function load_profile(profile_name)
 
   log('Done!')
 end
-local inspect = require('lib/inspect')
 local function download_theme(theme_name, deps)
   log('Starting ' .. theme_name)
 
@@ -395,7 +392,7 @@ local function download_themes(update)
       return
     end
 
-    -- log('Found local theme cache')
+    log('Found local theme cache')
     parse_list(file:read('*a'))
     file:close()
   else
@@ -504,7 +501,7 @@ local function download_headers(update)
       return
     end
 
-    -- log('Found local header cache')
+    log('Found local header cache')
     parse_list(file:read('*a'))
     file:close()
   else
