@@ -143,21 +143,6 @@ end
 local function should_copy(file_path)
   return io.exists(file_path) and io.isfile(file_path) and bools['prevent_redownloads']
 end
-local function get_theme_dir(theme_name, path)
-  local base = dirs.resources .. 'Themes\\' .. theme_name .. '\\'
-  if path then
-    return base .. path
-  end
-
-  return base
-end
-local function convert_path(path, to_backslashes)
-  if to_backslashes then
-    return path:gsub('/', '\\')
-  end
-
-  return path:gsub('\\', '/')
-end
 local function hide_header()
   lib:trigger_command_by_ref('Stand>Settings>Appearance>Header>Header>Be Gone')
 end
@@ -184,9 +169,6 @@ local function clear_headers()
     util.yield()
   until count == 0
 end
-local function clean_profile_name(profile_name)
-  return profile_name:gsub('%-', ''):gsub('&', ''):gsub(' ', ''):lower()
-end
 local function get_active_profile_name()
   local meta_state_path = dirs['stand'] .. 'Meta State.txt'
   local file = util.read_colons_and_tabs_file(meta_state_path)
@@ -201,9 +183,6 @@ local function load_profile(profile_name)
   reload_textures()
   reload_font()
 
-  local original_name = profile_name
-  profile_name = clean_profile_name(profile_name)
-
   lib:trigger_command_by_ref('Stand>Profiles')
   util.yield(100)
   lib:trigger_command_by_ref('Stand')
@@ -212,9 +191,8 @@ local function load_profile(profile_name)
 
   -- combine
   if bools['combine_profiles'] then
-    -- local active_profile_name = clean_profile_name(get_active_profile_name())
     for k, v in util.read_colons_and_tabs_file(
-        dirs['resources'] .. 'Themes\\' .. original_name .. '\\' .. original_name .. '.txt') do
+        dirs['resources'] .. 'Themes\\' .. profile_name .. '\\' .. profile_name .. '.txt') do
       -- todo: copy tags
       if k:startswith('Stand>Settings>Appearance') or k:startswith('Stand>Lua Scripts') then
         local ref = menu.ref_by_path(k .. '>' .. v, 43)
@@ -231,25 +209,23 @@ local function load_profile(profile_name)
     if not lib:trigger_command_by_ref('Stand>Profiles>' .. get_active_profile_name() .. '>Save') then
       util.toast('Failed to save the active profile.')
     end
-    -- lib:trigger_command('save' .. active_profile_name)
   else
-    -- util.log('not combining')
-    if not lib:trigger_command_by_ref('Stand>Profiles>' .. original_name) then
+    if not lib:trigger_command_by_ref('Stand>Profiles>' .. profile_name) then
       util.toast('Failed to find profile ref.')
     else
       util.yield(250)
-      if not lib:trigger_command_by_ref('Stand>Profiles>' .. original_name .. '>Load') then
+      if not lib:trigger_command_by_ref('Stand>Profiles>' .. profile_name .. '>Load') then
         util.toast('Failed to load profile.')
       else
         util.yield(250)
-        if not lib:trigger_command_by_ref('Stand>Profiles>' .. original_name .. '>Active') then
+        if not lib:trigger_command_by_ref('Stand>Profiles>' .. profile_name .. '>Active') then
           util.toast('Failed to set the profile as active.')
         end
       end
     end
 
     lib:trigger_command(lang_map[lang_index])
-    lib:trigger_command_by_ref('Stand>Profiles>' .. original_name .. '>Save')
+    lib:trigger_command_by_ref('Stand>Profiles>' .. profile_name .. '>Save')
   end
 
   lib:trigger_command_by_ref('Stand>Clear Notifications')
@@ -309,7 +285,7 @@ local function download_theme(theme_name, deps)
           goto continue
         end
 
-        local paths = {dirs['resources'] .. convert_path(v2.path, true)}
+        local paths = {dirs['resources'] .. v2.path:gsub('/', '\\')}
 
         -- o.o
         if k1 == 1 then -- root
