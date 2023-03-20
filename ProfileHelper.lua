@@ -212,26 +212,28 @@ local function load_profile(profile_name)
 
   -- combine
   if bools['combine_profiles'] then
-    local active_profile_name = clean_profile_name(get_active_profile_name())
+    -- local active_profile_name = clean_profile_name(get_active_profile_name())
     for k, v in util.read_colons_and_tabs_file(
         dirs['resources'] .. 'Themes\\' .. original_name .. '\\' .. original_name .. '.txt') do
       -- todo: copy tags
       if k:startswith('Stand>Settings>Appearance') or k:startswith('Stand>Lua Scripts') then
-        local path = k .. '>' .. v
-        local ref = menu.ref_by_path(path, 44)
+        local ref = menu.ref_by_path(k .. '>' .. v, 43)
         if not ref:isValid() then
           lib:trigger_command_by_ref(k, v)
         else
-          lib:trigger_command_by_ref(path)
+          lib:trigger_command_by_ref(k .. '>' .. v)
         end
       end
       util.yield()
     end
     lib:trigger_command(lang_map[lang_index])
     util.yield(250)
-    lib:trigger_command('save' .. active_profile_name)
+    if not lib:trigger_command_by_ref('Stand>Profiles>' .. get_active_profile_name() .. '>Save') then
+      util.toast('Failed to save the active profile.')
+    end
+    -- lib:trigger_command('save' .. active_profile_name)
   else
-    util.log('not combining')
+    -- util.log('not combining')
     if not lib:trigger_command_by_ref('Stand>Profiles>' .. original_name) then
       util.toast('Failed to find profile ref.')
     else
