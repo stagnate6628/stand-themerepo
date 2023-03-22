@@ -72,6 +72,7 @@ for _, dependency in auto_update_config.dependencies do
 end
 
 local path_map<const> = {'Root', 'Theme', 'Tags', 'Tabs', 'Custom Header', 'Lua Scripts'}
+local make_dirs<const> = {'Lua Scripts', 'Custom Header', 'Theme\\Custom', 'Theme\\Tabs'}
 
 local bools = {
   ['is_downloading'] = false,
@@ -101,7 +102,28 @@ theme_config:toggle('Combine Profiles', {}, '', function(s)
   bools['combine_profiles'] = s
 end, false)
 
-local make_dirs<const> = {'Lua Scripts', 'Custom Header', 'Theme\\Custom', 'Theme\\Tabs'}
+local lang_list = {}
+local lang_map<const> = {'langzh', 'langnl', 'langenuk', 'langenus', 'langfr', 'langde', 'langko', 'langlt', 'langpl',
+                         'langpt', 'langru', 'langes', 'langtr', 'langsex', 'languwu', 'langhornyuwu'}
+local lang_index = 3 -- english uk
+
+local function get_lang_list()
+  if #lang_list > 0 then
+    return lang_list
+  end
+
+  local ref = menu.ref_by_path('Stand>Settings>Language', 44)
+  for k, v in ref:getChildren() do
+    table.insert(lang_list, v.menu_name)
+  end
+
+  return lang_list
+end
+
+menu.textslider(theme_config, 'Language', {}, '', get_lang_list(), function(index)
+  lang_index = index
+  util.toast('[ProfileHelper] Lanaguage set to ' .. lang_list[lang_index])
+end)
 
 local function log(msg)
   if not bools['debug'] then
@@ -120,21 +142,6 @@ local function log(msg)
 end
 local function should_copy(file_path)
   return io.exists(file_path) and io.isfile(file_path) and bools['prevent_redownloads']
-end
-local function get_theme_dir(theme_name, path)
-  local base = dirs.resources .. 'Themes\\' .. theme_name .. '\\'
-  if path then
-    return base .. path
-  end
-
-  return base
-end
-local function convert_path(path, to_backslashes)
-  if to_backslashes then
-    return path:gsub('/', '\\')
-  end
-
-  return path:gsub('\\', '/')
 end
 local function hide_header()
   lib:trigger_command_by_ref('Stand>Settings>Appearance>Header>Header>Be Gone')
@@ -162,9 +169,6 @@ local function clear_headers()
     util.yield()
   until count == 0
 end
-local function clean_profile_name(profile_name)
-  return profile_name:gsub('%-', ''):gsub('&', ''):gsub(' ', ''):lower()
-end
 local function get_active_profile_name()
   local meta_state_path = dirs['stand'] .. 'Meta State.txt'
   local file = util.read_colons_and_tabs_file(meta_state_path)
@@ -175,13 +179,9 @@ local function get_active_profile_name()
 
   return 'Main'
 end
-
 local function load_profile(profile_name)
   reload_textures()
   reload_font()
-
-  local original_name = profile_name
-  profile_name = clean_profile_name(profile_name)
 
   lib:trigger_command_by_ref('Stand>Profiles')
   util.yield(100)
@@ -189,38 +189,48 @@ local function load_profile(profile_name)
   util.yield(100)
   lib:trigger_command_by_ref('Stand>Profiles')
 
+  -- combine
   if bools['combine_profiles'] then
-    local active_profile_name = clean_profile_name(get_active_profile_name())
-    for k, v in util.read_colons_and_tabs_file(dirs['stand'] .. 'Profiles\\' .. profile_name .. '.txt') do
+    for k, v in util.read_colons_and_tabs_file(
+        dirs['resources'] .. 'Themes\\' .. profile_name .. '\\' .. profile_name .. '.txt') do
+      -- todo: copy tags
       if k:startswith('Stand>Settings>Appearance') or k:startswith('Stand>Lua Scripts') then
-        local path = k .. '>' .. v
-        local ref = menu.ref_by_path(path, 44)
+        local ref = menu.ref_by_path(k .. '>' .. v, 43)
         if not ref:isValid() then
           lib:trigger_command_by_ref(k, v)
         else
-          lib:trigger_command_by_ref(path)
+          lib:trigger_command_by_ref(k .. '>' .. v)
         end
       end
       util.yield()
     end
-    lib:trigger_command('save' .. active_profile_name)
+    lib:trigger_command(lang_map[lang_index])
+    util.yield(250)
+    if not lib:trigger_command_by_ref('Stand>Profiles>' .. get_active_profile_name() .. '>Save') then
+      util.toast('Failed to save the active profile.')
+    end
   else
-    if not lib:trigger_command_by_ref('Stand>Profiles>' .. original_name) then
+    if not lib:trigger_command_by_ref('Stand>Profiles>' .. profile_name) then
       util.toast('Failed to find profile ref.')
     else
       util.yield(250)
-      if not lib:trigger_command_by_ref('Stand>Profiles>' .. original_name .. '>Load') then
+      if not lib:trigger_command_by_ref('Stand>Profiles>' .. profile_name .. '>Load') then
         util.toast('Failed to load profile.')
       else
         util.yield(250)
-        if not lib:trigger_command_by_ref('Stand>Profiles>' .. original_name .. '>Active') then
+        if not lib:trigger_command_by_ref('Stand>Profiles>' .. profile_name .. '>Active') then
           util.toast('Failed to set the profile as active.')
         end
       end
     end
+
+    lib:trigger_command(lang_map[lang_index])
+    lib:trigger_command_by_ref('Stand>Profiles>' .. profile_name .. '>Save')
   end
 
   lib:trigger_command_by_ref('Stand>Clear Notifications')
+  util.yield(100)
+  lib:trigger_command_by_ref('Game>Remove Notifications Above Minimap')
   util.yield(100)
   lib:trigger_command_by_ref('Stand>Lua Scripts')
   util.yield(100)
@@ -275,11 +285,11 @@ local function download_theme(theme_name, deps)
           goto continue
         end
 
-        local paths = {dirs['resources'] .. convert_path(v2.path, true)}
+        local paths = {dirs['resources'] .. v2.path:gsub('/', '\\')}
 
         -- o.o
         if k1 == 1 then -- root
-          if lib:get_ext(v2.name) == 'txt' then
+          if lib:get_ext(v2.name) == 'txt' and not bools['combine_profiles'] then
             table.insert(paths, dirs['stand'] .. 'Profiles\\' .. v2.name)
           end
         elseif k1 == 2 then -- theme
@@ -327,7 +337,7 @@ local function download_themes(update)
 
       local parts = v:split(';')
       local theme_name = parts[1]
-      local theme_author = 'Made by ' .. parts[2]
+      local theme_author = 'Author: ' .. parts[2]
       local deps = {}
 
       if type(parts[3]) == 'string' and string.len(parts[3]) > 0 then
@@ -426,7 +436,7 @@ local function download_headers(update)
         lib:make_request('Headers/' .. v, function(body, headers, status_code)
           local success, body = pcall(soup.json.decode, body)
           if not success then
-            log('Failed to decode json response [5]')
+            log('Failed to decode json response [7]')
             return
           end
 
@@ -522,12 +532,12 @@ helpers:toggle('Debug', {}, 'Logs more detailed output and enables the developer
   else
     lib:trigger_command_by_ref('Stand>Lua Scripts>Settings>Presets>User')
   end
-  
+
   bools['debug'] = s
 end, false)
 helpers:action('Restart Script', {}, '', util.restart_script)
 helpers:action('Update Script', {}, '', function()
-  util.toast('Checking for updates')
+  util.toast('Checking for updates.')
   auto_update_config.check_interval = 0
   auto_updater.run_auto_update(auto_update_config)
 end)
@@ -542,7 +552,7 @@ reset:action('Default Headers', {}, '', function()
   hide_header()
 end)
 
-if SCRIPT_MANUAL_START or SCRIPT_SILENT_START then
+if SCRIPT_MANUAL_START and not SCRIPT_SILENT_START then
   -- idk if this is even a good method
   if math.random() > 0.5 then
     util.toast('[ProfileHelper] Remember to maintain backups of textures as needed.')
