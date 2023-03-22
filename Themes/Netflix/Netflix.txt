@@ -44,7 +44,7 @@ Stand
 			List Height: 31
 			Spacer Size: 2
 	Lua Scripts
+		ProfileHelper: On
 		Pulsive: On
 			Primary Colour: FF0000FF
 			Animation Speed: 60
-		ProfileHelper: On
