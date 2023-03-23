@@ -77,7 +77,7 @@ local make_dirs<const> = {'Lua Scripts', 'Custom Header', 'Theme\\Custom', 'Them
 local bools = {
   ['is_downloading'] = false,
   ['prevent_redownloads'] = true,
-  ['debug'] = false,
+  ['debug'] = true,
   ['combine_profiles'] = false
 }
 
@@ -194,8 +194,9 @@ local function load_profile(profile_name)
     for k, v in util.read_colons_and_tabs_file(
         dirs['resources'] .. 'Themes\\' .. profile_name .. '\\' .. profile_name .. '.txt') do
       -- todo: copy tags
+      -- util.log(k .. '>' .. v)
       if k:startswith('Stand>Settings>Appearance') or k:startswith('Stand>Lua Scripts') then
-        local ref = menu.ref_by_path(k .. '>' .. v, 43)
+        local ref = menu.ref_by_path(k .. '>' .. v, 45)
         if not ref:isValid() then
           lib:trigger_command_by_ref(k, v)
         else
@@ -238,6 +239,7 @@ local function load_profile(profile_name)
 
   log('Done!')
 end
+local inspect = require('lib/inspect')
 local function download_theme(theme_name, deps)
   log('Starting ' .. theme_name)
 
@@ -269,12 +271,13 @@ local function download_theme(theme_name, deps)
 
     lib:make_request(v1, function(body, headers, status_code)
       if status_code == 404 then
+        util.log('404 at ' .. v1)
         return
       end
 
       local success, body = pcall(soup.json.decode, body)
       if not success then
-        log('Failed to parse json response [' .. k .. ']')
+        log('Failed to parse json response [' .. k1 .. ']')
         return
       end
 
@@ -301,9 +304,13 @@ local function download_theme(theme_name, deps)
         elseif k1 == 5 then -- custom header
           hide_header()
           table.insert(paths, dirs['header'] .. v2.name)
+
+          util.log(inspect(paths))
         elseif k1 == 6 then -- lua scripts
           table.insert(paths, filesystem.scripts_dir() .. v2.name)
         end
+
+        util.log(inspect(k1))
 
         if should_copy(paths[1]) and paths[2] ~= nil then
           lib:copy_file(paths[1], paths[2])
@@ -525,6 +532,7 @@ end)
 
 local helpers = menu.list(menu.my_root(), 'Helpers', {}, '')
 local reset = helpers:list('Reset', {}, '')
+local folders = helpers:list('Folders', {}, '')
 
 helpers:toggle('Debug', {}, 'Logs more detailed output and enables the developer preset.', function(s)
   if s then
@@ -534,7 +542,7 @@ helpers:toggle('Debug', {}, 'Logs more detailed output and enables the developer
   end
 
   bools['debug'] = s
-end, false)
+end, true)
 helpers:action('Restart Script', {}, '', util.restart_script)
 helpers:action('Update Script', {}, '', function()
   util.toast('Checking for updates.')
@@ -550,6 +558,22 @@ end)
 reset:action('Default Headers', {}, '', function()
   clear_headers()
   hide_header()
+end)
+
+folders:action('Stand Folder', {}, '', function()
+  util.open_folder(dirs['stand'])
+end)
+folders:action('Theme Folder', {}, '', function()
+  util.open_folder(dirs['theme'])
+end)
+folders:action('Headers Folder', {}, '', function()
+  util.open_folder(dirs['header'])
+end)
+folders:action('Profiles Folder', {}, '', function()
+  util.open_folder(dirs['stand'] .. 'Profiles')
+end)
+folders:action('Script Resources Folder', {}, '', function()
+  util.open_folder(dirs['resources'])
 end)
 
 if SCRIPT_MANUAL_START and not SCRIPT_SILENT_START then
