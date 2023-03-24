@@ -239,7 +239,6 @@ local function load_profile(profile_name)
 
   log('Done!')
 end
-local inspect = require('lib/inspect')
 local function download_theme(theme_name, deps)
   log('Starting ' .. theme_name)
 
@@ -304,13 +303,9 @@ local function download_theme(theme_name, deps)
         elseif k1 == 5 then -- custom header
           hide_header()
           table.insert(paths, dirs['header'] .. v2.name)
-
-          util.log(inspect(paths))
         elseif k1 == 6 then -- lua scripts
           table.insert(paths, filesystem.scripts_dir() .. v2.name)
         end
-
-        util.log(inspect(k1))
 
         if should_copy(paths[1]) and paths[2] ~= nil then
           lib:copy_file(paths[1], paths[2])
