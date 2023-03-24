@@ -77,7 +77,7 @@ local make_dirs<const> = {'Lua Scripts', 'Custom Header', 'Theme\\Custom', 'Them
 local bools = {
   ['is_downloading'] = false,
   ['prevent_redownloads'] = true,
-  ['debug'] = true,
+  ['debug'] = false,
   ['combine_profiles'] = false
 }
 
@@ -542,7 +542,7 @@ helpers:toggle('Debug', {}, 'Logs more detailed output and enables the developer
   end
 
   bools['debug'] = s
-end, true)
+end, false)
 helpers:action('Restart Script', {}, '', util.restart_script)
 helpers:action('Update Script', {}, '', function()
   util.toast('Checking for updates.')
