@@ -73,7 +73,7 @@ for _, dependency in auto_update_config.dependencies do
   end
 end
 
-local lib = lib
+local io, lib, util = io, lib, util
 
 local path_map<const> = {'Root', 'Theme', 'Tags', 'Tabs', 'Custom Header', 'Lua Scripts'}
 local make_dirs<const> = {'Lua Scripts', 'Custom Header', 'Theme\\Custom', 'Theme\\Tabs'}
@@ -197,9 +197,8 @@ local function load_profile(profile_name)
   if bools['combine_profiles'] then
     for k, v in util.read_colons_and_tabs_file(
         dirs['resources'] .. 'Themes\\' .. profile_name .. '\\' .. profile_name .. '.txt') do
-      -- todo: copy tags
-      -- util.log(k .. '>' .. v)
-      if k:startswith('Stand>Settings>Appearance') or k:startswith('Stand>Lua Scripts') then
+      if k:startswith('Stand>Settings>Appearance') or k:startswith('Stand>Lua Scripts') or
+          k:startswith('Players>Settings>Tags') then
         local ref = menu.ref_by_path(k .. '>' .. v, 45)
         if not ref:isValid() then
           lib:trigger_command_by_ref(k, v)
@@ -274,7 +273,6 @@ local function download_theme(theme_name, deps)
 
     lib:make_request(v1, function(body, headers, status_code)
       if status_code == 404 then
-        util.log('404 at ' .. v1)
         return
       end
 
@@ -532,6 +530,11 @@ end)
 local helpers = menu.list(menu.my_root(), 'Helpers', {}, '')
 local reset = helpers:list('Reset', {}, '')
 local folders = helpers:list('Folders', {}, '')
+
+local shortcuts = helpers:list('Shortcuts', {}, '')
+shortcuts:link(menu.ref_by_path('Stand>Profiles', 45))
+shortcuts:link(menu.ref_by_path('Stand>Settings>Appearance', 45))
+shortcuts:link(menu.ref_by_path('Stand>Lua Scripts', 45))
 
 helpers:toggle('Debug', {}, 'Logs detailed output to a log file and enables the developer preset.', function(s)
   if s then
