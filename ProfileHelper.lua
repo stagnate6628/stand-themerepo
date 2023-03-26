@@ -532,9 +532,15 @@ local reset = helpers:list('Reset', {}, '')
 local folders = helpers:list('Folders', {}, '')
 
 local shortcuts = helpers:list('Shortcuts', {}, '')
-shortcuts:link(menu.ref_by_path('Stand>Profiles', 45))
-shortcuts:link(menu.ref_by_path('Stand>Settings>Appearance', 45))
-shortcuts:link(menu.ref_by_path('Stand>Lua Scripts', 45))
+shortcuts:action('Profiles', {}, '', function()
+  menu.focus(menu.ref_by_path('Stand>Profiles', 45))
+end)
+shortcuts:action('Appearance', {}, '', function() 
+  menu.focus(menu.ref_by_path('Stand>Settings>Appearance', 45))
+end)
+shortcuts:action('Lua Scripts', {}, '', function()
+  menu.focus(menu.ref_by_path('Stand>Lua Scripts', 45))
+end)
 
 helpers:toggle('Debug', {}, 'Logs detailed output to a log file and enables the developer preset.', function(s)
   if s then
