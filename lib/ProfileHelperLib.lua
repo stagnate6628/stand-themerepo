@@ -137,7 +137,7 @@ function lib:trigger_command(command, args)
 end
 
 function lib:trigger_command_by_ref(path, args)
-  local ref = menu.ref_by_path(path, 44)
+  local ref = menu.ref_by_path(path, 45)
   if not ref:isValid() then
     return false
   end
