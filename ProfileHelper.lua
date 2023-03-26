@@ -532,15 +532,9 @@ local reset = helpers:list('Reset', {}, '')
 local folders = helpers:list('Folders', {}, '')
 
 local shortcuts = helpers:list('Shortcuts', {}, '')
-shortcuts:action('Profiles', {}, '', function()
-  menu.focus(menu.ref_by_path('Stand>Profiles', 45))
-end)
-shortcuts:action('Appearance', {}, '', function() 
-  menu.focus(menu.ref_by_path('Stand>Settings>Appearance', 45))
-end)
-shortcuts:action('Lua Scripts', {}, '', function()
-  menu.focus(menu.ref_by_path('Stand>Lua Scripts', 45))
-end)
+shortcuts:link(menu.ref_by_path('Stand>Profiles', 45))
+shortcuts:link(menu.ref_by_path('Stand>Settings>Appearance', 45))
+shortcuts:link(menu.ref_by_path('Stand>Lua Scripts', 45))
 
 helpers:toggle('Debug', {}, 'Logs detailed output to a log file and enables the developer preset.', function(s)
   if s then
@@ -584,18 +578,16 @@ folders:action('Script Resources Folder', {}, '', function()
   util.open_folder(dirs['resources'])
 end)
 
-if SCRIPT_MANUAL_START and not SCRIPT_SILENT_START then
-  -- idk if this is even a good method
-  if math.random() > 0.5 then
-    util.toast('[ProfileHelper] Remember to maintain backups of textures as needed.')
-  end
-
-  io.makedirs(dirs['resources'])
-  io.makedirs(dirs['resources'] .. '\\Themes')
-  io.makedirs(dirs['resources'] .. '\\Headers')
-
-  download_themes()
-  download_headers()
+-- idk if this is even a good method
+if math.random() > 0.5 then
+  util.toast('[ProfileHelper] Remember to maintain backups of textures as needed.')
 end
+
+io.makedirs(dirs['resources'])
+io.makedirs(dirs['resources'] .. '\\Themes')
+io.makedirs(dirs['resources'] .. '\\Headers')
+
+download_themes()
+download_headers()
 
 util.keep_running()
