@@ -59,7 +59,9 @@ local auto_update_config = {
     is_required = true
   }}
 }
+
 auto_updater.run_auto_update(auto_update_config)
+
 for _, dependency in auto_update_config.dependencies do
   if dependency.is_required then
     if dependency.loaded_lib == nil then
@@ -70,6 +72,8 @@ for _, dependency in auto_update_config.dependencies do
     end
   end
 end
+
+local lib = lib
 
 local path_map<const> = {'Root', 'Theme', 'Tags', 'Tabs', 'Custom Header', 'Lua Scripts'}
 local make_dirs<const> = {'Lua Scripts', 'Custom Header', 'Theme\\Custom', 'Theme\\Tabs'}
@@ -112,7 +116,7 @@ local function get_lang_list()
     return lang_list
   end
 
-  local ref = menu.ref_by_path('Stand>Settings>Language', 44)
+  local ref = menu.ref_by_path('Stand>Settings>Language', 45)
   for k, v in ref:getChildren() do
     table.insert(lang_list, v.menu_name)
   end
@@ -462,7 +466,7 @@ local function download_headers(update)
             util.yield(250)
           until i == #body
 
-          local ref = menu.ref_by_path('Stand>Settings>Appearance>Header>Header', 44)
+          local ref = menu.ref_by_path('Stand>Settings>Appearance>Header>Header', 45)
           if menu.get_value(ref) == 200 then
             hide_header()
           end
@@ -529,7 +533,7 @@ local helpers = menu.list(menu.my_root(), 'Helpers', {}, '')
 local reset = helpers:list('Reset', {}, '')
 local folders = helpers:list('Folders', {}, '')
 
-helpers:toggle('Debug', {}, 'Logs more detailed output and enables the developer preset.', function(s)
+helpers:toggle('Debug', {}, 'Logs detailed output to a log file and enables the developer preset.', function(s)
   if s then
     lib:trigger_command_by_ref('Stand>Lua Scripts>Settings>Presets>Developer')
   else
