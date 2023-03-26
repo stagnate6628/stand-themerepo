@@ -50,4 +50,3 @@ Stand
 		Pulsive: On
 			Primary Colour: 009600FF
 			Animation Speed: 60
-		ProfileHelper: On

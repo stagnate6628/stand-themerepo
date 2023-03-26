@@ -89,10 +89,7 @@ Stand
 			Spacer Size: 1
 			Smooth Scrolling: 30
 			Background Blur: 0
-			Stream-Proof Rendering: On
 		Info Text
 			Position: 2, 1
 			Alignment: Top Left
 			Scale: 15
-	Lua Scripts
-		ProfileHelper: On

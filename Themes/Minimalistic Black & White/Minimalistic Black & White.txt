@@ -30,5 +30,3 @@ Stand
 			Border
 				Colour: 000000FF
 			Max Visible Commands: 17
-	Lua Scripts:
-		ProfileHelper: On

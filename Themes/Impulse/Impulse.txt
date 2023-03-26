@@ -49,5 +49,4 @@ Stand
 			Spacer Size: 12
 			Background Blur: 0
 	Lua Scripts
-		ProfileHelper: On
 		[SPH] Impulse: On

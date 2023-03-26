@@ -71,4 +71,3 @@ Stand
 			Reset Animation on Selection Change: Off
 			Animation Speed: 80
 			Seperator Height: 1
-		ProfileHelper: On

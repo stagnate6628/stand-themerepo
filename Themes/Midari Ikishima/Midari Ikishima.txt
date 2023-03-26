@@ -47,5 +47,3 @@ Stand
 				Rounded: On
 				Colour: 000000FF
 			List Width: 448
-	Lua Scripts:
-		ProfileHelper: On

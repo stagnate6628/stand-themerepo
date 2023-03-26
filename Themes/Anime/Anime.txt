@@ -56,5 +56,3 @@ Stand
 			Position: 286, 876
 			Alignment: Top Left
 			Scale: 17
-	Lua Scripts
-		ProfileHelper: On

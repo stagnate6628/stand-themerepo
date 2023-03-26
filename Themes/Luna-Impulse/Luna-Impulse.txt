@@ -78,5 +78,4 @@ Stand
 			Position: 1907, 81
 			Scale: 17
 	Lua Scripts
-		ProfileHelper: On
 		InfOverlay: On

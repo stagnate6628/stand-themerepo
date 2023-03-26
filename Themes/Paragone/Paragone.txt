@@ -27,5 +27,3 @@ Stand
 				Border Colour: 1E6793FF
 				Flash Colour: 1E6793FF
 			Max Visible Commands: 12
-	Lua Scripts
-		ProfileHelper: On

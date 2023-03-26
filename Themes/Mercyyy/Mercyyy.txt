@@ -89,7 +89,3 @@ Stand
 		Info Text
 			Position: 1905, 833
 			Scale: 15
-		Discord Rich Presence: On
-		Menu Navigation Reminders: Off
-	Lua Scripts
-		ProfileHelper: On

@@ -73,5 +73,3 @@ Stand
 					Scale: 10
 				Small Text
 					Scale: 8
-	Lua Scripts
-		ProfileHelper

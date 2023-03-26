@@ -74,5 +74,3 @@ Stand
 			Font & Text
 				Small Text
 					Scale: 11
-	Lua Scripts
-		ProfileHelper: On

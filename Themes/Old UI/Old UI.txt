@@ -41,5 +41,3 @@ Stand
 			Spacer Size: 0
 			Smooth Scrolling: 0
 			Background Blur: 2
-	Lua Scripts
-		ProfileHelper: On

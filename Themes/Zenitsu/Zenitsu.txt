@@ -57,5 +57,3 @@ Stand
 		Info Text
 			Position: 1875, 98
 			Alignment: Top Centre
-	Lua Scripts
-		ProfileHelper: On

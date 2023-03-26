@@ -85,5 +85,4 @@ Stand
 			Alignment: Top Left
 			Scale: 16
 	Lua Scripts
-		ProfileHelper: On
 		Pulsive: On

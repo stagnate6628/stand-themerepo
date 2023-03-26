@@ -65,11 +65,7 @@ Stand
 					Scale: 17
 				Small Text
 					Scale: 11
-		Input
-			Back Closes Menu: On
 		Info Text
 			Position: 278, 936
 			Alignment: Top Left
 			Scale: 18
-	Lua Scripts
-		ProfileHelper: On

@@ -92,5 +92,3 @@ Stand
 					Y Offset: 3
 		Info Text
 			Scale: 18
-	Lua Scripts
-		ProfileHelper: On

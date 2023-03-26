@@ -106,5 +106,3 @@ Stand
 		Info Text
 			Position: 1909, 7
 			Scale: 13
-	Lua Scripts
-		ProfileHelper: On

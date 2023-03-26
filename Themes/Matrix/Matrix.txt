@@ -77,16 +77,7 @@ Stand
 				Small Text
 					Scale: 11
 					X Offset: 0
-			Stream-Proof Rendering: On
-		Input
-			Keep Cursor When Revisiting
-				Lists: On
-			Key Repeat Interval: 50
-			Key Long-Hold Repeat Interval: 50
-			Key Repeat Interval For Tabs: 60
 		Info Text
 			Position: 460, 728
 			Alignment: Top Left
 			Scale: 10
-	Lua Scripts
-		ProfileHelper: On

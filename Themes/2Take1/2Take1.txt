@@ -47,5 +47,4 @@ Stand
 			Spacer Size: 0
 			Background Blur: 0
 	Lua Scripts
-		ProfileHelper: On
 		[SPH] 2Take1: On
