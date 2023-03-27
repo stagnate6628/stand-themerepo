@@ -174,26 +174,27 @@ local function clear_headers()
   until count == 0
 end
 local function get_active_profile_name()
-  local meta_state_path = dirs['stand'] .. 'Meta State.txt'
-  local file = util.read_colons_and_tabs_file(meta_state_path)
-
-  if file['Active Profile'] then
-    return file['Active Profile']
-  end
-
-  return 'Main'
+  local file = util.read_colons_and_tabs_file(dirs['stand'] .. 'Meta State.txt')
+  return file['Active Profile'] or 'Main'
 end
 local function load_profile(profile_name)
+  log('Loading ' .. profile_name)
+
   reload_textures()
   reload_font()
 
   lib:trigger_command_by_ref('Stand>Profiles')
-  util.yield(100)
+  util.yield()
   lib:trigger_command_by_ref('Stand')
-  util.yield(100)
+  util.yield()
   lib:trigger_command_by_ref('Stand>Profiles')
 
-  -- combine
+  lib:trigger_command_by_ref('Stand>Lua Scripts')
+  util.yield()
+  lib:trigger_command_by_ref('Stand')
+  util.yield()
+  lib:trigger_command_by_ref('Stand>Lua Scripts')
+
   if bools['combine_profiles'] then
     for k, v in util.read_colons_and_tabs_file(
         dirs['resources'] .. 'Themes\\' .. profile_name .. '\\' .. profile_name .. '.txt') do
@@ -203,44 +204,33 @@ local function load_profile(profile_name)
         if not ref:isValid() then
           lib:trigger_command_by_ref(k, v)
         else
-          lib:trigger_command_by_ref(k .. '>' .. v)
+          ref:trigger()
         end
       end
       util.yield()
     end
-    lib:trigger_command(lang_map[lang_index])
-    util.yield(250)
-    if not lib:trigger_command_by_ref('Stand>Profiles>' .. get_active_profile_name() .. '>Save') then
-      util.toast('Failed to save the active profile.')
+    if lang_index ~= 3 then
+      lib:trigger_commands(lang_map[lang_index])
     end
+    lib:trigger_command_by_ref('Stand>Profiles>' .. get_active_profile_name() .. '>Save')
   else
-    if not lib:trigger_command_by_ref('Stand>Profiles>' .. profile_name) then
-      util.toast('Failed to find profile ref.')
-    else
-      util.yield(250)
-      if not lib:trigger_command_by_ref('Stand>Profiles>' .. profile_name .. '>Load') then
-        util.toast('Failed to load profile.')
-      else
-        util.yield(250)
-        if not lib:trigger_command_by_ref('Stand>Profiles>' .. profile_name .. '>Active') then
-          util.toast('Failed to set the profile as active.')
-        end
-      end
+    local ref = menu.ref_by_path('Stand>Profiles>' .. profile_name)
+    ref:refByRelPath('Active'):trigger()
+
+    if lang_index ~= 3 then
+      lib:trigger_commands(lang_map[lang_index])
+      ref:refByRelPath('Save'):trigger()
     end
 
-    lib:trigger_command(lang_map[lang_index])
-    lib:trigger_command_by_ref('Stand>Profiles>' .. profile_name .. '>Save')
+    ref:refByRelPath('Load'):trigger()
+    ref:refByRelPath('Load'):trigger()
   end
 
-  lib:trigger_command_by_ref('Stand>Clear Notifications')
-  util.yield(100)
-  lib:trigger_command_by_ref('Game>Remove Notifications Above Minimap')
-  util.yield(100)
-  lib:trigger_command_by_ref('Stand>Lua Scripts')
-  util.yield(100)
-  lib:trigger_command_by_ref('Stand>Lua Scripts>ProfileHelper')
+  -- this works sometimes :]
+  menu.ref_by_path('Self>Movement', 45):focus()
 
   log('Done!')
+  util.toast('Done!')
 end
 local function download_theme(theme_name, deps)
   log('Starting ' .. theme_name)
