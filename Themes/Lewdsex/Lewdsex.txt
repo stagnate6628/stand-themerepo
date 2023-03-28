@@ -1,0 +1,99 @@
+Finished Tutorial: Yes
+Understands Commands: Yes
+Understands Sliders: Yes
+Understands Profiles: Yes
+Understands Controller Open/Close: Yes
+Prompted For Controller Disables: Yes
+Understands Command Chaining: Yes
+Tree Compatibility Version: 45
+Players
+	Settings
+		Tags
+			Brackets: STD
+			Self: 
+			Friend: 
+			Crew Member: 
+			In Timeout: 
+			Modder: 
+			Admin: 
+			Likely Modder: 
+			Attacked You: 
+			Host: 
+			Next Host: 
+			Script Host: 
+			Invulnerable: 
+			Indestructible Vehicle: 
+			RC Vehicle: 
+			Off The Radar: 
+			In An Interior: 
+			Spectating: 
+			Typing: 
+			Dead: 
+			Invisible: 
+			VPN: 
+Stand
+	Settings
+		Appearance
+			Colours
+				Primary Colour: 590C0DFA
+				Focused Text Colour: F2797BFF
+				Focused Right-Bound Text Colour: F2797BFF
+				Focused Texture Colour: F2797BFF
+				Background Colour: 1900094B
+				HUD Colour: 590C1FFF
+				AR Colour: 590C1FB4
+				Minigame Colour: 590C1FB4
+			Position: 1430, 189
+			Header
+				Header: Custom
+				Frame Interval: 66
+			Address Bar
+				Root Name: Stand {} Crash Addict Edition
+				Height: 28
+				Text
+					Scale: 16
+			Cursor
+				Colour: FFFFFFFF
+			Tabs
+				Tabs: Off
+				Width: 68
+				Height: 40
+				Position: Top
+				Text
+					Scale: 18
+					X Offset: 3
+					Y Offset: 7
+				Text Alignment: Centre
+				Show Name: Off
+				Show Icon Right: On
+			Scrollbar
+				Scrollbar: Enabled
+				Width: 7
+			Command Info Text
+				Position: Bottom
+			Notifications
+				Type: Game
+				Border Colour: 590C1EC8
+				Flash Colour: FFFFFF1E
+					Rainbow Mode: 30
+			Commands
+				Text
+					Scale: 16
+			Border
+				Width: 3
+				Colour: 720013BE
+			Max Visible Commands: 10
+			List Width: 435
+			List Height: 49
+			Spacer Size: 5
+			Smooth Scrolling: 270
+			Background Blur: 0
+			Font & Text
+				Command Box Input Text
+					Scale: 19
+				Small Text
+					Scale: 1
+		Info Text
+			Position: 304, 911
+			Alignment: Bottom Centre
+			Scale: 18
