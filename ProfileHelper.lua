@@ -73,13 +73,17 @@ for _, dependency in auto_update_config.dependencies do
   end
 end
 
+local inspect = require('lib/inspect')
+
 local io, lib, util = io, lib, util
+math.randomseed(util.current_unix_time_seconds()) -- apparently this is good
 
 local path_map<const> = {'Root', 'Theme', 'Tags', 'Tabs', 'Custom Header', 'Lua Scripts'}
 local make_dirs<const> = {'Lua Scripts', 'Custom Header', 'Theme\\Custom', 'Theme\\Tabs'}
 
 local bools = {
   ['is_downloading'] = false,
+  ['is_header_downloading'] = false,
   ['prevent_redownloads'] = true,
   ['debug'] = false,
   ['combine_profiles'] = false
@@ -94,10 +98,10 @@ local dirs<const> = {
 
 -- headers
 local header_root = menu.list(menu.my_root(), 'Headers', {}, '')
-local header_config = menu.list(header_root, 'Configuration', {}, '')
+local header_config = header_root:list('Configuration', {}, '')
 -- themes
 local theme_root = menu.list(menu.my_root(), 'Themes', {}, '')
-local theme_config = menu.list(theme_root, 'Configuration', {}, '')
+local theme_config = theme_root:list('Configuration', {}, '')
 
 theme_config:toggle('Re-use Local Assets', {}, '', function(s)
   bools['prevent_redownloads'] = s
@@ -106,7 +110,9 @@ theme_config:toggle('Combine Profiles', {}, '', function(s)
   bools['combine_profiles'] = s
 end, false)
 
+-- lang names from stand
 local lang_list = {}
+-- lang commands
 local lang_map<const> = {'langzh', 'langnl', 'langenuk', 'langenus', 'langfr', 'langde', 'langko', 'langlt', 'langpl',
                          'langpt', 'langru', 'langes', 'langtr', 'langsex', 'languwu', 'langhornyuwu'}
 local lang_index = 3 -- english uk
@@ -116,28 +122,26 @@ local function get_lang_list()
     return lang_list
   end
 
-  local ref = menu.ref_by_path('Stand>Settings>Language', 45)
-  for k, v in ref:getChildren() do
+  for k, v in menu.ref_by_path('Stand>Settings>Language', 45):getChildren() do
     table.insert(lang_list, v.menu_name)
   end
 
   return lang_list
 end
-
-menu.textslider(theme_config, 'Language', {}, '', get_lang_list(), function(index)
-  lang_index = index
-  util.toast('[ProfileHelper] Lanaguage set to ' .. lang_list[lang_index])
-end)
+theme_config:list_action('Language', {}, 'Some theme fonts may not support a language.', get_lang_list(),
+    function(index)
+      lang_index = index
+      util.toast('[ProfileHelper] Profile language set to ' .. lang_list[lang_index])
+    end)
 
 local function log(msg)
   if not bools['debug'] then
     return
   end
 
-  local log_path = dirs['resources'] .. '\\log.txt'
+  local log_path = dirs['resources'] .. 'log.txt'
   if not io.exists(log_path) then
-    local file = io.open(log_path, 'wb')
-    file:close()
+    io.open(log_path, 'wb'):close()
   end
 
   local log_file = io.open(log_path, 'a+')
@@ -159,20 +163,6 @@ end
 local function reload_textures()
   lib:trigger_command_by_ref('Stand>Settings>Appearance>Textures>Reload Textures')
 end
-local function clear_headers()
-  local files = io.listdir(dirs['header'])
-  local count = #files
-
-  for k, v in files do
-    io.remove(v)
-    count = count - 1
-    util.yield(5)
-  end
-
-  repeat
-    util.yield()
-  until count == 0
-end
 local function get_active_profile_name()
   local file = util.read_colons_and_tabs_file(dirs['stand'] .. 'Meta State.txt')
   return file['Active Profile'] or 'Main'
@@ -184,15 +174,15 @@ local function load_profile(profile_name)
   reload_font()
 
   lib:trigger_command_by_ref('Stand>Profiles')
-  util.yield()
+  util.yield(100)
   lib:trigger_command_by_ref('Stand')
-  util.yield()
+  util.yield(100)
   lib:trigger_command_by_ref('Stand>Profiles')
 
   lib:trigger_command_by_ref('Stand>Lua Scripts')
-  util.yield()
+  util.yield(100)
   lib:trigger_command_by_ref('Stand')
-  util.yield()
+  util.yield(100)
   lib:trigger_command_by_ref('Stand>Lua Scripts')
 
   if bools['combine_profiles'] then
@@ -210,7 +200,7 @@ local function load_profile(profile_name)
       util.yield()
     end
     if lang_index ~= 3 then
-      lib:trigger_commands(lang_map[lang_index])
+      lib:trigger_command(lang_map[lang_index])
     end
     lib:trigger_command_by_ref('Stand>Profiles>' .. get_active_profile_name() .. '>Save')
   else
@@ -218,7 +208,7 @@ local function load_profile(profile_name)
     ref:refByRelPath('Active'):trigger()
 
     if lang_index ~= 3 then
-      lib:trigger_commands(lang_map[lang_index])
+      lib:trigger_command(lang_map[lang_index])
       ref:refByRelPath('Save'):trigger()
     end
 
@@ -244,10 +234,9 @@ local function download_theme(theme_name, deps)
   end
 
   lib:empty_dir(dirs['theme'])
+  lib:empty_dir(dirs['header'])
   io.makedirs(dirs['theme'] .. 'Custom')
   io.makedirs(dirs['theme'] .. 'Tabs')
-
-  clear_headers()
 
   local req_url = {}
   table.insert(req_url, 'Themes/' .. theme_name) -- 1=root
@@ -279,24 +268,28 @@ local function download_theme(theme_name, deps)
           goto continue
         end
 
+        -- v2.path is nil on ratelimit
         local paths = {dirs['resources'] .. v2.path:gsub('/', '\\')}
+        local file_name = v2.name
+
+        log(string.format('Downloading %s at path %s', v2.name, v2.path))
 
         -- o.o
         if k1 == 1 then -- root
-          if lib:get_ext(v2.name) == 'txt' and not bools['combine_profiles'] then
-            table.insert(paths, dirs['stand'] .. 'Profiles\\' .. v2.name)
+          if lib:get_ext(file_name) == 'txt' and not bools['combine_profiles'] then
+            table.insert(paths, dirs['stand'] .. 'Profiles\\' .. file_name)
           end
         elseif k1 == 2 then -- theme
-          table.insert(paths, dirs['theme'] .. v2.name)
+          table.insert(paths, dirs['theme'] .. file_name)
         elseif k1 == 3 then -- custom/tags
-          table.insert(paths, dirs['theme'] .. 'Custom\\' .. v2.name)
+          table.insert(paths, dirs['theme'] .. 'Custom\\' .. file_name)
         elseif k1 == 4 then -- tabs
-          table.insert(paths, dirs['theme'] .. 'Tabs\\' .. v2.name)
+          table.insert(paths, dirs['theme'] .. 'Tabs\\' .. file_name)
         elseif k1 == 5 then -- custom header
           hide_header()
-          table.insert(paths, dirs['header'] .. v2.name)
+          table.insert(paths, dirs['header'] .. file_name)
         elseif k1 == 6 then -- lua scripts
-          table.insert(paths, filesystem.scripts_dir() .. v2.name)
+          table.insert(paths, filesystem.scripts_dir() .. file_name)
         end
 
         if should_copy(paths[1]) and paths[2] ~= nil then
@@ -313,13 +306,20 @@ local function download_theme(theme_name, deps)
 
     repeat
       util.yield(250)
-      log(string.format('Yielding for %s: %d/%d', v1, i, j))
+      log(string.format('Waiting at path %s: %d/%d', v1, i, j))
     until i == j
 
-    util.toast(string.format('[ProfileHelper] Finished traversing at path %s (%d/6)', path_map[k1], k1))
+    util.toast(string.format('[ProfileHelper] Finished path %s (%d/6)', path_map[k1], k1))
   end
 
   load_profile(theme_name)
+end
+local function empty_list(ref)
+  for k, v in ref:getChildren() do
+    if v:getType() == COMMAND_ACTION then
+      v:delete()
+    end
+  end
 end
 local function download_themes(update)
   local function parse_list(out)
@@ -362,18 +362,11 @@ local function download_themes(update)
     end
   end
 
-  local path = dirs['resources'] .. '\\themes.txt'
+  local path = dirs['resources'] .. 'themes.txt'
   local function download_list()
     lib:download_file('themes.txt', {path}, function(body, headers, status_code)
       log('Creating theme cache')
-
-      local file = io.open(path, 'wb')
-      file:write(body)
-      file:close()
-
-      pcall(parse_list, body)
-    end, function()
-      log('Failed to download themes list.')
+      parse_list(body)
     end)
   end
 
@@ -381,29 +374,22 @@ local function download_themes(update)
   if file ~= nil then
     if update then
       log('Request to update theme list')
-      local children = menu.get_children(theme_root)
-      for k, v in children do
-        if v.menu_name == 'Configuration' then
-          goto continue
-        end
-
-        v:delete()
-        ::continue::
-      end
-
+      empty_list(theme_root)
       download_list()
       lib:trigger_command_by_ref('Stand>Lua Scripts>ProfileHelper>Themes')
       return
     end
 
-    log('Found local theme cache')
+    if not update then
+      log('Found local theme list cache')
+    end
     parse_list(file:read('*a'))
     file:close()
   else
     download_list()
   end
 end
-menu.action(theme_config, 'Update List', {}, '', function()
+theme_config:action('Update List', {}, '', function()
   download_themes(true)
 end)
 
@@ -415,7 +401,7 @@ local function download_headers(update)
         goto continue
       end
 
-      menu.action(header_root, v, {}, '', function(click_type)
+      header_root:action(v, {}, '', function(click_type)
         if bools['is_header_downloading'] then
           menu.show_warning(header_root, click_type,
               'A download has already started. You may need to wait for the header to finish downloading. Proceed?',
@@ -426,11 +412,13 @@ local function download_headers(update)
         end
 
         bools['is_header_downloading'] = true
-        clear_headers()
+
+        lib:empty_dir(dirs['header'])
+
         lib:make_request('Headers/' .. v, function(body, headers, status_code)
           local success, body = pcall(soup.json.decode, body)
           if not success then
-            log('Failed to decode json response [7]')
+            log('Failed to parse json response [headers]')
             return
           end
 
@@ -442,6 +430,7 @@ local function download_headers(update)
             if should_copy(paths[1]) then
               lib:copy_file(paths[1], paths[2])
               log(string.format('Copied header %s (%d/%d)', v2.name, i + 1, #body))
+              i = i + 1
             else
               lib:download_file(v2.path, paths, function()
                 log(string.format('Downloaded header %s (%d/%d)', v2.name, i + 1, #body))
@@ -454,17 +443,18 @@ local function download_headers(update)
             util.yield(250)
           until i == #body
 
-          local ref = menu.ref_by_path('Stand>Settings>Appearance>Header>Header', 45)
-          if menu.get_value(ref) == 200 then
+          if menu.ref_by_path('Stand>Settings>Appearance>Header>Header', 45).value == 200 then
             hide_header()
           end
           use_custom_header()
 
           bools['is_header_downloading'] = false
 
-          if math.random() > 0.5 then
+          if math.random() > 0.8 then
             util.toast('Tip: Make sure to save the current profile to load the Custom Header on start.')
           end
+          log('Done!')
+          util.toast('Done!')
         end)
       end)
 
@@ -472,48 +462,33 @@ local function download_headers(update)
     end
   end
 
+  local path = dirs['resources'] .. 'headers.txt'
   local function download_list()
-    local path = dirs['resources'] .. 'headers.txt'
-    lib:download_file('headers.txt', path, function(body, headers, status_code)
+    lib:download_file('headers.txt', {path}, function(body, headers, status_code)
       log('Creating headers cache')
-
-      local file = io.open(path, 'wb')
-      file:write(body)
-      file:close()
-
-      pcall(parse_list, body)
-    end, function()
-      log('Failed to download headers list')
+      parse_list(body)
     end)
   end
 
-  local file = io.open(dirs['resources'] .. '\\headers.txt', 'r')
+  local file = io.open(path, 'r')
   if file ~= nil then
     if update then
-      local children = menu.get_children(header_root)
-      for k, v in children do
-        if v.menu_name == 'Configuration' then
-          goto continue
-        end
-
-        v:delete()
-        ::continue::
-      end
-
+      empty_list(header_root)
       download_list()
       lib:trigger_command_by_ref('Stand>Lua Scripts>ProfileHelper>Headers')
       return
     end
 
-    log('Found local header cache')
+    if not update then
+      log('Found local header list cache')
+    end
     parse_list(file:read('*a'))
     file:close()
   else
     download_list()
   end
 end
-
-menu.action(header_config, 'Update List', {}, '', function()
+header_config:action('Update List', {}, '', function()
   download_headers(true)
 end)
 
@@ -523,10 +498,10 @@ local folders = helpers:list('Folders', {}, '')
 
 local shortcuts = helpers:list('Shortcuts', {}, '')
 shortcuts:action('Profiles', {}, '', function()
-  menu.focus(menu.ref_by_path('Stand>Profiles', 45))
+  lib:trigger_command_by_ref('Stand>Profiles')
 end)
 shortcuts:action('Lua Scripts', {}, '', function()
-  menu.focus(menu.ref_by_path('Stand>Lua Scripts', 45))
+  lib:trigger_command_by_ref('Stand>Lua Scripts')
 end)
 
 helpers:toggle('Debug', {}, 'Logs detailed output to a log file and enables the developer preset.', function(s)
@@ -540,7 +515,6 @@ helpers:toggle('Debug', {}, 'Logs detailed output to a log file and enables the 
 end, false)
 helpers:action('Restart Script', {}, '', util.restart_script)
 helpers:action('Update Script', {}, '', function()
-  util.toast('Checking for updates.')
   auto_update_config.check_interval = 0
   auto_updater.run_auto_update(auto_update_config)
 end)
@@ -551,7 +525,7 @@ reset:action('Default Textures and Font', {}, '', function()
   reload_font()
 end)
 reset:action('Default Headers', {}, '', function()
-  clear_headers()
+  lib:empty_dir(dirs['header'])
   hide_header()
 end)
 
@@ -572,7 +546,7 @@ folders:action('Script Resources Folder', {}, '', function()
 end)
 
 -- idk if this is even a good method
-if math.random() > 0.5 then
+if math.random() > 0.8 then
   util.toast('[ProfileHelper] Remember to maintain backups of textures as needed.')
 end
 
