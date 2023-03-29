@@ -1,0 +1,51 @@
+Finished Tutorial: Yes
+Understands Commands: Yes
+Understands Sliders: Yes
+Understands Profiles: Yes
+Understands Context Menu: Yes
+Understands Controller Open/Close: Yes
+Prompted For Controller Disables: Yes
+Understands Command Chaining: Yes
+Tree Compatibility Version: 45
+Stand
+	Settings
+		Appearance
+			Colours
+				Primary Colour: 558752FF
+				Focused Text Colour: 9EFFD3FF
+				Focused Right-Bound Text Colour: 15EA9CFF
+				Focused Texture Colour: 15EA9CFF
+				Background Colour: 1A1A2BC8
+				HUD Colour: FFFFFFC8
+			Position: 1427, 153
+			Header
+				Header: Custom
+				Frame Interval: 100
+			Address Bar
+				Root Name: Stand {} Early Access
+				Height: 27
+			Tabs
+				Width: 50
+				Position: Top
+				Text Alignment: Centre
+				Show Icon Left: On
+				Show Name: Off
+			Scrollbar
+				Width: 1
+			Notifications
+				Type: Game
+			Border
+				Rounded: On
+				Colour: EFC28BFF
+			List Width: 350
+			List Height: 30
+			Spacer Size: 0
+			Smooth Scrolling: 110
+			Background Blur: 5
+			Font & Text
+				Small Text
+					Y Offset: 1
+		Info Text
+			Position: 1908, 983
+			Alignment: Bottom Right
+			Scale: 15
