@@ -1,0 +1,49 @@
+Finished Tutorial: Yes
+Understands Commands: Yes
+Understands Sliders: Yes
+Understands Profiles: Yes
+Understands Controller Open/Close: Yes
+Prompted For Controller Disables: Yes
+Understands Command Chaining: Yes
+Tree Compatibility Version: 45
+Stand
+	Settings
+		Appearance
+			Colours
+				Primary Colour: EFC28BFF
+				Focused Text Colour: 7C6048FF
+				Focused Right-Bound Text Colour: 7C6048FF
+				Focused Texture Colour: 7C6048FF
+				Background Colour: 7C6048D7
+				HUD Colour: FFFFFF64
+			Position: 1495, 175
+			Header
+				Header: Custom
+			Address Bar
+				Root Name: Stand {} Femboy Edition
+				Height: 27
+			Tabs
+				Width: 50
+				Position: Top
+				Text Alignment: Centre
+				Show Icon Left: On
+				Show Name: Off
+			Scrollbar
+				Width: 1
+			Notifications
+				Type: Game
+			Border
+				Width: 2
+				Rounded: On
+				Colour: EFC28BFF
+			List Width: 350
+			List Height: 30
+			Spacer Size: 0
+			Smooth Scrolling: 110
+			Background Blur: 5
+			Font & Text
+				Small Text
+					Y Offset: 1
+		Info Text
+			Alignment: Bottom Left
+			Scale: 11
