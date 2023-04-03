@@ -1,0 +1,78 @@
+Finished Tutorial: Yes
+Understands Commands: Yes
+Understands Sliders: Yes
+Understands Profiles: Yes
+Understands Context Menu: Yes
+Understands Controller Open/Close: Yes
+Prompted For Controller Disables: Yes
+Understands Command Chaining: Yes
+Tree Compatibility Version: 45
+Players
+	Settings
+		Tags
+			Classification Tags On Self: Off
+			Self: 
+			Friend: 
+			Crew Member: 
+			In Timeout: 
+			Modder: 
+			Admin: 
+			Likely Modder: 
+			Attacked You: 
+			Host: 
+			Next Host: 
+			Script Host: 
+			Invulnerable: 
+			Indestructible Vehicle: 
+			RC Vehicle: 
+			Off The Radar: 
+			In An Interior: 
+			Spectating: 
+			Typing: 
+			Dead: 
+			Invisible: 
+			VPN: 
+Stand
+	Settings
+		Appearance
+			Colours
+				Primary Colour: 000000FF
+				Background Colour: 000000C8
+				Unfocused Text Colour: FFFFFF64
+				Unfocused Right-Bound Text Colour: FFFFFF64
+				Unfocused Texture Colour: FFFFFF64
+				HUD Colour: FFFFFFC8
+			Position: 1367, 143
+			Header
+				Header: Custom
+				Frame Interval: 100
+			Address Bar
+				Address Bar: Off
+				Root Name: Stand {} Early Access
+				Height: 27
+			Tabs
+				Width: 50
+				Position: Top
+				Text
+					Scale: 13
+					Y Offset: 7
+				Text Alignment: Centre
+			Scrollbar
+				Width: 1
+			Notifications
+				Type: Game
+			Border
+				Rounded: On
+				Colour: EFC28BFF
+			List Width: 350
+			List Height: 30
+			Spacer Size: 0
+			Smooth Scrolling: 110
+			Background Blur: 5
+			Font & Text
+				Small Text
+					Y Offset: 1
+		Info Text
+			Position: 1908, 983
+			Alignment: Bottom Right
+			Scale: 15

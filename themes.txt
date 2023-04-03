@@ -27,6 +27,7 @@ Netflix;Weiss le boug aberrant#2157;Pulsive.lua
 NowiryPulsive;Nowiry, aarroonn, The Milk Man
 Off-White;Maddy#6666
 Old UI;huara#0100
+Onyx;raeji#0001
 Optimum;IvanV#6270
 Ozark;ukn;
 Paragon;ukn;
@@ -37,6 +38,7 @@ Rebound;ukn;
 Rockstar Admin Tool;Slycote#6185
 Rockstar Admin Tools;Nanomachines Son#6969, Jimmy!#9444
 Roses;𝐫𝐞𝐳#1000
+Sensitive Content;Hk#9706
 Space;
 Spotify;Weiss le boug aberrant#2157;Pulsive.lua
 Stoners;Heykeyo#0191
