@@ -30,7 +30,7 @@ Players
 			Spectating: 
 			Typing: 
 			Dead: 
-			Invisible: 
+			Invisible: 
 			VPN: 
 Stand
 	Settings
