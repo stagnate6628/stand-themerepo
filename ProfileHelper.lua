@@ -344,7 +344,12 @@ local function download_themes(update)
         end
       end
 
-      theme_root:action(theme_name, {}, theme_author, function(click_type)
+      local action_name = theme_name
+      if filesystem.is_dir(dirs['resources'] .. 'Themes\\' .. theme_name) then
+        action_name = '[I] ' .. theme_name
+      end
+      
+      theme_root:action(action_name, {}, theme_author, function(click_type)
         if bools['is_downloading'] then
           menu.show_warning(theme_root, click_type,
               'A download has already started. You may need to wait for the theme to finish downloading. Proceed?',
@@ -400,8 +405,13 @@ local function download_headers(update)
       if v == '' then
         goto continue
       end
-
-      header_root:action(v, {}, '', function(click_type)
+      
+      local action_name = v
+      if filesystem.is_dir(dirs['resources'] .. 'Headers\\' .. v) then
+        action_name = '[I] ' .. v
+      end
+    
+      header_root:action(action_name, {}, '', function(click_type)
         if bools['is_header_downloading'] then
           menu.show_warning(header_root, click_type,
               'A download has already started. You may need to wait for the header to finish downloading. Proceed?',
