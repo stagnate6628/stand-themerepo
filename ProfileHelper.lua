@@ -73,8 +73,6 @@ for _, dependency in auto_update_config.dependencies do
   end
 end
 
-local inspect = require('lib/inspect')
-
 local io, lib, util = io, lib, util
 math.randomseed(util.current_unix_time_seconds()) -- apparently this is good
 
