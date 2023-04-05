@@ -95,11 +95,12 @@ local dirs<const> = {
   ['resources'] = filesystem.resources_dir() .. 'ProfileHelper\\'
 }
 
+local root = menu.my_root()
 -- headers
-local header_root = menu.list(menu.my_root(), 'Headers', {}, '')
+local header_root = menu.list(root, 'Headers', {}, '')
 local header_config = header_root:list('Configuration', {}, '')
 -- themes
-local theme_root = menu.list(menu.my_root(), 'Themes', {}, '')
+local theme_root = menu.list(root, 'Themes', {}, '')
 local theme_config = theme_root:list('Configuration', {}, '')
 
 theme_config:toggle('Re-use Local Assets', {}, '', function(s)
@@ -331,7 +332,6 @@ local function download_themes(update)
 
       local parts = v:split(';')
       local theme_name = parts[1]
-      local theme_author = 'Author: ' .. parts[2]
       local deps = {}
 
       if type(parts[3]) == 'string' and string.len(parts[3]) > 0 then
@@ -349,7 +349,7 @@ local function download_themes(update)
         action_name = '[I] ' .. theme_name
       end
       
-      theme_root:action(action_name, {}, theme_author, function(click_type)
+      theme_root:action(action_name, {}, '', function(click_type)
         if bools['is_downloading'] then
           menu.show_warning(theme_root, click_type,
               'A download has already started. You may need to wait for the theme to finish downloading. Proceed?',
@@ -566,5 +566,7 @@ io.makedirs(dirs['resources'] .. '\\Headers')
 
 download_themes()
 download_headers()
+
+root:hyperlink('Credits', 'https://github.com/stagnate6628/stand-profile-helper/wiki/Credits')
 
 util.keep_running()
