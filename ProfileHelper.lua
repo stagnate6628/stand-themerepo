@@ -76,6 +76,7 @@ end
 local io, lib, util = io, lib, util
 math.randomseed(util.current_unix_time_seconds()) -- apparently this is good
 
+local tree_version<const> = 45
 local path_map<const> = {'Root', 'Theme', 'Tags', 'Tabs', 'Custom Header', 'Lua Scripts'}
 local make_dirs<const> = {'Lua Scripts', 'Custom Header', 'Theme\\Custom', 'Theme\\Tabs'}
 
@@ -120,7 +121,7 @@ local function get_lang_list()
     return lang_list
   end
 
-  for k, v in menu.ref_by_path('Stand>Settings>Language', 45):getChildren() do
+  for k, v in menu.ref_by_path('Stand>Settings>Language', tree_version):getChildren() do
     table.insert(lang_list, v.menu_name)
   end
 
@@ -188,7 +189,7 @@ local function load_profile(profile_name)
         dirs['resources'] .. 'Themes\\' .. profile_name .. '\\' .. profile_name .. '.txt') do
       if k:startswith('Stand>Settings>Appearance') or k:startswith('Stand>Lua Scripts') or
           k:startswith('Players>Settings>Tags') then
-        local ref = menu.ref_by_path(k .. '>' .. v, 45)
+        local ref = menu.ref_by_path(k .. '>' .. v, tree_version)
         if not ref:isValid() then
           lib:trigger_command_by_ref(k, v)
         else
@@ -207,6 +208,7 @@ local function load_profile(profile_name)
 
     if lang_index ~= 3 then
       lib:trigger_command(lang_map[lang_index])
+      -- todo: remove stand>lua scripts>profilehelper if not using default config
       ref:refByRelPath('Save'):trigger()
     end
 
@@ -215,7 +217,7 @@ local function load_profile(profile_name)
   end
 
   -- this works sometimes :]
-  menu.ref_by_path('Self>Movement', 45):focus()
+  menu.ref_by_path('Self>Movement', tree_version):focus()
 
   log('Done!')
   util.toast('Done!')
@@ -451,7 +453,7 @@ local function download_headers(update)
             util.yield(250)
           until i == #body
 
-          if menu.ref_by_path('Stand>Settings>Appearance>Header>Header', 45).value == 200 then
+          if menu.ref_by_path('Stand>Settings>Appearance>Header>Header', tree_version).value == 200 then
             hide_header()
           end
           use_custom_header()
