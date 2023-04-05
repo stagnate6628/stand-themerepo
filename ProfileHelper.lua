@@ -76,6 +76,7 @@ end
 local io, lib, util = io, lib, util
 math.randomseed(util.current_unix_time_seconds()) -- apparently this is good
 
+local tree_version<const> = 45
 local path_map<const> = {'Root', 'Theme', 'Tags', 'Tabs', 'Custom Header', 'Lua Scripts'}
 local make_dirs<const> = {'Lua Scripts', 'Custom Header', 'Theme\\Custom', 'Theme\\Tabs'}
 
@@ -94,11 +95,12 @@ local dirs<const> = {
   ['resources'] = filesystem.resources_dir() .. 'ProfileHelper\\'
 }
 
+local root = menu.my_root()
 -- headers
-local header_root = menu.list(menu.my_root(), 'Headers', {}, '')
+local header_root = menu.list(root, 'Headers', {}, '')
 local header_config = header_root:list('Configuration', {}, '')
 -- themes
-local theme_root = menu.list(menu.my_root(), 'Themes', {}, '')
+local theme_root = menu.list(root, 'Themes', {}, '')
 local theme_config = theme_root:list('Configuration', {}, '')
 
 theme_config:toggle('Re-use Local Assets', {}, '', function(s)
@@ -120,7 +122,7 @@ local function get_lang_list()
     return lang_list
   end
 
-  for k, v in menu.ref_by_path('Stand>Settings>Language', 45):getChildren() do
+  for k, v in menu.ref_by_path('Stand>Settings>Language', tree_version):getChildren() do
     table.insert(lang_list, v.menu_name)
   end
 
@@ -188,7 +190,7 @@ local function load_profile(profile_name)
         dirs['resources'] .. 'Themes\\' .. profile_name .. '\\' .. profile_name .. '.txt') do
       if k:startswith('Stand>Settings>Appearance') or k:startswith('Stand>Lua Scripts') or
           k:startswith('Players>Settings>Tags') then
-        local ref = menu.ref_by_path(k .. '>' .. v, 45)
+        local ref = menu.ref_by_path(k .. '>' .. v, tree_version)
         if not ref:isValid() then
           lib:trigger_command_by_ref(k, v)
         else
@@ -207,6 +209,7 @@ local function load_profile(profile_name)
 
     if lang_index ~= 3 then
       lib:trigger_command(lang_map[lang_index])
+      -- todo: remove stand>lua scripts>profilehelper if not using default config
       ref:refByRelPath('Save'):trigger()
     end
 
@@ -215,7 +218,7 @@ local function load_profile(profile_name)
   end
 
   -- this works sometimes :]
-  menu.ref_by_path('Self>Movement', 45):focus()
+  menu.ref_by_path('Self>Movement', tree_version):focus()
 
   log('Done!')
   util.toast('Done!')
@@ -329,7 +332,6 @@ local function download_themes(update)
 
       local parts = v:split(';')
       local theme_name = parts[1]
-      local theme_author = 'Author: ' .. parts[2]
       local deps = {}
 
       if type(parts[3]) == 'string' and string.len(parts[3]) > 0 then
@@ -347,7 +349,7 @@ local function download_themes(update)
         action_name = '[I] ' .. theme_name
       end
       
-      theme_root:action(action_name, {}, theme_author, function(click_type)
+      theme_root:action(action_name, {}, '', function(click_type)
         if bools['is_downloading'] then
           menu.show_warning(theme_root, click_type,
               'A download has already started. You may need to wait for the theme to finish downloading. Proceed?',
@@ -451,7 +453,7 @@ local function download_headers(update)
             util.yield(250)
           until i == #body
 
-          if menu.ref_by_path('Stand>Settings>Appearance>Header>Header', 45).value == 200 then
+          if menu.ref_by_path('Stand>Settings>Appearance>Header>Header', tree_version).value == 200 then
             hide_header()
           end
           use_custom_header()
@@ -564,5 +566,7 @@ io.makedirs(dirs['resources'] .. '\\Headers')
 
 download_themes()
 download_headers()
+
+root:hyperlink('Credits', 'https://github.com/stagnate6628/stand-profile-helper/wiki/Credits')
 
 util.keep_running()
