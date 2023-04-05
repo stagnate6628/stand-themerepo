@@ -13,6 +13,7 @@ Jinx
 Killua
 Madara Uchiha Animated
 MyMenuIsNoWork
+Neon Wave
 Orange Clouds Animated
 Paragone Blue (2)
 Paragone Blue (3)
@@ -34,13 +35,18 @@ Paragone White
 Paragone Yellow (2)
 Paragone Yellow (3)
 Paragone Yellow
+Pink Storm
 Purple Clouds Animated
 Purple Explosion
 Purple Heart
 Purple Shards
+Purple Smoke
+Red Rose Black
+Red Sci-Fi Wave
 Retro Animated
 Rockstar Administrator Tool
 Rockstar Anti-Profit Tool
+Rose Red Glitch
 Sex and drugs
 Showtime
 Smoke
@@ -51,4 +57,5 @@ Teal Clouds Animated
 WaifuOk
 whatthedogdoin
 White Dots
+Wolf
 Yeat
