@@ -110,7 +110,7 @@ theme_config:toggle('Combine Profiles', {}, '', function(s)
   bools['combine_profiles'] = s
 end, false)
 
-local lang_list = { "Chinese (Simplified) - 简体中文", "Dutch - Nederlands", "English (UK)", "English (US)",
+local lang_list<const> = { "Chinese (Simplified) - 简体中文", "Dutch - Nederlands", "English (UK)", "English (US)",
   "French - Français", "German - Deutsch", "Korean - 한국어", "Lithuanian - Lietuvių", "Polish - Polski",
   "Portuguese - Português", "Russian - русский", "Spanish - Español", "Turkish - Türkçe", "Horny English",
   "Engwish", "Howny Engwish" }
