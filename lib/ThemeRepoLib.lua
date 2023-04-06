@@ -6,10 +6,6 @@ local function handle_ratelimit(status_code)
 end
 -- https://stackoverflow.com/questions/9102126/lua-return-directory-path-from-path
 local function get_dirname_from_path(path)
-  if type(path) ~= 'string' then
-    return nil
-  end
-
   return path:match('(.*[/\\])')
 end
 local function write_file(path, body)
