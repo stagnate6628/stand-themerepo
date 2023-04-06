@@ -1,23 +1,20 @@
-require('ProfileHelperLib')
-
-local header_path = filesystem.resources_dir() .. "ProfileHelper\\Themes\\Paragon\\Header.bmp"
-local subheader_path = filesystem.resources_dir() .. "ProfileHelper\\Themes\\Paragon\\Subheader.bmp"
-local footer_path = filesystem.resources_dir() .. "ProfileHelper\\Themes\\Paragon\\Footer.bmp"
+local header_path = filesystem.resources_dir() .. "ThemeRepo\\Themes\\Paragon\\Header.bmp"
+local subheader_path = filesystem.resources_dir() .. "ThemeRepo\\Themes\\Paragon\\Subheader.bmp"
+local footer_path = filesystem.resources_dir() .. "ThemeRepo\\Themes\\Paragon\\Footer.bmp"
 
 if not io.exists(header_path) then
-    util.toast("[SPH] Header not found, attempting download.")
-    lib:download_file("Themes/Paragon/Header.bmp", {header_path})
+    util.toast('[ThemeRepo] Header not found!')
+    util.stop_script()
 end
 
 if not io.exists(footer_path) then
-    util.toast("[SPH] Footer not found, attempting download.")
-    lib:download_file("Themes/Paragon/Footer.bmp", {footer_path})
-
+    util.toast('[ThemeRepo] Footer not found!')
+    util.stop_script()
 end
 
 if not io.exists(subheader_path) then
-    util.toast("[SPH] Footer not found, attempting download.")
-    lib:download_file("Themes/Paragon/Subheader.bmp", {subheader_path})
+    util.toast('[ThemeRepo] Subheader not found!')
+    util.stop_script()
 end
 
 local header = directx.create_texture(header_path)

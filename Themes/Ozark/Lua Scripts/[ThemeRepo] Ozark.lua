@@ -1,27 +1,25 @@
-require('ProfileHelperLib')
-
-local header_path = filesystem.resources_dir() .. "ProfileHelper\\Themes\\Ozark\\Header.bmp"
-local subheader_path = filesystem.resources_dir() .. "ProfileHelper\\Themes\\Ozark\\Subheader.bmp"
+local header_path = filesystem.resources_dir() .. "ThemeRepo\\Themes\\Ozark\\Header.bmp"
+local subheader_path = filesystem.resources_dir() .. "ThemeRepo\\Themes\\Ozark\\Subheader.bmp"
 
 local interaction_header_path = function(i)
-    return filesystem.resources_dir() .. 'ProfileHelper\\Themes\\Ozark\\Interaction Header\\Header' .. i .. ".bmp"
+    return filesystem.resources_dir() .. 'ThemeRepo\\Themes\\Ozark\\Interaction Header\\Header' .. i .. ".bmp"
 end
 
 if not io.exists(header_path) then
-    util.toast("[SPH] Header not found, attempting download.")
-    lib:download_file("Themes/Ozark/Header.bmp", {header_path})
+    util.toast('[ThemeRepo] Header not found!')
+    util.stop_script()
 end
 
 for i = 1, 18 do
     if not io.exists(interaction_header_path(i)) then
-        util.toast("[SPH] Downloaded globe header " .. i .. "/18")
-        lib:download_file("Themes/Ozark/Interaction Header/Header" .. i .. ".bmp", {interaction_header_path(i)})
+        util.toast('[ThemeRepo] Header ' .. i .. ' not found!')
+        util.stop_script()
     end
 end
 
 if not io.exists(subheader_path) then
-    util.toast("[SPH] Footer not found, attempting download.")
-    lib:download_file("Themes/Ozark/Subheader.bmp", {subheader_path})
+    util.toast('[ThemeRepo] Subheader not found!')
+	util.stop_script()
 end
 
 local header = directx.create_texture(header_path)

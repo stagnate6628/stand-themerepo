@@ -47,4 +47,4 @@ Stand
 			Spacer Size: 0
 			Background Blur: 0
 	Lua Scripts
-		[SPH] 2Take1: On
+		[ThemeRepo] 2Take1: On

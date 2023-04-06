@@ -77,4 +77,4 @@ Stand
 			Position: 1888, 26
 			Scale: 17
 	Lua Scripts
-		[SPH] Kiddions: On
+		[ThemeRepo] Kiddions: On

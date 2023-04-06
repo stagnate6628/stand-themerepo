@@ -1,22 +1,20 @@
-require('ProfileHelperLib')
-
-local header_path = filesystem.resources_dir() .. "ProfileHelper\\Themes\\XCheats\\Header.bmp"
-local subheader_path = filesystem.resources_dir() .. "ProfileHelper\\Themes\\XCheats\\Subheader.bmp"
-local footer_path = filesystem.resources_dir() .. "ProfileHelper\\Themes\\XCheats\\Footer.bmp"
+local header_path = filesystem.resources_dir() .. "ThemeRepo\\Themes\\XCheats\\Header.bmp"
+local subheader_path = filesystem.resources_dir() .. "ThemeRepo\\Themes\\XCheats\\Subheader.bmp"
+local footer_path = filesystem.resources_dir() .. "ThemeRepo\\Themes\\XCheats\\Footer.bmp"
 
 if not io.exists(header_path) then
-    util.toast("[SPH] Header not found, attempting download.")
-    lib:download_file("Themes/XCheats/Header.bmp", {header_path})
+    util.toast('[ThemeRepo] Header not found!')
+    util.stop_script()
 end
 
 if not io.exists(footer_path) then
-    util.toast("[SPH] Footer not found, attempting download.")
-    lib:download_file("Themes/XCheats/Footer.bmp", {footer_path})
+    util.toast('[ThemeRepo] Footer not found!')
+    util.stop_script()
 end
 
 if not io.exists(subheader_path) then
-    util.toast("[SPH] Footer not found, attempting download.")
-    lib:download_file("Themes/XCheats/Subheader.bmp", {subheader_path})
+    util.toast('[ThemeRepo] Subheader not found!')
+    util.stop_script()
 end
 
 local header = directx.create_texture(header_path)

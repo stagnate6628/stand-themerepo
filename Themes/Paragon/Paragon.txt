@@ -51,4 +51,4 @@ Stand
 			Spacer Size: 0
 			Background Blur: 0
 	Lua Scripts
-		[SPH] Paragon: On
+		[ThemeRepo] Paragon: On

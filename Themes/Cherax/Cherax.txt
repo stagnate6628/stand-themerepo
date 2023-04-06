@@ -47,4 +47,4 @@ Stand
 					X Offset: -4
 					Y Offset: 4
 	Lua Scripts
-		[SPH] Cherax: On
+		[ThemeRepo] Cherax: On

@@ -50,4 +50,4 @@ Stand
 			Spacer Size: 0
 			Background Blur: 0
 	Lua Scripts
-		[SPH] Rebound: On
+		[ThemeRepo] Rebound: On

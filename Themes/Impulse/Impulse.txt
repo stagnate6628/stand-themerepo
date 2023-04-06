@@ -49,4 +49,4 @@ Stand
 			Spacer Size: 12
 			Background Blur: 0
 	Lua Scripts
-		[SPH] Impulse: On
+		[ThemeRepo] Impulse: On

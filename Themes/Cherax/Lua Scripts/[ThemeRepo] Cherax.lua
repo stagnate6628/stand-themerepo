@@ -1,10 +1,8 @@
-require('ProfileHelperLib')
-
-local header_path = filesystem.resources_dir() .. 'ProfileHelper\\Themes\\Cherax\\Header.bmp'
+local header_path = filesystem.resources_dir() .. 'ThemeRepo\\Themes\\Cherax\\Header.bmp'
 
 if not io.exists(header_path) then
-		util.toast('[SPH] Header not found, attempting download.')
-		lib:download_file('Themes/Cherax/Header.bmp', {header_path})
+	util.toast('[ThemeRepo] Header.bmp not found!')
+	util.stop_script()
 end
 
 local header = directx.create_texture(header_path)

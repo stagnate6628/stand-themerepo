@@ -1,22 +1,20 @@
-require('ProfileHelperLib')
-
-local header_path = filesystem.resources_dir() .. 'ProfileHelper\\Themes\\Circuit\\Header.bmp'
-local footer_path = filesystem.resources_dir() .. 'ProfileHelper\\Themes\\Circuit\\Footer.bmp'
-local subheader_path = filesystem.resources_dir() .. 'ProfileHelper\\Themes\\Circuit\\Subheader.bmp'
+local header_path = filesystem.resources_dir() .. 'ThemeRepo\\Themes\\Circuit\\Header.bmp'
+local footer_path = filesystem.resources_dir() .. 'ThemeRepo\\Themes\\Circuit\\Footer.bmp'
+local subheader_path = filesystem.resources_dir() .. 'ThemeRepo\\Themes\\Circuit\\Subheader.bmp'
 
 if not io.exists(header_path) then
-		util.toast('[SPH] Header not found, attempting download.')
-		lib:download_file('Themes/Circuit/Header.bmp', {header_path})
+		util.toast('[ThemeRepo] Circuit Header not found!')
+		util.stop_script()
 end
 
 if not io.exists(footer_path) then
-		util.toast('[SPH] Footer not found, attempting download.')
-		lib:download_file('Themes/Circuit/Footer.bmp', {footer_path})
+		util.toast('[ThemeRepo] Circuit Footer not found!')
+		util.stop_script()
 end
 
 if not io.exists(subheader_path) then
-		util.toast('[SPH] Footer not found, attempting download.')
-		lib:download_file('Themes/Circuit/Subheader.bmp', {subheader_path})
+	util.toast('[ThemeRepo] Circuit Subheader not found!')
+	util.stop_script()
 end
 
 local header = directx.create_texture(header_path)

@@ -1,17 +1,14 @@
-require('ProfileHelperLib')
-
-local background_path = filesystem.resources_dir() .. "ProfileHelper\\Themes\\Zanium\\Background.png"
-local logo_path = filesystem.resources_dir() .. "ProfileHelper\\Themes\\Zanium\\Logo.png"
+local background_path = filesystem.resources_dir() .. "ThemeRepo\\Themes\\Zanium\\Background.png"
+local logo_path = filesystem.resources_dir() .. "ThemeRepo\\Themes\\Zanium\\Logo.png"
 
 if not io.exists(background_path) then
-    util.toast("[SPH] Background not found, attempting download.")
-    lib:download_file("Themes/Zanium/Background.png", {background_path})
-
+    util.toast('[ThemeRepo] Background not found!')
+    util.stop_script()
 end
 
 if not io.exists(logo_path) then
-    util.toast("[SPH] Logo not found, attempting download.")
-    lib:download_file("Themes/Zanium/Logo.png", {logo_path})
+    util.toast('[ThemeRepo] Logo not found!')
+    util.stop_script()
 end
 
 local logo = directx.create_texture(logo_path)
