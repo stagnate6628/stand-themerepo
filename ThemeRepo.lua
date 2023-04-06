@@ -335,10 +335,8 @@ local function download_themes(update)
       end
 
       local action_name = theme_name
-			local help_text = ''
 			if filesystem.is_dir(dirs['resources'] .. 'Themes\\' .. theme_name) then
         action_name = '[I] ' .. theme_name
-				help_text = 'You installed this theme from the repository. Click to apply.' 
       end
       
       theme_root:action(action_name, {}, '', function(click_type)
@@ -399,7 +397,6 @@ local function download_headers(update)
       end
       
       local action_name = v
-			local help_text = 
       if filesystem.is_dir(dirs['resources'] .. 'Headers\\' .. v) then
         action_name = '[I] ' .. v
       end
