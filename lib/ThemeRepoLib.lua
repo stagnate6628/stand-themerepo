@@ -1,19 +1,11 @@
--- ProfileHelperLib.lua 
+-- ThemeRepoLib.lua
 local function handle_ratelimit(status_code)
   if status_code == 403 then
     util.toast('You are currently ratelimited by Github. You can let it expire or a use a vpn.')
-    return
   end
-end
-local function is_404(status_code)
-  return status_code == 404
 end
 -- https://stackoverflow.com/questions/9102126/lua-return-directory-path-from-path
 local function get_dirname_from_path(path)
-  if type(path) ~= 'string' then
-    return nil
-  end
-
   return path:match('(.*[/\\])')
 end
 local function write_file(path, body)
@@ -24,7 +16,7 @@ local function write_file(path, body)
   file:close()
 end
 local function get_github_auth()
-  local file = io.open(filesystem.resources_dir() .. 'ProfileHelper\\.github', 'r')
+  local file = io.open(filesystem.resources_dir() .. 'ThemeRepo\\.github', 'r')
   if file == nil then
     return nil
   end
@@ -43,11 +35,11 @@ lib = {}
 function lib:download_file(url_path, file_path, on_success, on_fail, on_not_found)
   local downloading = true
 
-  async_http.init('https://raw.githubusercontent.com', '/stagnate6628/stand-profile-helper/main/' .. url_path,
+  async_http.init('https://raw.githubusercontent.com', '/stagnate6628/stand-themerepo/main/' .. url_path,
       function(body, headers, status_code)
         handle_ratelimit(status_code)
 
-        if is_404(status_code) then
+        if status_code == 404 then
           pcall(on_not_found)
           goto continue
         end
@@ -82,7 +74,7 @@ end
 
 function lib:make_request(url_path, callback)
   local downloading = true
-  async_http.init('https://api.github.com', '/repos/stagnate6628/stand-profile-helper/contents/' .. url_path,
+  async_http.init('https://api.github.com', '/repos/stagnate6628/stand-themerepo/contents/' .. url_path,
       function(body, headers, status_code)
         downloading = false
         handle_ratelimit(status_code)
