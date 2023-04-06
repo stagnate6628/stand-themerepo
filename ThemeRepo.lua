@@ -55,7 +55,7 @@ local auto_update_config = {
     name = 'ThemeRepoLib',
     source_url = 'https://raw.githubusercontent.com/stagnate6628/stand-themerepo/main/lib/ThemeRepoLib.lua',
     script_relpath = 'lib/ThemeRepoLib.lua',
-    verify_file_begins_with = '-- ThemeRepoLib.lua ',
+    verify_file_begins_with = '-- ThemeRepoLib.lua',
     is_required = true
   }}
 }
