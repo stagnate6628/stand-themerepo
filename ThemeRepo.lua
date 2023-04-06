@@ -565,7 +565,6 @@ io.makedirs(dirs['resources'] .. '\\Headers')
 download_themes()
 download_headers()
 
--- todo: update url
-root:hyperlink('Credits', 'https://github.com/stagnate6628/stand-profile-helper/wiki/Credits')
+root:hyperlink('Credits', 'https://github.com/stagnate6628/stand-themerepo/wiki/Credits')
 
 util.keep_running()
