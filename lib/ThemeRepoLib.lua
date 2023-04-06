@@ -2,7 +2,6 @@
 local function handle_ratelimit(status_code)
   if status_code == 403 then
     util.toast('You are currently ratelimited by Github. You can let it expire or a use a vpn.')
-    return
   end
 end
 -- https://stackoverflow.com/questions/9102126/lua-return-directory-path-from-path
