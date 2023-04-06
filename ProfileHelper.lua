@@ -4,32 +4,32 @@ if not status then
   local auto_update_complete = nil
   util.toast('Installing auto-updater...', TOAST_ALL)
   async_http.init('raw.githubusercontent.com', '/hexarobi/stand-lua-auto-updater/main/auto-updater.lua',
-      function(result, headers, status_code)
-        local function parse_auto_update_result(result, headers, status_code)
-          local error_prefix = 'Error downloading auto-updater: '
-          if status_code ~= 200 then
-            util.toast(error_prefix .. status_code, TOAST_ALL)
-            return false
-          end
-          if not result or result == '' then
-            util.toast(error_prefix .. 'Found empty file.', TOAST_ALL)
-            return false
-          end
-          filesystem.mkdir(filesystem.scripts_dir() .. 'lib')
-          local file = io.open(filesystem.scripts_dir() .. 'lib\\auto-updater.lua', 'wb')
-          if file == nil then
-            util.toast(error_prefix .. 'Could not open file for writing.', TOAST_ALL)
-            return false
-          end
-          file:write(result)
-          file:close()
-          util.toast('Successfully installed auto-updater lib', TOAST_ALL)
-          return true
+    function(result, headers, status_code)
+      local function parse_auto_update_result(result, headers, status_code)
+        local error_prefix = 'Error downloading auto-updater: '
+        if status_code ~= 200 then
+          util.toast(error_prefix .. status_code, TOAST_ALL)
+          return false
         end
-        auto_update_complete = parse_auto_update_result(result, headers, status_code)
-      end, function()
-        util.toast('Error downloading auto-updater lib. Update failed to download.', TOAST_ALL)
-      end)
+        if not result or result == '' then
+          util.toast(error_prefix .. 'Found empty file.', TOAST_ALL)
+          return false
+        end
+        filesystem.mkdir(filesystem.scripts_dir() .. 'lib')
+        local file = io.open(filesystem.scripts_dir() .. 'lib\\auto-updater.lua', 'wb')
+        if file == nil then
+          util.toast(error_prefix .. 'Could not open file for writing.', TOAST_ALL)
+          return false
+        end
+        file:write(result)
+        file:close()
+        util.toast('Successfully installed auto-updater lib', TOAST_ALL)
+        return true
+      end
+      auto_update_complete = parse_auto_update_result(result, headers, status_code)
+    end, function()
+      util.toast('Error downloading auto-updater lib. Update failed to download.', TOAST_ALL)
+    end)
   async_http.dispatch()
   local i = 1
   while (auto_update_complete == nil and i < 40) do
@@ -51,13 +51,13 @@ local auto_update_config = {
   verify_file_begins_with = '--',
   check_interval = 86400,
   silent_updates = true,
-  dependencies = {{
+  dependencies = { {
     name = 'ProfileHelperLib',
     source_url = 'https://raw.githubusercontent.com/stagnate6628/stand-profile-helper/main/lib/ProfileHelperLib.lua',
     script_relpath = 'lib/ProfileHelperLib.lua',
     verify_file_begins_with = '-- ProfileHelperLib.lua ',
     is_required = true
-  }}
+  } }
 }
 
 auto_updater.run_auto_update(auto_update_config)
@@ -76,9 +76,9 @@ end
 local io, lib, util = io, lib, util
 math.randomseed(util.current_unix_time_seconds()) -- apparently this is good
 
-local tree_version<const> = 45
-local path_map<const> = {'Root', 'Theme', 'Tags', 'Tabs', 'Custom Header', 'Lua Scripts'}
-local make_dirs<const> = {'Lua Scripts', 'Custom Header', 'Theme\\Custom', 'Theme\\Tabs'}
+local tree_version <const> = 45
+local path_map <const> = { 'Root', 'Theme', 'Tags', 'Tabs', 'Custom Header', 'Lua Scripts' }
+local make_dirs <const> = { 'Lua Scripts', 'Custom Header', 'Theme\\Custom', 'Theme\\Tabs' }
 
 local bools = {
   ['is_downloading'] = false,
@@ -88,7 +88,7 @@ local bools = {
   ['combine_profiles'] = false
 }
 
-local dirs<const> = {
+local dirs <const> = {
   ['stand'] = filesystem.stand_dir(),
   ['theme'] = filesystem.stand_dir() .. 'Theme\\',
   ['header'] = filesystem.stand_dir() .. 'Headers\\Custom Header\\',
@@ -111,28 +111,19 @@ theme_config:toggle('Combine Profiles', {}, '', function(s)
 end, false)
 
 -- lang names from stand
-local lang_list = {}
--- lang commands
-local lang_map<const> = {'langzh', 'langnl', 'langenuk', 'langenus', 'langfr', 'langde', 'langko', 'langlt', 'langpl',
-                         'langpt', 'langru', 'langes', 'langtr', 'langsex', 'languwu', 'langhornyuwu'}
+local lang_list = { "Chinese (Simplified) - 简体中文", "Dutch - Nederlands", "English (UK)", "English (US)",
+  "French - Français", "German - Deutsch", "Korean - 한국어", "Lithuanian - Lietuvių", "Polish - Polski",
+  "Portuguese - Português", "Russian - русский", "Spanish - Español", "Turkish - Türkçe", "Horny English",
+  "Engwish", "Howny Engwish" }
+local lang_map <const> = { 'langzh', 'langnl', 'langenuk', 'langenus', 'langfr', 'langde', 'langko', 'langlt', 'langpl',
+  'langpt', 'langru', 'langes', 'langtr', 'langsex', 'languwu', 'langhornyuwu' }
 local lang_index = 3 -- english uk
 
-local function get_lang_list()
-  if #lang_list > 0 then
-    return lang_list
-  end
-
-  for k, v in menu.ref_by_path('Stand>Settings>Language', tree_version):getChildren() do
-    table.insert(lang_list, v.menu_name)
-  end
-
-  return lang_list
-end
-theme_config:list_action('Language', {}, 'Some theme fonts may not support a language.', get_lang_list(),
-    function(index)
-      lang_index = index
-      util.toast('[ProfileHelper] Profile language set to ' .. lang_list[lang_index])
-    end)
+theme_config:list_action('Language', {}, 'Some theme fonts may not support a language.', lang_list,
+  function(index)
+    lang_index = index
+    util.toast('[ProfileHelper] Profile language set to ' .. lang_list[lang_index])
+  end)
 
 local function log(msg)
   if not bools['debug'] then
@@ -187,7 +178,7 @@ local function load_profile(profile_name)
 
   if bools['combine_profiles'] then
     for k, v in util.read_colons_and_tabs_file(
-        dirs['resources'] .. 'Themes\\' .. profile_name .. '\\' .. profile_name .. '.txt') do
+      dirs['resources'] .. 'Themes\\' .. profile_name .. '\\' .. profile_name .. '.txt') do
       if k:startswith('Stand>Settings>Appearance') or k:startswith('Stand>Lua Scripts') or
           k:startswith('Players>Settings>Tags') then
         local ref = menu.ref_by_path(k .. '>' .. v, tree_version)
@@ -240,12 +231,12 @@ local function download_theme(theme_name, deps)
   io.makedirs(dirs['theme'] .. 'Tabs')
 
   local req_url = {}
-  table.insert(req_url, 'Themes/' .. theme_name) -- 1=root
-  table.insert(req_url, req_url[1] .. '/Theme') -- 2=theme
-  table.insert(req_url, req_url[2] .. '/Custom') -- 3=tag_names
-  table.insert(req_url, req_url[2] .. '/Tabs') -- 4=tabs
+  table.insert(req_url, 'Themes/' .. theme_name)        -- 1=root
+  table.insert(req_url, req_url[1] .. '/Theme')         -- 2=theme
+  table.insert(req_url, req_url[2] .. '/Custom')        -- 3=tag_names
+  table.insert(req_url, req_url[2] .. '/Tabs')          -- 4=tabs
   table.insert(req_url, req_url[1] .. '/Custom Header') -- 5=custom header
-  table.insert(req_url, req_url[1] .. '/Lua Scripts') -- 6=lua scripts
+  table.insert(req_url, req_url[1] .. '/Lua Scripts')   -- 6=lua scripts
 
   for k1, v1 in req_url do
     local i = 0
@@ -270,7 +261,7 @@ local function download_theme(theme_name, deps)
         end
 
         -- v2.path is nil on ratelimit
-        local paths = {dirs['resources'] .. v2.path:gsub('/', '\\')}
+        local paths = { dirs['resources'] .. v2.path:gsub('/', '\\') }
         local file_name = v2.name
 
         log(string.format('Downloading %s at path %s', v2.name, v2.path))
@@ -348,14 +339,14 @@ local function download_themes(update)
       if filesystem.is_dir(dirs['resources'] .. 'Themes\\' .. theme_name) then
         action_name = '[I] ' .. theme_name
       end
-      
+
       theme_root:action(action_name, {}, '', function(click_type)
         if bools['is_downloading'] then
           menu.show_warning(theme_root, click_type,
-              'A download has already started. You may need to wait for the theme to finish downloading. Proceed?',
-              function()
-                bools['is_downloading'] = false
-              end)
+            'A download has already started. You may need to wait for the theme to finish downloading. Proceed?',
+            function()
+              bools['is_downloading'] = false
+            end)
           return
         end
 
@@ -369,7 +360,7 @@ local function download_themes(update)
 
   local path = dirs['resources'] .. 'themes.txt'
   local function download_list()
-    lib:download_file('themes.txt', {path}, function(body, headers, status_code)
+    lib:download_file('themes.txt', { path }, function(body, headers, status_code)
       log('Creating theme cache')
       parse_list(body)
     end)
@@ -405,19 +396,19 @@ local function download_headers(update)
       if v == '' then
         goto continue
       end
-      
+
       local action_name = v
       if filesystem.is_dir(dirs['resources'] .. 'Headers\\' .. v) then
         action_name = '[I] ' .. v
       end
-    
+
       header_root:action(action_name, {}, '', function(click_type)
         if bools['is_header_downloading'] then
           menu.show_warning(header_root, click_type,
-              'A download has already started. You may need to wait for the header to finish downloading. Proceed?',
-              function()
-                bools['is_header_downloading'] = false
-              end)
+            'A download has already started. You may need to wait for the header to finish downloading. Proceed?',
+            function()
+              bools['is_header_downloading'] = false
+            end)
           return
         end
 
@@ -436,7 +427,7 @@ local function download_headers(update)
 
           local i = 0
           for _, v2 in body do
-            local paths = {dirs['resources'] .. 'Headers\\' .. v .. '\\' .. v2.name, dirs['header'] .. v2.name}
+            local paths = { dirs['resources'] .. 'Headers\\' .. v .. '\\' .. v2.name, dirs['header'] .. v2.name }
             if should_copy(paths[1]) then
               lib:copy_file(paths[1], paths[2])
               log(string.format('Copied header %s (%d/%d)', v2.name, i + 1, #body))
@@ -474,7 +465,7 @@ local function download_headers(update)
 
   local path = dirs['resources'] .. 'headers.txt'
   local function download_list()
-    lib:download_file('headers.txt', {path}, function(body, headers, status_code)
+    lib:download_file('headers.txt', { path }, function(body, headers, status_code)
       log('Creating headers cache')
       parse_list(body)
     end)
