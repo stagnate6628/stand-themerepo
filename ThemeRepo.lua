@@ -46,14 +46,14 @@ if auto_updater == true then
 end
 
 local auto_update_config = {
-  source_url = 'https://raw.githubusercontent.com/stagnate6628/stand-profile-helper/main/ThemeRepo.lua',
+  source_url = 'https://raw.githubusercontent.com/stagnate6628/stand-themerepo/main/ThemeRepo.lua',
   script_relpath = SCRIPT_RELPATH,
   verify_file_begins_with = '--',
   check_interval = 86400,
   silent_updates = true,
   dependencies = {{
     name = 'ThemeRepoLib',
-    source_url = 'https://raw.githubusercontent.com/stagnate6628/stand-profile-helper/main/lib/ThemeRepoLib.lua',
+    source_url = 'https://raw.githubusercontent.com/stagnate6628/stand-themerepo/main/lib/ThemeRepoLib.lua',
     script_relpath = 'lib/ThemeRepoLib.lua',
     verify_file_begins_with = '-- ThemeRepoLib.lua ',
     is_required = true
