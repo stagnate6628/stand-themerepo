@@ -124,7 +124,6 @@ theme_config:list_action('Language', {}, 'Some theme fonts may not support a lan
     util.toast('[ThemeRepo] Profile language set to ' .. lang_list[lang_index])
   end)
 
-
 local function log(msg)
   if not bools['debug'] then
     return
