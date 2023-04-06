@@ -1,5 +1,5 @@
 # ThemeRepo
-Lua script to help apply themes blazingly fast for Stand
+Lua script to apply headers and themes blazingly fast for Stand
 
 ### [Creating Themes](https://github.com/stagnate6628/stand-themerepo/wiki/Creating-Themes)
 
