@@ -60,9 +60,8 @@ local auto_update_config = {
   }}
 }
 
-auto_updater.run_auto_update(auto_update_config)
-
-for _, dependency in auto_update_config.dependencies do
+--auto_updater.run_auto_update(auto_update_config)
+--[[for _, dependency in auto_update_config.dependencies do
   if dependency.is_required then
     if dependency.loaded_lib == nil then
       util.toast('Error loading lib ' .. dependency.name, TOAST_ALL)
@@ -72,6 +71,8 @@ for _, dependency in auto_update_config.dependencies do
     end
   end
 end
+]]
+require 'lib/ThemeRepoLib'
 
 local io, lib, util = io, lib, util
 math.randomseed(util.current_unix_time_seconds()) -- apparently this is good
@@ -84,7 +85,7 @@ local bools = {
   ['is_downloading'] = false,
   ['is_header_downloading'] = false,
   ['prevent_redownloads'] = true,
-  ['debug'] = false,
+  ['debug'] = true,
   ['combine_profiles'] = false
 }
 
@@ -118,11 +119,10 @@ local lang_map <const> = { 'langzh', 'langnl', 'langenuk', 'langenus', 'langfr',
   'langpt', 'langru', 'langes', 'langtr', 'langsex', 'languwu', 'langhornyuwu' }
 local lang_index = 3 -- english uk
 
-theme_config:list_action('Language', {}, 'Some theme fonts may not support a language.', lang_list,
-  function(index)
-    lang_index = index
-    util.toast('[ThemeRepo] Profile language set to ' .. lang_list[lang_index])
-  end)
+theme_config:list_action('Language', {}, 'Some theme fonts may not support a language.', lang_list, function(index)
+  lang_index = index
+  util.toast('[ThemeRepo] Profile language set to ' .. lang_list[lang_index])
+end)
 
 local function log(msg)
   if not bools['debug'] then
@@ -189,7 +189,7 @@ local function load_profile(profile_name)
       end
       util.yield()
     end
-    if lang_index ~= 3 then
+    if lang_index != 3 then
       lib:trigger_command(lang_map[lang_index])
     end
     lib:trigger_command_by_ref('Stand>Profiles>' .. get_active_profile_name() .. '>Save')
@@ -197,7 +197,7 @@ local function load_profile(profile_name)
     local ref = menu.ref_by_path('Stand>Profiles>' .. profile_name)
     ref:refByRelPath('Active'):trigger()
 
-    if lang_index ~= 3 then
+    if lang_index != 3 then
       lib:trigger_command(lang_map[lang_index])
       -- todo: remove stand>lua scripts>ThemeRepo if not using default config
       ref:refByRelPath('Save'):trigger()
@@ -255,8 +255,8 @@ local function download_theme(theme_name, deps)
       j = #body
       for k2, v2 in body do
         if v2.type == 'dir' then
-          j = j - 1
-          goto continue
+          j -= 1
+          continue
         end
 
         -- v2.path is nil on ratelimit
@@ -283,15 +283,12 @@ local function download_theme(theme_name, deps)
           table.insert(paths, filesystem.scripts_dir() .. file_name)
         end
 
-        if should_copy(paths[1]) and paths[2] ~= nil then
+        if should_copy(paths[1]) and paths[2] != nil then
           lib:copy_file(paths[1], paths[2])
-          i = i + 1
         else
-          lib:download_file(v2.path, paths, function()
-            i = i + 1
-          end)
+          lib:download_file(v2.path, paths)
         end
-        ::continue::
+        i += 1
       end
     end)
 
@@ -306,9 +303,9 @@ local function download_theme(theme_name, deps)
   load_profile(theme_name)
 end
 local function empty_list(ref)
-  for k, v in ref:getChildren() do
-    if v:getType() == COMMAND_ACTION then
-      v:delete()
+  for ref:getChildren() as child do
+    if child:getType() == COMMAND_ACTION then
+      child:delete()
     end
   end
 end
@@ -360,24 +357,22 @@ local function download_themes(update)
   local path = dirs['resources'] .. 'themes.txt'
   local function download_list()
     lib:download_file('themes.txt', {path}, function(body, headers, status_code)
-      log('Creating theme cache')
+      log(if not update then 'Creating themes cache' else 'Updating themes cache')
       parse_list(body)
     end)
   end
 
   local file = io.open(path, 'r')
-  if file ~= nil then
+  if file != nil then
     if update then
-      log('Request to update theme list')
       empty_list(theme_root)
       download_list()
       lib:trigger_command_by_ref('Stand>Lua Scripts>ThemeRepo>Themes')
       return
-    end
-
-    if not update then
+    else
       log('Found local theme list cache')
     end
+
     parse_list(file:read('*a'))
     file:close()
   else
@@ -430,13 +425,12 @@ local function download_headers(update)
             if should_copy(paths[1]) then
               lib:copy_file(paths[1], paths[2])
               log(string.format('Copied header %s (%d/%d)', v2.name, i + 1, #body))
-              i = i + 1
             else
               lib:download_file(v2.path, paths, function()
                 log(string.format('Downloaded header %s (%d/%d)', v2.name, i + 1, #body))
-                i = i + 1
               end)
             end
+            i += 1
           end
 
           repeat
@@ -465,23 +459,22 @@ local function download_headers(update)
   local path = dirs['resources'] .. 'headers.txt'
   local function download_list()
     lib:download_file('headers.txt', {path}, function(body, headers, status_code)
-      log('Creating headers cache')
+      log(if not update then 'Creating headers cache' else 'Updating headers cache')
       parse_list(body)
     end)
   end
 
   local file = io.open(path, 'r')
-  if file ~= nil then
+  if file != nil then
     if update then
       empty_list(header_root)
       download_list()
       lib:trigger_command_by_ref('Stand>Lua Scripts>ThemeRepo>Headers')
       return
-    end
-
-    if not update then
+    else
       log('Found local header list cache')
     end
+
     parse_list(file:read('*a'))
     file:close()
   else
@@ -493,16 +486,20 @@ header_config:action('Update List', {}, '', function()
 end)
 
 local helpers = menu.list(menu.my_root(), 'Helpers', {}, '')
-local reset = helpers:list('Reset', {}, '')
-local folders = helpers:list('Folders', {}, '')
-
+helpers:list_action('Reset', {}, '', { 'Default textures and font', 'Default headers' }, function(index, menu_name, prev_index, click_type)
+	if index == 1 then
+		lib:empty_dir(dirs['theme'])
+		reload_textures()
+		reload_font()
+		return
+	elseif index == 2 then
+		lib:empty_dir(dirs['header'])
+  	hide_header()
+	end
+end)
 local shortcuts = helpers:list('Shortcuts', {}, '')
-shortcuts:action('Profiles', {}, '', function()
-  lib:trigger_command_by_ref('Stand>Profiles')
-end)
-shortcuts:action('Lua Scripts', {}, '', function()
-  lib:trigger_command_by_ref('Stand>Lua Scripts')
-end)
+shortcuts:link(menu.ref_by_path('Stand>Profiles'))
+shortcuts:link(menu.ref_by_path('Stand>Lua Scripts'))
 
 helpers:toggle('Debug', {}, 'Logs detailed output to a log file and enables the developer preset.', function(s)
   if s then
@@ -519,31 +516,25 @@ helpers:action('Update Script', {}, '', function()
   auto_updater.run_auto_update(auto_update_config)
 end)
 
-reset:action('Default Textures and Font', {}, '', function()
-  lib:empty_dir(dirs['theme'])
-  reload_textures()
-  reload_font()
-end)
-reset:action('Default Headers', {}, '', function()
-  lib:empty_dir(dirs['header'])
-  hide_header()
-end)
-
-folders:action('Stand Folder', {}, '', function()
-  util.open_folder(dirs['stand'])
-end)
-folders:action('Theme Folder', {}, '', function()
-  util.open_folder(dirs['theme'])
-end)
-folders:action('Headers Folder', {}, '', function()
-  util.open_folder(dirs['header'])
-end)
-folders:action('Profiles Folder', {}, '', function()
-  util.open_folder(dirs['stand'] .. 'Profiles')
-end)
-folders:action('Script Resources Folder', {}, '', function()
-  util.open_folder(dirs['resources'])
-end)
+-- not meant to be visible in a public rel
+if bools['debug'] then
+	local folders = helpers:list('Folders', {}, '')
+	folders:action('Stand Folder', {}, '', function()
+	  util.open_folder(dirs['stand'])
+	end)
+	folders:action('Theme Folder', {}, '', function()
+	  util.open_folder(dirs['theme'])
+	end)
+	folders:action('Headers Folder', {}, '', function()
+	  util.open_folder(dirs['header'])
+	end)
+	folders:action('Profiles Folder', {}, '', function()
+	  util.open_folder(dirs['stand'] .. 'Profiles')
+	end)
+	folders:action('Script Resources Folder', {}, '', function()
+	  util.open_folder(dirs['resources'])
+	end)
+end
 
 -- idk if this is even a good method
 if math.random() > 0.8 then
