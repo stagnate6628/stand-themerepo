@@ -623,10 +623,6 @@ helpers:list_action('Reset', {}, '', { 'Default textures and font', 'Default hea
   	hide_header()
 	end
 end)
-local shortcuts = helpers:list('Shortcuts', {}, '')
-shortcuts:link(menu.ref_by_path('Stand>Profiles'))
-shortcuts:link(menu.ref_by_path('Stand>Lua Scripts'))
-
 helpers:toggle('Debug', {}, 'Logs detailed output to a log file and enables the developer preset.', function(s)
   if s then
     trigger_command('Stand>Lua Scripts>Settings>Presets>Developer')
