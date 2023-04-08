@@ -51,15 +51,15 @@ local auto_update_config = {
   verify_file_begins_with = '--',
   check_interval = 86400,
   silent_updates = true,
-  dependencies = {{
+  --[[dependencies = {{
     name = 'ThemeRepoLib',
     source_url = 'https://raw.githubusercontent.com/stagnate6628/stand-themerepo/main/lib/ThemeRepoLib.lua',
     script_relpath = 'lib/ThemeRepoLib.lua',
     verify_file_begins_with = '-- ThemeRepoLib.lua',
     is_required = true
   }}
+  ]]
 }
-
 --auto_updater.run_auto_update(auto_update_config)
 --[[for _, dependency in auto_update_config.dependencies do
   if dependency.is_required then
@@ -72,20 +72,133 @@ local auto_update_config = {
   end
 end
 ]]
-require 'lib/ThemeRepoLib'
+local function write_file(path, body)
+  io.makedirs(path:match('^(.+)[\\/]'))
 
-local io, lib, util = io, lib, util
+  local file = io.open(path, 'wb')
+  file:write(body)
+  file:close()
+end
+local function get_github_auth()
+  local file = io.open(filesystem.resources_dir() .. 'ThemeRepo\\.github', 'r')
+  if file == nil then
+    return nil
+  end
+  local token = file:read('a')
+  file:close()
+
+  if type(token) == 'string' and token:startswith('ghp_') and token:len() == 40 then
+    return token
+  end
+  return nil
+end
+local function make_request(url_path, callback)
+  local downloading = true
+  async_http.init('https://api.github.com', '/repos/stagnate6628/stand-themerepo/contents/' .. url_path, 
+    function(body, headers, status_code)
+      downloading = false
+      if status_code == 403 then
+        for i = 0, 5 do
+          util.toast('You are currently ratelimited by Github. You can let it expire or a use a vpn.')
+        end
+        util.stop_script()
+      end
+
+      callback(body, headers, status_code)
+  end)
+
+  local token = get_github_auth()
+  if token then
+    async_http.add_header('Authorization', 'Bearer ' .. token)
+  end
+  async_http.dispatch()
+
+  while downloading do
+    util.yield()
+  end
+end
+local function download_file(url_path, file_path, on_success, on_fail, on_not_found)
+  local downloading = true
+  async_http.init('https://raw.githubusercontent.com', '/stagnate6628/stand-themerepo/main/' .. url_path,
+    function(body, headers, status_code)
+       if status_code == 403 then
+        for i = 0, 5 do
+          util.toast('You are currently ratelimited by Github. You can let it expire or a use a vpn.')
+        end
+        util.stop_script()
+      end
+      if status_code == 404 then
+        pcall(on_not_found)
+        goto continue
+      end
+
+      if type(file_path) == 'string' then
+        file_path = {file_path}
+      end
+
+      if type(file_path) == 'table' and #file_path > 0 then
+        for _, path in file_path do
+          write_file(path, body)
+        end
+        pcall(on_success, body, headers, status_code)
+      end
+      ::continue::
+      downloading = false
+    end, function()
+      downloading = false
+      pcall(on_fail)
+    end)
+  local token = get_github_auth()
+  if token then
+    async_http.add_header('Authorization', 'Bearer ' .. token)
+  end
+  async_http.dispatch()
+
+  while downloading do
+    util.yield()
+  end
+end
+
+--pluto 0.6
+--local tree_version<constexpr> = 45
+local tree_version<const> = 45
+local function get_ref(ref) 
+  return menu.ref_by_path(ref, tree_version)
+end
+local function trigger_command(ref, args)
+  local ref_ = get_ref(ref) 
+  if not args then
+    ref_:trigger()
+    return
+  end
+  menu.trigger_command(ref_, args)
+end
+
+local function empty_dir(dir)
+  for io.listdir(dir) as path1 do
+    if io.isfile(path1) then
+      io.remove(path1)
+    else 
+      for io.listdir(path1) as path2 do
+        io.remove(path2)
+      end
+      io.remove(path1)
+    end
+  end
+end
+
+local io, lib, menu, util = io, lib, menu, util
 math.randomseed(util.current_unix_time_seconds()) -- apparently this is good
 
-local tree_version<constexpr> = 45
-local path_map<constexpr> = {'Root', 'Theme', 'Tags', 'Tabs', 'Custom Header', 'Lua Scripts'}
-local make_dirs<constexpr> = {'Lua Scripts', 'Custom Header', 'Theme\\Custom', 'Theme\\Tabs'}
+--constexpr -> 0.6
+local path_map<const> = {'Root', 'Theme', 'Tags', 'Tabs', 'Custom Header', 'Lua Scripts'}
+local make_dirs<const> = {'Lua Scripts', 'Custom Header', 'Theme\\Custom', 'Theme\\Tabs'}
 
 local bools = {
   ['is_downloading'] = false,
   ['is_header_downloading'] = false,
   ['prevent_redownloads'] = true,
-  ['debug'] = false,
+  ['debug'] = true,
   ['combine_profiles'] = false
 }
 
@@ -142,16 +255,16 @@ local function should_copy(file_path)
   return io.exists(file_path) and io.isfile(file_path) and bools['prevent_redownloads']
 end
 local function hide_header()
-  lib:trigger_command_by_ref('Stand>Settings>Appearance>Header>Header>Be Gone')
+  trigger_command('Stand>Settings>Appearance>Header>Header>Be Gone')
 end
 local function use_custom_header()
-  lib:trigger_command_by_ref('Stand>Settings>Appearance>Header>Header>Custom')
+  trigger_command('Stand>Settings>Appearance>Header>Header>Custom')
 end
 local function reload_font()
-  lib:trigger_command_by_ref('Stand>Settings>Appearance>Font & Text>Reload Font')
+  trigger_command('Stand>Settings>Appearance>Font & Text>Reload Font')
 end
 local function reload_textures()
-  lib:trigger_command_by_ref('Stand>Settings>Appearance>Textures>Reload Textures')
+  trigger_command('Stand>Settings>Appearance>Textures>Reload Textures')
 end
 local function get_active_profile_name()
   local file = util.read_colons_and_tabs_file(dirs['stand'] .. 'Meta State.txt')
@@ -163,26 +276,26 @@ local function load_profile(profile_name)
   reload_textures()
   reload_font()
 
-  lib:trigger_command_by_ref('Stand>Profiles')
+  trigger_command('Stand>Profiles')
   util.yield(100)
-  lib:trigger_command_by_ref('Stand')
+  trigger_command('Stand')
   util.yield(100)
-  lib:trigger_command_by_ref('Stand>Profiles')
+  trigger_command('Stand>Profiles')
 
-  lib:trigger_command_by_ref('Stand>Lua Scripts')
+  trigger_command('Stand>Lua Scripts')
   util.yield(100)
-  lib:trigger_command_by_ref('Stand')
+  trigger_command('Stand')
   util.yield(100)
-  lib:trigger_command_by_ref('Stand>Lua Scripts')
+  trigger_command('Stand>Lua Scripts')
 
   if bools['combine_profiles'] then
     for k, v in util.read_colons_and_tabs_file(
         dirs['resources'] .. 'Themes\\' .. profile_name .. '\\' .. profile_name .. '.txt') do
       if k:startswith('Stand>Settings>Appearance') or 
       	k:startswith('Stand>Lua Scripts') or k:startswith('Players>Settings>Tags') then
-        local ref = menu.ref_by_path(k .. '>' .. v, tree_version)
+        local ref = get_ref(k .. '>' .. v)
         if not ref:isValid() then
-          lib:trigger_command_by_ref(k, v)
+          trigger_command(k, v)
         else
           ref:trigger()
         end
@@ -190,15 +303,15 @@ local function load_profile(profile_name)
       util.yield()
     end
     if lang_index != 3 then
-      lib:trigger_command(lang_map[lang_index])
+      menu.trigger_commands(lang_map[lang_index])
     end
-    lib:trigger_command_by_ref('Stand>Profiles>' .. get_active_profile_name() .. '>Save')
+    trigger_command('Stand>Profiles>' .. get_active_profile_name() .. '>Save')
   else
-    local ref = menu.ref_by_path('Stand>Profiles>' .. profile_name, tree_version)
+    local ref = get_ref('Stand>Profiles>' .. profile_name)
     ref:refByRelPath('Active'):trigger()
 
     if lang_index != 3 then
-      lib:trigger_command(lang_map[lang_index])
+      menu.trigger_command(lang_map[lang_index])
       -- todo: remove stand>lua scripts>ThemeRepo if not using default config
       ref:refByRelPath('Save'):trigger()
     end
@@ -207,8 +320,15 @@ local function load_profile(profile_name)
     ref:refByRelPath('Load'):trigger()
   end
 
-  -- this works sometimes :]
-  menu.ref_by_path('Self>Movement', tree_version):focus()
+  if menu.are_tabs_visible() then
+    get_ref('Self>Movement'):focus()
+    util.yield(100)
+    get_ref('Self>Movement'):focus()
+  else
+    get_ref('Self'):focus()
+    util.yield(100)
+    get_ref('Self'):focus()
+  end
 
   log('Done!')
   util.toast('Done!')
@@ -218,14 +338,13 @@ local function download_theme(theme_name, deps)
 
   for k, v in make_dirs do
     if v == 'Lua Scripts' and #deps == 0 then
-      goto continue
+     continue
     end
     io.makedirs(dirs['resources'] .. 'Themes\\' .. theme_name .. '\\' .. v)
-    ::continue::
   end
 
-  lib:empty_dir(dirs['theme'])
-  lib:empty_dir(dirs['header'])
+  empty_dir(dirs['theme'])
+  empty_dir(dirs['header'])
 
   io.makedirs(dirs['theme'] .. 'Custom')
   io.makedirs(dirs['theme'] .. 'Tabs')
@@ -237,12 +356,13 @@ local function download_theme(theme_name, deps)
   table.insert(req_url, req_url[2] .. '/Tabs') -- 4=tabs
   table.insert(req_url, req_url[1] .. '/Custom Header') -- 5=custom header
   table.insert(req_url, req_url[1] .. '/Lua Scripts') -- 6=lua scripts
+  table.insert(req_url, req_url[1] .. '/Interaction Header') --7 only for epsilon/ozark i think?
 
   for k1, v1 in req_url do
     local i = 0
     local j = 0
 
-    lib:make_request(v1, function(body, headers, status_code)
+    make_request(v1, function(body, headers, status_code)
       if status_code == 404 then
         return
       end
@@ -269,7 +389,7 @@ local function download_theme(theme_name, deps)
         local path 
         switch k1 do
         	case 1: -- root
-						if lib:get_ext(file_name) == 'txt' and not bools['combine_profiles'] then
+						if file_name:match("%.([^.]+)$") == 'txt' and not bools['combine_profiles'] then
         			path = dirs['stand'] .. 'Profiles\\'
 	          end
         	break
@@ -289,17 +409,20 @@ local function download_theme(theme_name, deps)
 					case 6: -- lua scripts
 						path = filesystem.scripts_dir()
 					break
+          default: -- for dirs such as "Interaction Header"
+            path = dirs['resources'] .. 'Themes\\' .. theme_name .. '\\' .. v2.path:match('.*/(.*)/.*')
+            util.log('unknown path ' .. path)
+          break
         end
 
-        -- should always run anyways?
-        if path_to_insert then
-        	table.insert(paths, path_to_insert .. file_name)
+        if path then 
+          table.insert(paths, path .. file_name)
         end
 
         if should_copy(paths[1]) and paths[2] != nil then
-          lib:copy_file(paths[1], paths[2])
+          io.copyto(paths[1], paths[2])
         else
-          lib:download_file(v2.path, paths)
+          download_file(v2.path, paths)
         end
         i += 1
       end
@@ -307,10 +430,12 @@ local function download_theme(theme_name, deps)
 
     repeat
       util.yield(250)
-      log(string.format('Waiting at path %s: %d/%d', v1, i, j))
+      log($"Waiting at path {v1}: {i}/{j}")
     until i == j
 
-    util.toast(string.format('[ThemeRepo] Finished path %s (%d/6)', path_map[k1], k1))
+    if k1 != 7 then 
+      util.toast(string.format('[ThemeRepo] Finished path %s (%d/6)', path_map[k1], k1))
+    end
   end
 
   load_profile(theme_name)
@@ -364,7 +489,7 @@ local function download_themes(update)
 
   local path = dirs['resources'] .. 'themes.txt'
   local function download_list()
-    lib:download_file('themes.txt', {path}, function(body, headers, status_code)
+    download_file('themes.txt', {path}, function(body, headers, status_code)
       log(if not update then 'Creating themes cache' else 'Updating themes cache')
       parse_list(body)
     end)
@@ -375,7 +500,7 @@ local function download_themes(update)
     if update then
       empty_list(theme_root)
       download_list()
-      lib:trigger_command_by_ref('Stand>Lua Scripts>ThemeRepo>Themes')
+      trigger_command('Stand>Lua Scripts>ThemeRepo>Themes')
       return
     else
       log('Found local theme list cache')
@@ -411,9 +536,9 @@ local function download_headers(update)
 
         bools['is_header_downloading'] = true
 
-        lib:empty_dir(dirs['header'])
+        empty_dir(dirs['header'])
 
-        lib:make_request('Headers/' .. v, function(body, headers, status_code)
+        make_request('Headers/' .. v, function(body, headers, status_code)
           local success, body = pcall(soup.json.decode, body)
           if not success then
             log('Failed to parse json response [headers]')
@@ -426,10 +551,10 @@ local function download_headers(update)
           for body as v2 do
             local paths = {dirs['resources'] .. 'Headers\\' .. v .. '\\' .. v2.name, dirs['header'] .. v2.name}
             if should_copy(paths[1]) then
-              lib:copy_file(paths[1], paths[2])
+              io.copyto(paths[1], paths[2])
               log(string.format('Copied header %s (%d/%d)', v2.name, i + 1, #body))
             else
-              lib:download_file(v2.path, paths, function()
+              download_file(v2.path, paths, function()
                 log(string.format('Downloaded header %s (%d/%d)', v2.name, i + 1, #body))
               end)
             end
@@ -459,7 +584,7 @@ local function download_headers(update)
 
   local path = dirs['resources'] .. 'headers.txt'
   local function download_list()
-    lib:download_file('headers.txt', {path}, function(body, headers, status_code)
+    download_file('headers.txt', {path}, function(body, headers, status_code)
       log(if not update then 'Creating headers cache' else 'Updating headers cache')
       parse_list(body)
     end)
@@ -470,7 +595,7 @@ local function download_headers(update)
     if update then
       empty_list(header_root)
       download_list()
-      lib:trigger_command_by_ref('Stand>Lua Scripts>ThemeRepo>Headers')
+      trigger_command('Stand>Lua Scripts>ThemeRepo>Headers')
       return
     else
       log('Found local header list cache')
@@ -489,12 +614,12 @@ end)
 local helpers = menu.list(menu.my_root(), 'Helpers', {}, '')
 helpers:list_action('Reset', {}, '', { 'Default textures and font', 'Default headers' }, function(index, menu_name, prev_index, click_type)
 	if index == 1 then
-		lib:empty_dir(dirs['theme'])
+		empty_dir(dirs['theme'])
 		reload_textures()
 		reload_font()
 		return
 	elseif index == 2 then
-		lib:empty_dir(dirs['header'])
+		empty_dir(dirs['header'])
   	hide_header()
 	end
 end)
@@ -504,9 +629,9 @@ shortcuts:link(menu.ref_by_path('Stand>Lua Scripts'))
 
 helpers:toggle('Debug', {}, 'Logs detailed output to a log file and enables the developer preset.', function(s)
   if s then
-    lib:trigger_command_by_ref('Stand>Lua Scripts>Settings>Presets>Developer')
+    trigger_command('Stand>Lua Scripts>Settings>Presets>Developer')
   else
-    lib:trigger_command_by_ref('Stand>Lua Scripts>Settings>Presets>User')
+    trigger_command('Stand>Lua Scripts>Settings>Presets>User')
   end
 
   bools['debug'] = s
