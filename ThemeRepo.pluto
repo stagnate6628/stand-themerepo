@@ -362,6 +362,7 @@ local function download_theme(theme_name, deps)
     local i = 0
     local j = 0
 
+
     make_request(v1, function(body, headers, status_code)
       if status_code == 404 then
         return
@@ -371,6 +372,10 @@ local function download_theme(theme_name, deps)
       if not success then
         log('Failed to parse json response [' .. k1 .. ']')
         return
+      end
+
+      if k1 == 7 then
+        util.toast('Finishing up...')
       end
 
       j = #body
@@ -411,12 +416,11 @@ local function download_theme(theme_name, deps)
 					break
           default: -- for dirs such as "Interaction Header"
             path = dirs['resources'] .. 'Themes\\' .. theme_name .. '\\' .. v2.path:match('.*/(.*)/.*')
-            util.log('unknown path ' .. path)
           break
         end
-
+        
         if path then 
-          table.insert(paths, path .. file_name)
+          table.insert(paths, path .. file_name) 
         end
 
         if should_copy(paths[1]) and paths[2] != nil then
@@ -623,6 +627,7 @@ helpers:list_action('Reset', {}, '', { 'Default textures and font', 'Default hea
   	hide_header()
 	end
 end)
+
 helpers:toggle('Debug', {}, 'Logs detailed output to a log file and enables the developer preset.', function(s)
   if s then
     trigger_command('Stand>Lua Scripts>Settings>Presets>Developer')
