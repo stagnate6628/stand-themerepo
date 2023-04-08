@@ -333,15 +333,8 @@ local function load_profile(profile_name)
   log('Done!')
   util.toast('Done!')
 end
-local function download_theme(theme_name, deps)
+local function download_theme(theme_name)
   log('Starting ' .. theme_name)
-
-  for k, v in make_dirs do
-    if v == 'Lua Scripts' and #deps == 0 then
-     continue
-    end
-    io.makedirs(dirs['resources'] .. 'Themes\\' .. theme_name .. '\\' .. v)
-  end
 
   empty_dir(dirs['theme'])
   empty_dir(dirs['header'])
@@ -361,7 +354,6 @@ local function download_theme(theme_name, deps)
   for k1, v1 in req_url do
     local i = 0
     local j = 0
-
 
     make_request(v1, function(body, headers, status_code)
       if status_code == 404 then
@@ -453,26 +445,7 @@ local function empty_list(ref)
 end
 local function download_themes(update)
   local function parse_list(out)
-    for out:split('\n') as v do
-    	-- dont think this ever runs
-      if v == '' then
-        continue
-      end
-
-      local parts = v:split(';')
-      local theme_name = parts[1]
-      local deps = {}
-
-      if type(parts[3]) == 'string' and string.len(parts[3]) > 0 then
-        if parts[3]:contains(',') then
-        	for parts[3]:split(',') as dep do
-        		table.insert(deps, dep)
-        	end   
-        else
-          table.insert(deps, parts[3])
-        end
-      end
-
+    for out:split('\n') as theme_name do
       local action_name = if filesystem.is_dir(dirs['resources'] .. 'Themes\\' .. theme_name) then '[I] ' .. theme_name else theme_name
       theme_root:action(action_name, {}, '', function(click_type)
         if bools['is_downloading'] then
@@ -485,7 +458,7 @@ local function download_themes(update)
         end
 
         bools['is_downloading'] = true
-        download_theme(theme_name, deps)
+        download_theme(theme_name)
         bools['is_downloading'] = false
       end)
     end
@@ -523,10 +496,6 @@ end)
 local function download_headers(update)
   local function parse_list(out)
     for out:split('\n') as v do
-      if v == '' then
-       	continue
-      end
-      
       local action_name = if filesystem.is_dir(dirs['resources'] .. 'Headers\\' .. v) then '[I] ' .. v else v
       header_root:action(action_name, {}, '', function(click_type)
         if bools['is_header_downloading'] then
