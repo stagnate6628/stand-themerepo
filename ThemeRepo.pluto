@@ -473,7 +473,7 @@ local function download_themes(update)
       theme_root:action(action_name, {}, '', function(click_type)
         if bools['is_downloading'] then
           menu.show_warning(theme_root, click_type,
-              'A download has already started. You may need to wait for the theme to finish downloading. Proceed?',
+              'A download has already started. You may need to wait for the theme to finish downloading. Continuing may lead to unexpected issues. Proceed?',
               function()
                 bools['is_downloading'] = false
               end)
@@ -527,7 +527,7 @@ local function download_headers(update)
       header_root:action(action_name, {}, '', function(click_type)
         if bools['is_header_downloading'] then
           menu.show_warning(header_root, click_type,
-              'A download has already started. You may need to wait for the header to finish downloading. Proceed?',
+              'A download has already started. You may need to wait for the header to finish downloading. Continuing may lead to unexpected issues. Proceed?',
               function()
                 bools['is_header_downloading'] = false
               end)
