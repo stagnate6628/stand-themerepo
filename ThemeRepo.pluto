@@ -202,7 +202,7 @@ local bools = {
   ['combine_profiles'] = false
 }
 
-local dirs<const> = {
+local dirs = {
   ['stand'] = filesystem.stand_dir(),
   ['theme'] = filesystem.stand_dir() .. 'Theme\\',
   ['header'] = filesystem.stand_dir() .. 'Headers\\Custom Header\\',
