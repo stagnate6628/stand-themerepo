@@ -98,10 +98,10 @@ local dirs<const> = {
 
 local root = menu.my_root()
 -- headers
-local header_root = menu.list(root, 'Headers', {}, '')
+local header_root = root:list('Headers', {}, '')
 local header_config = header_root:list('Configuration', {}, '')
 -- themes
-local theme_root = menu.list(root, 'Themes', {}, '')
+local theme_root = root:list('Themes', {}, '')
 local theme_config = theme_root:list('Configuration', {}, '')
 
 theme_config:toggle('Re-use Local Assets', {}, '', function(s)
@@ -253,8 +253,8 @@ local function download_theme(theme_name, deps)
       end
 
       j = #body
-      for k2, v2 in body do
-        if v2.type == 'dir' then
+      for body as v2 do
+      	if v2.type == 'dir' then
           j -= 1
           continue
         end
@@ -311,10 +311,9 @@ local function empty_list(ref)
 end
 local function download_themes(update)
   local function parse_list(out)
-    local list = out:split('\n')
-    for _, v in list do
+    for out:split('\n') as v do
       if v == '' then
-        goto continue
+        continue
       end
 
       local parts = v:split(';')
@@ -323,19 +322,15 @@ local function download_themes(update)
 
       if type(parts[3]) == 'string' and string.len(parts[3]) > 0 then
         if parts[3]:contains(',') then
-          for _, v in parts[3]:split(',') do
-            table.insert(deps, v)
-          end
+        	for parts[3]:split(',') as dep do
+        		table.insert(deps, dep)
+        	end   
         else
           table.insert(deps, parts[3])
         end
       end
 
-      local action_name = theme_name
-			if filesystem.is_dir(dirs['resources'] .. 'Themes\\' .. theme_name) then
-        action_name = '[I] ' .. theme_name
-      end
-      
+      local action_name = if filesystem.is_dir(dirs['resources'] .. 'Themes\\' .. theme_name) then '[I] ' .. theme_name else theme_name
       theme_root:action(action_name, {}, '', function(click_type)
         if bools['is_downloading'] then
           menu.show_warning(theme_root, click_type,
@@ -350,7 +345,6 @@ local function download_themes(update)
         download_theme(theme_name, deps)
         bools['is_downloading'] = false
       end)
-      ::continue::
     end
   end
 
@@ -385,17 +379,12 @@ end)
 
 local function download_headers(update)
   local function parse_list(out)
-    local list = out:split('\n')
-    for _, v in list do
+    for out:split('\n') as v do
       if v == '' then
-        goto continue
+       	continue
       end
       
-      local action_name = v
-      if filesystem.is_dir(dirs['resources'] .. 'Headers\\' .. v) then
-        action_name = '[I] ' .. v
-      end
-    
+      local action_name = if filesystem.is_dir(dirs['resources'] .. 'Headers\\' .. v) then '[I] ' .. v else v
       header_root:action(action_name, {}, '', function(click_type)
         if bools['is_header_downloading'] then
           menu.show_warning(header_root, click_type,
@@ -420,7 +409,7 @@ local function download_headers(update)
           io.makedirs(dirs['resources'] .. 'Headers\\' .. v .. '\\')
 
           local i = 0
-          for _, v2 in body do
+          for body as v2 do
             local paths = {dirs['resources'] .. 'Headers\\' .. v .. '\\' .. v2.name, dirs['header'] .. v2.name}
             if should_copy(paths[1]) then
               lib:copy_file(paths[1], paths[2])
@@ -432,7 +421,7 @@ local function download_headers(update)
             end
             i += 1
           end
-
+          
           repeat
             util.yield(250)
           until i == #body
@@ -451,8 +440,6 @@ local function download_headers(update)
           util.toast('Done!')
         end)
       end)
-
-      ::continue::
     end
   end
 
