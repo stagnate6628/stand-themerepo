@@ -596,6 +596,25 @@ helpers:list_action('Reset', {}, '', { 'Default textures and font', 'Default hea
   	hide_header()
 	end
 end)
+-- not meant to be visible in a public rel
+if bools['debug'] then
+  local folders = helpers:list('Folders', {}, '')
+  folders:action('Stand Folder', {}, '', function()
+    util.open_folder(dirs['stand'])
+  end)
+  folders:action('Theme Folder', {}, '', function()
+    util.open_folder(dirs['theme'])
+  end)
+  folders:action('Headers Folder', {}, '', function()
+    util.open_folder(dirs['header'])
+  end)
+  folders:action('Profiles Folder', {}, '', function()
+    util.open_folder(dirs['stand'] .. 'Profiles')
+  end)
+  folders:action('Script Resources Folder', {}, '', function()
+    util.open_folder(dirs['resources'])
+  end)
+end
 
 helpers:toggle('Debug', {}, 'Logs detailed output to a log file and enables the developer preset.', function(s)
   if s then
@@ -611,25 +630,11 @@ helpers:action('Update Script', {}, '', function()
   auto_update_config.check_interval = 0
   auto_updater.run_auto_update(auto_update_config)
 end)
-
--- not meant to be visible in a public rel
 if bools['debug'] then
-	local folders = helpers:list('Folders', {}, '')
-	folders:action('Stand Folder', {}, '', function()
-	  util.open_folder(dirs['stand'])
-	end)
-	folders:action('Theme Folder', {}, '', function()
-	  util.open_folder(dirs['theme'])
-	end)
-	folders:action('Headers Folder', {}, '', function()
-	  util.open_folder(dirs['header'])
-	end)
-	folders:action('Profiles Folder', {}, '', function()
-	  util.open_folder(dirs['stand'] .. 'Profiles')
-	end)
-	folders:action('Script Resources Folder', {}, '', function()
-	  util.open_folder(dirs['resources'])
-	end)
+  helpers:action('Clean Install', {}, '', function()
+    auto_update_config.clean_reinstall = true
+    auto_updater.run_auto_update(auto_update_config)
+  end)
 end
 
 -- idk if this is even a good method
