@@ -91,18 +91,20 @@ local function get_github_auth()
 
   return nil
 end
+local function handle_ratelimit()
+  for i = 0, 3 do
+    util.toast('You are currently ratelimited by Github. You can let it expire or a use a vpn.')
+  end
+  util.stop_script()
+end
 local function make_request(url_path, callback)
   local downloading = true
   async_http.init('https://api.github.com', '/repos/stagnate6628/stand-themerepo/contents/' .. url_path, 
     function(body, headers, status_code)
       downloading = false
       if status_code == 403 then
-        for i = 0, 3 do
-          util.toast('You are currently ratelimited by Github. You can let it expire or a use a vpn.')
-        end
-        util.stop_script()
+        handle_ratelimit()
       end
-
       callback(body, headers, status_code)
   end)
 
@@ -120,13 +122,9 @@ local function download_file(url_path, file_path, on_success, on_fail, on_not_fo
   local downloading = true
   async_http.init('https://raw.githubusercontent.com', '/stagnate6628/stand-themerepo/main/' .. url_path,
     function(body, headers, status_code)
-       if status_code == 403 then
-        for i = 0, 3 do
-          util.toast('You are currently ratelimited by Github. You can let it expire or a use a vpn.')
-        end
-        util.stop_script()
-      end
-      if status_code == 404 then
+      if status_code == 403 then
+        handle_ratelimit()
+      elseif status_code == 404 then
         pcall(on_not_found)
         goto continue
       end
