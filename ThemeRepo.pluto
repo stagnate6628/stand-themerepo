@@ -95,14 +95,13 @@ local function make_request(url_path, callback)
     util.yield()
   end
 end
-local function download_file(url_path, file_path, on_success, on_fail, on_not_found)
+local function download_file(url_path, file_path, callback)
   local downloading = true
   async_http.init('https://raw.githubusercontent.com', '/stagnate6628/stand-themerepo/main/' .. url_path,
     function(body, headers, status_code)
       if status_code == 403 then
         handle_ratelimit()
       elseif status_code == 404 then
-        pcall(on_not_found)
         goto continue
       end
 
@@ -114,13 +113,12 @@ local function download_file(url_path, file_path, on_success, on_fail, on_not_fo
         for file_path as path do 
           write_file(path, body)
         end
-        pcall(on_success, body, headers, status_code)
+        pcall(callback, body, headers, status_code)
       end
       ::continue::
       downloading = false
     end, function()
       downloading = false
-      pcall(on_fail)
     end)
   if token := get_github_auth() then
     async_http.add_header('Authorization', 'Bearer ' .. token)
@@ -405,7 +403,6 @@ local function download_theme(theme_name)
       util.toast(string.format('[ThemeRepo] Finished path %s (%d/6)', path_map[k1], k1))
     end
   end
-
   load_profile(theme_name)
 end
 local function empty_list(ref)
