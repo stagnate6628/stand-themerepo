@@ -107,9 +107,7 @@ local function make_request(url_path, callback)
       end
       callback(body, headers, status_code)
   end)
-
-  local token = get_github_auth()
-  if token then
+  if token := get_github_auth() then
     async_http.add_header('Authorization', 'Bearer ' .. token)
   end
   async_http.dispatch()
@@ -145,8 +143,7 @@ local function download_file(url_path, file_path, on_success, on_fail, on_not_fo
       downloading = false
       pcall(on_fail)
     end)
-  local token = get_github_auth()
-  if token then
+  if token := get_github_auth() then
     async_http.add_header('Authorization', 'Bearer ' .. token)
   end
   async_http.dispatch()
