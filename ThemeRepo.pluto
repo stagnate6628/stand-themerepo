@@ -311,11 +311,7 @@ local function load_profile(profile_name)
 
     if lang_index != 3 then
       menu.trigger_command(lang_map[lang_index])
-      -- todo: remove stand>lua scripts>ThemeRepo if not using default config
       ref:refByRelPath('Save'):trigger()
-
-
-      for k, v in util.read_colons_and_tabs_file(dirs[''])
     end
 
     ref:refByRelPath('Load'):trigger()
