@@ -56,7 +56,6 @@ local auto_update_config = {
 
 local function write_file(path, body)
   io.makedirs(path:match('^(.+)[\\/]'))
-
   if file := io.open(path, 'wb') then 
     file:write(body)
     file:close()
@@ -287,17 +286,18 @@ local function load_profile(profile_name)
     end
 
     ref:refByRelPath('Load'):trigger()
+    util.yield(100)
     ref:refByRelPath('Load'):trigger()
   end
 
   if menu.are_tabs_visible() then
     get_ref('Self>Movement'):focus()
     util.yield(100)
-    get_ref('Self>Movement'):focus()
+    get_ref('Self>Movement'):trigger()
   else
     get_ref('Self'):focus()
     util.yield(100)
-    get_ref('Self'):focus()
+    get_ref('Self'):trigger()
   end
 
   log('Done!')
@@ -441,8 +441,7 @@ local function download_themes(update)
     end)
   end
 
-  local file = io.open(path, 'r')
-  if file != nil then
+  if file := io.open(path, 'r') then
     if update then
       empty_list(theme_root)
       download_list()
@@ -507,7 +506,7 @@ local function download_headers(update)
             util.yield(250)
           until i == #body
 
-          if menu.ref_by_path('Stand>Settings>Appearance>Header>Header', tree_version).value == 200 then
+          if get_ref('Stand>Settings>Appearance>Header>Header').value == 200 then
             hide_header()
           end
           use_custom_header()
@@ -532,8 +531,7 @@ local function download_headers(update)
     end)
   end
 
-  local file = io.open(path, 'r')
-  if file != nil then
+  if file := io.open(path, 'r') then 
     if update then
       empty_list(header_root)
       download_list()
@@ -542,7 +540,6 @@ local function download_headers(update)
     else
       log('Found local header list cache')
     end
-
     parse_list(file:read('*a'))
     file:close()
   else
