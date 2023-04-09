@@ -592,7 +592,6 @@ helpers:list_action('Reset', {}, '', { 'Default Textures and Font', 'Default Hea
 		empty_dir(dirs['theme'])
 		reload_textures()
 		reload_font()
-		return
 	elseif index == 2 then
 		empty_dir(dirs['header'])
   	hide_header()
