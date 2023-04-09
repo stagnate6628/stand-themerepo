@@ -129,9 +129,7 @@ local function download_file(url_path, file_path, callback)
   end
 end
 
---pluto 0.6
---local tree_version<constexpr> = 45
-local tree_version<const> = 45
+local tree_version<constexpr> = 45
 local function get_ref(ref) 
   return menu.ref_by_path(ref, tree_version)
 end
@@ -160,7 +158,6 @@ end
 local io, lib, menu, util = io, lib, menu, util
 math.randomseed(util.current_unix_time_seconds()) -- apparently this is good
 
---constexpr -> 0.6
 local path_map<const> = {'Root', 'Theme', 'Tags', 'Tabs', 'Custom Header', 'Lua Scripts'}
 local make_dirs<const> = {'Lua Scripts', 'Custom Header', 'Theme\\Custom', 'Theme\\Tabs'}
 
@@ -198,7 +195,7 @@ local lang_list<const> = { "Chinese (Simplified) - 简体中文", "Dutch - Neder
   "French - Français", "German - Deutsch", "Korean - 한국어", "Lithuanian - Lietuvių", "Polish - Polski",
   "Portuguese - Português", "Russian - русский", "Spanish - Español", "Turkish - Türkçe", "Horny English",
   "Engwish", "Howny Engwish" }
-local lang_map <const> = { 'langzh', 'langnl', 'langenuk', 'langenus', 'langfr', 'langde', 'langko', 'langlt', 'langpl',
+local lang_map<const> = { 'langzh', 'langnl', 'langenuk', 'langenus', 'langfr', 'langde', 'langko', 'langlt', 'langpl',
   'langpt', 'langru', 'langes', 'langtr', 'langsex', 'languwu', 'langhornyuwu' }
 local lang_index = 3 -- english uk
 
@@ -505,7 +502,7 @@ local function download_headers(update)
           repeat
             util.yield(250)
           until i == #body
-
+          
           if get_ref('Stand>Settings>Appearance>Header>Header').value == 200 then
             hide_header()
           end
