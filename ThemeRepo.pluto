@@ -46,13 +46,13 @@ if auto_updater == true then
 end
 
 local auto_update_config = {
-  source_url = 'https://raw.githubusercontent.com/stagnate6628/stand-themerepo/main/ThemeRepo.lua',
+  source_url = 'https://raw.githubusercontent.com/stagnate6628/stand-themerepo/main/ThemeRepo.pluto',
   script_relpath = SCRIPT_RELPATH,
   verify_file_begins_with = '--',
   check_interval = 86400,
   silent_updates = true,
 }
---auto_updater.run_auto_update(auto_update_config)
+auto_updater.run_auto_update(auto_update_config)
 
 local function write_file(path, body)
   io.makedirs(path:match('^(.+)[\\/]'))
