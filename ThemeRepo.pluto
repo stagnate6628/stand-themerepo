@@ -66,11 +66,8 @@ local function get_github_auth()
   if file := io.open(filesystem.resources_dir() .. 'ThemeRepo\\.github', 'r') then
     local token = file:read('a')
     file:close()
-    if type(token) == 'string' and token:startswith('ghp_') and token:len() == 40 then
-      return token
-    end
+    return token:startswith('ghp_') and token:len() == 40 and token or nil
   end
-
   return nil
 end
 local function handle_ratelimit()
