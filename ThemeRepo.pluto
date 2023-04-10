@@ -166,7 +166,7 @@ local bools = {
   ['is_downloading'] = false,
   ['is_header_downloading'] = false,
   ['prevent_redownloads'] = true,
-  ['debug'] = true,
+  ['debug'] = false,
   ['combine_profiles'] = false
 }
 
