@@ -260,7 +260,7 @@ local function load_profile(profile_name)
     for k, v in util.read_colons_and_tabs_file(
         dirs['resources'] .. 'Themes\\' .. profile_name .. '\\' .. profile_name .. '.txt') do
       if k:startswith('Stand>Settings>Appearance') or 
-      	k:startswith('Stand>Lua Scripts') or k:startswith('Players>Settings>Tags') then
+        k:startswith('Stand>Lua Scripts') or k:startswith('Players>Settings>Tags') then
         local ref = get_ref(k .. '>' .. v)
         if not ref:isValid() then
           trigger_command(k, v)
@@ -340,7 +340,7 @@ local function download_theme(theme_name)
 
       j = #body
       for body as v2 do
-      	if v2.type == 'dir' then
+        if v2.type == 'dir' then
           j -= 1
           continue
         end
@@ -353,27 +353,27 @@ local function download_theme(theme_name)
 
         local path 
         switch k1 do
-        	case 1: -- root
-						if file_name:match("%.([^.]+)$") == 'txt' and not bools['combine_profiles'] then
-        			path = dirs['stand'] .. 'Profiles\\'
-	          end
-        	break
-        	case 2: -- theme
-							path = dirs['theme']
-					break        	
-					case 3: -- custom/tags
-						path = dirs['theme'] .. 'Custom\\'
-					break
-					case 4: -- tabs
-						path = dirs['theme'] .. 'Tabs\\'
-					break
-					case 5: -- custom header
-          	hide_header()
-          	path = dirs['header']
-					break
-					case 6: -- lua scripts
-						path = filesystem.scripts_dir()
-					break
+          case 1: -- root
+            if file_name:match("%.([^.]+)$") == 'txt' and not bools['combine_profiles'] then
+              path = dirs['stand'] .. 'Profiles\\'
+            end
+          break
+          case 2: -- theme
+              path = dirs['theme']
+          break         
+          case 3: -- custom/tags
+            path = dirs['theme'] .. 'Custom\\'
+          break
+          case 4: -- tabs
+            path = dirs['theme'] .. 'Tabs\\'
+          break
+          case 5: -- custom header
+            hide_header()
+            path = dirs['header']
+          break
+          case 6: -- lua scripts
+            path = filesystem.scripts_dir()
+          break
           default: -- for dirs such as "Interaction Header"
             path = dirs['resources'] .. 'Themes\\' .. theme_name .. '\\' .. v2.path:match('.*/(.*)/.*')
           break
@@ -413,6 +413,7 @@ end
 local function download_themes(update)
   local function parse_list(out)
     for out:split('\n') as theme_name do
+      if theme_name == '' then continue end
       local action_name = if filesystem.is_dir(dirs['resources'] .. 'Themes\\' .. theme_name) then '[I] ' .. theme_name else theme_name
       theme_root:action(action_name, {}, '', function(click_type)
         if bools['is_downloading'] then
@@ -462,6 +463,7 @@ end)
 local function download_headers(update)
   local function parse_list(out)
     for out:split('\n') as v do
+      if v == '' then continue end
       local action_name = if filesystem.is_dir(dirs['resources'] .. 'Headers\\' .. v) then '[I] ' .. v else v
       header_root:action(action_name, {}, '', function(click_type)
         if bools['is_header_downloading'] then
@@ -550,14 +552,14 @@ end)
 
 local helpers = menu.list(menu.my_root(), 'Helpers', {}, '')
 helpers:list_action('Reset', {}, '', { 'Default Textures and Font', 'Default Headers' }, function(index, menu_name, prev_index, click_type)
-	if index == 1 then
-		empty_dir(dirs['theme'])
-		reload_textures()
-		reload_font()
-	elseif index == 2 then
-		empty_dir(dirs['header'])
-  	hide_header()
-	end
+  if index == 1 then
+    empty_dir(dirs['theme'])
+    reload_textures()
+    reload_font()
+  elseif index == 2 then
+    empty_dir(dirs['header'])
+    hide_header()
+  end
 end)
 helpers:toggle('Debug', {}, 'Logs detailed output to a log file and enables the developer preset.', function(s)
   if s then
