@@ -551,12 +551,15 @@ header_config:action('Update List', {}, '', function()
 end)
 
 local helpers = menu.list(menu.my_root(), 'Helpers', {}, '')
-helpers:list_action('Reset', {}, '', { 'Default Textures and Font', 'Default Headers' }, function(index, menu_name, prev_index, click_type)
+helpers:list_action('Reset', {}, '', { 'Default Textures and Font', 'Default Font', 'Default Headers' }, function(index, menu_name, prev_index, click_type)
   if index == 1 then
     empty_dir(dirs['theme'])
     reload_textures()
     reload_font()
-  elseif index == 2 then
+  else if index == 2 then
+    io.remove(dirs['theme'] .. 'Font.spritefont')
+    reload_font()
+  else 
     empty_dir(dirs['header'])
     hide_header()
   end
