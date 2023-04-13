@@ -1,0 +1,74 @@
+Finished Tutorial: Yes
+Understands Commands: Yes
+Understands Sliders: Yes
+Understands Profiles: Yes
+Understands Context Menu: Yes
+Understands Controller Open/Close: Yes
+Prompted For Controller Disables: Yes
+Understands Command Chaining: Yes
+Tree Compatibility Version: 45
+Players
+	Settings
+		Tags
+			Brackets: STD
+			Self: 
+			Friend: 
+			Crew Member: 
+			In Timeout: 
+			Modder: 
+			Admin: 
+			Likely Modder: 
+			Attacked You: 
+			Host: 
+			Next Host: 
+			Script Host: 
+			Invulnerable: 
+			Indestructible Vehicle: 
+			RC Vehicle: 
+			Off The Radar: 
+			In An Interior: 
+			Spectating: 
+			Typing: 
+			Dead: 
+			VPN: 
+Stand
+	Settings
+		Appearance
+			Colours
+				Primary Colour: BABABAFF
+				Focused Text Colour: 000000FF
+				Focused Right-Bound Text Colour: 000000FF
+				Focused Texture Colour: 000000FF
+				Background Colour: 010201C8
+			Position: 1429, 172
+			Address Bar
+				Address Bar: Off
+			Tabs
+				Tabs: Off
+				Width: 49
+				Height: 5
+				Position: Top
+				Text
+					Scale: 11
+					Y Offset: 5
+				Text Alignment: Centre
+				Show Name: Off
+			Scrollbar
+				Width: 10
+			Command Info Text
+				Show Help Text: Off
+				Show Command Syntax: Off
+				Indicate Slider Behaviour: Off
+				Indicate If Usable By Other Players: Off
+			Notifications
+				Border Colour: 19C1FFFF
+				Flash Colour: 19C1FFFF
+				Background Colour: 010201DC
+			Max Visible Commands: 12
+			List Width: 343
+			List Height: 34
+			Spacer Size: 0
+			Smooth Scrolling: 110
+			Background Blur: 1
+	Lua Scripts
+		[ThemeRepo] Superior V: On
