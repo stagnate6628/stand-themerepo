@@ -556,7 +556,7 @@ helpers:list_action('Reset', {}, '', { 'Default Textures and Font', 'Default Fon
     empty_dir(dirs['theme'])
     reload_textures()
     reload_font()
-  else if index == 2 then
+  elseif index == 2 then
     io.remove(dirs['theme'] .. 'Font.spritefont')
     reload_font()
   else 
