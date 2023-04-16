@@ -46,6 +46,7 @@ if auto_updater == true then
 end
 
 local crypto = require 'crypto'
+
 local auto_update_config = {
   source_url = 'https://raw.githubusercontent.com/stagnate6628/stand-themerepo/main/ThemeRepo.pluto',
   script_relpath = SCRIPT_RELPATH,
@@ -144,7 +145,7 @@ local function get_host_path(url)
   return url:match("(https?://[%w.-]+)([%S]*)")
 end
 
-local tree_version<constexpr> = 45
+local tree_version<constexpr> = 46
 local function get_ref(ref) 
   return menu.ref_by_path(ref, tree_version)
 end
@@ -158,11 +159,22 @@ local function trigger_command(ref, args)
 
   if not args then
     ref_:trigger()
-    return
+  else
+    menu.trigger_command(ref_, args)
   end
-  menu.trigger_command(ref_, args)
 end
-
+local function hide_header()
+  trigger_command('Stand>Settings>Appearance>Header>Header>Be Gone')
+end
+local function use_custom_header()
+  trigger_command('Stand>Settings>Appearance>Header>Header>Custom')
+end
+local function reload_font()
+  trigger_command('Stand>Settings>Appearance>Font & Text>Reload Font')
+end
+local function reload_textures()
+  trigger_command('Stand>Settings>Appearance>Textures>Reload Textures')
+end
 local function empty_dir(dir)
   for io.listdir(dir) as path1 do
     if io.isfile(path1) then
@@ -176,7 +188,7 @@ local function empty_dir(dir)
   end
 end
 
-local io, lib, menu, util = io, lib, menu, util
+local filesystem, io, lib, menu, util = filesystem, io, lib, menu, util
 math.randomseed(util.current_unix_time_seconds()) -- apparently this is good
 
 local path_map<const> = {'Root', 'Theme', 'Tags', 'Tabs', 'Custom Header', 'Lua Scripts'}
@@ -212,18 +224,17 @@ header_root:text_input('Install from Zip', {'installfromzip'}, 'For zip files wi
   end
 
   local zip_path = filesystem.stand_dir() .. path:match("[^/]+$")
-
   local downloading = true
   async_http.init(host, path, function(body, headers, status_code)
       if status_code ~= 200 then
         util.toast('Failed to download zip.')
-        log($'Failed to download zip, got {status_code}')
+        log($'Failed to download zip {host}{path}, got {status_code}')
         goto continue
       end
 
-      f = io.open(zip_path, 'wb')
-      f:write(body)
-      f:close()
+      io.open(zip_path, 'wb')
+        :write(body)
+        :close()
 
       ::continue::
       downloading = false
@@ -258,9 +269,9 @@ header_root:text_input('Install from Zip', {'installfromzip'}, 'For zip files wi
   until i == #zr:getFileList()
 
   if get_ref('Stand>Settings>Appearance>Header>Header').value == 200 then
-    trigger_command('Stand>Settings>Appearance>Header>Header>Be Gone')
+    hide_header()
   end
-  trigger_command('Stand>Settings>Appearance>Header>Header>Custom')
+  use_custom_header()
   
   fr = nil
   zr = nil
@@ -311,18 +322,6 @@ local function log(msg)
 end
 local function should_copy(file_path)
   return io.exists(file_path) and io.isfile(file_path) and bools['prevent_redownloads']
-end
-local function hide_header()
-  trigger_command('Stand>Settings>Appearance>Header>Header>Be Gone')
-end
-local function use_custom_header()
-  trigger_command('Stand>Settings>Appearance>Header>Header>Custom')
-end
-local function reload_font()
-  trigger_command('Stand>Settings>Appearance>Font & Text>Reload Font')
-end
-local function reload_textures()
-  trigger_command('Stand>Settings>Appearance>Textures>Reload Textures')
 end
 local function get_active_profile_name()
   local file = util.read_colons_and_tabs_file(dirs['stand'] .. 'Meta State.txt')
@@ -662,6 +661,63 @@ utils:toggle('Debug', {}, 'Logs detailed output to a log file and enables the de
   end
   bools['debug'] = s
 end, bools['debug'])
+
+local dirs_to_copy = {
+  dirs['stand'] .. 'Headers',
+  dirs['stand'] .. 'Lua Scripts',
+  dirs['stand'] .. 'Profiles',
+  dirs['stand'] .. 'Theme'
+}
+local function recurse_dir(dir, paths)
+  paths ??= {}
+  for filesystem.list_files(dir) as path do
+    if filesystem.is_dir(path) then
+      recurse_dir(path, paths)
+    else
+      table.insert(paths, path)
+    end
+  end
+  return paths
+end
+utils:action('Backup', {}, 'Backup profiles, lua scripts, textures/fonts/tags/tabs, and headers to a directory.', function()
+  local date = os.date('%Y-%m-%d-%H:%M:%S')
+  local hash = 'backup-' .. crypto.md5(date)
+
+  local backup_dir = dirs['resources'] .. 'Backups\\'
+  if filesystem.is_dir(backup_dir .. hash) then
+    util.toast('For some reason, this backup already exists...')
+    return
+  end
+
+  backup_dir ..= hash .. '\\'
+  io.makedirs(backup_dir .. 'Headers')
+  io.makedirs(backup_dir .. 'Lua Scripts')
+  io.makedirs(backup_dir .. 'Profiles')
+  io.makedirs(backup_dir .. 'Theme')
+  
+  for dirs_to_copy as v do
+    for recurse_dir(v) as v2 do
+      local new_path = v2:lstrip(dirs['stand'])
+      if not new_path:startswith('Lua Scripts\\resources\\ThemeRepo\\Backups\\') then
+        if f := io.open(v2, 'r') then
+          local path = backup_dir .. new_path
+          io.makedirs(path:match('^(.+)[\\/]'))
+          io.copyto(v2, path)
+          f:close()
+        end
+      end
+      util.yield()
+    end
+    util.yield()
+  end
+
+  io.open(backup_dir .. '.created_at', 'wb')
+    :write(date)
+    :close()
+
+  util.toast($'Backup created under "{hash}"!')
+  util.open_folder(backup_dir)
+end)
 utils:action('Restart Script', {}, '', util.restart_script)
 utils:action('Update Script', {}, '', function()
   auto_update_config.check_interval = 0
@@ -677,6 +733,7 @@ end
 io.makedirs(dirs['resources'])
 io.makedirs(dirs['resources'] .. 'Themes')
 io.makedirs(dirs['resources'] .. 'Headers')
+io.makedirs(dirs['resources'] .. 'Backups')
 
 download_themes()
 download_headers()
