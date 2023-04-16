@@ -1,0 +1,107 @@
+Finished Tutorial: Yes
+Understands Commands: Yes
+Understands Sliders: Yes
+Understands Profiles: Yes
+Understands Context Menu: Yes
+Understands Controller Open/Close: Yes
+Prompted For Controller Disables: Yes
+Understands Command Chaining: Yes
+Tree Compatibility Version: 45
+Players
+	Settings
+		InfOverlay Settings
+			X\:: 650
+			Y\:: 20
+			Overlay colours
+				Title Bar Colour: 000000FF
+				Background Colour: 000000B4
+				Health Bar Colour: 9400FF96
+				Armour Bar Colour: 9400FF96
+				Map Colour: 9400FFBF
+				Blip Colour: 9400FFFF
+				Name Colour: 9400FFFF
+				Label Colour: 9400FFFF
+				Info Colour: 9400FFFF
+			Element Sizing & Spacing
+				Overlay Width: 153
+				Padding: 10
+				Spacing: 8
+				Blip Size: 0.34
+			Text Sizing & Spacing
+				Name: 0.50
+				Info Text: 0.44
+			Border
+				Width: 2
+				Colour: 9400FFFF
+Stand
+	Settings
+		Appearance
+			Colours
+				Primary Colour: 000000AA
+				Focused Text Colour: 9400FFC8
+				Focused Right-Bound Text Colour: 9400FFC8
+				Focused Texture Colour: 9400FFC8
+				Background Colour: 000000B4
+				Unfocused Text Colour: 9400FFC8
+				Unfocused Right-Bound Text Colour: 9400FFC8
+				Unfocused Texture Colour: 9400FFDC
+				HUD Colour: 9400FFC8
+				AR Colour: 9400FF3C
+				Minigame Colour: 9400FFDC
+			Position: 1252, 119
+			Header
+				Header: Custom
+				Legacy Positioning: Off
+			Address Bar
+				Root Name: Hidden
+				Address Separator: Stand:Online
+				Show Current List Only: On
+				Height: 23
+				Text
+					Y Offset: 1
+				Show Cursor Position: On
+			Cursor
+				Scroll Gap: 3
+				Width: 2
+				Rounded: On
+				Colour: 9400FFF0
+			Tabs
+				Width: 57
+				Height: 27
+				Position: Top
+				Text
+					X Offset: 7
+				Show Icon Left: On
+				Show Name: Off
+			Scrollbar
+				Scrollbar: Disabled
+			Command Info Text
+				Position: Bottom
+				Show Command Syntax: Off
+				Indicate If Usable By Other Players: Off
+			Notifications
+				Type: Stand, Custom Position
+				Custom Position: 305, 1063
+				Width: 380
+				Border Colour: 9400FFC8
+				Flash Colour: 000000C8
+				Background Colour: 00000096
+			Commands
+				Text
+					Scale: 13
+					X Offset: -4
+					Y Offset: 1
+			Border
+				Width: 2
+				Rounded: On
+				Colour: 9400FF96
+			Max Visible Commands: 36
+			List Width: 399
+			List Height: 22
+			Spacer Size: 7
+			Smooth Scrolling: 100
+		Info Text
+			Position: 1914, 131
+			Scale: 14
+		Lua Scripts
+			InfOverlay: On
