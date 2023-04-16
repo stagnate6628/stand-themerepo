@@ -45,6 +45,7 @@ if auto_updater == true then
   error('Invalid auto-updater lib. Please delete your Stand/Lua Scripts/lib/auto-updater.lua and try again')
 end
 
+local crypto = require 'crypto'
 local auto_update_config = {
   source_url = 'https://raw.githubusercontent.com/stagnate6628/stand-themerepo/main/ThemeRepo.pluto',
   script_relpath = SCRIPT_RELPATH,
@@ -53,7 +54,17 @@ local auto_update_config = {
   silent_updates = true,
   script_run_name = 'themerepo'
 }
-auto_updater.run_auto_update(auto_update_config)
+local bools = {
+  ['is_downloading'] = false,
+  ['is_header_downloading'] = false,
+  ['prevent_redownloads'] = true,
+  ['debug'] = false,
+  ['combine_profiles'] = false
+}
+
+if not bools['debug'] then 
+  auto_updater.run_auto_update(auto_update_config)
+end
 
 local function write_file(path, body)
   io.makedirs(path:match('^(.+)[\\/]'))
@@ -129,6 +140,9 @@ local function download_file(url_path, file_path, callback)
     util.yield()
   end
 end
+local function get_host_path(url)
+  return url:match("(https?://[%w.-]+)([%S]*)")
+end
 
 local tree_version<constexpr> = 45
 local function get_ref(ref) 
@@ -168,14 +182,6 @@ math.randomseed(util.current_unix_time_seconds()) -- apparently this is good
 local path_map<const> = {'Root', 'Theme', 'Tags', 'Tabs', 'Custom Header', 'Lua Scripts'}
 local make_dirs<const> = {'Lua Scripts', 'Custom Header', 'Theme\\Custom', 'Theme\\Tabs'}
 
-local bools = {
-  ['is_downloading'] = false,
-  ['is_header_downloading'] = false,
-  ['prevent_redownloads'] = true,
-  ['debug'] = false,
-  ['combine_profiles'] = false
-}
-
 local dirs = {
   ['stand'] = filesystem.stand_dir(),
   ['theme'] = filesystem.stand_dir() .. 'Theme\\',
@@ -187,6 +193,84 @@ local root = menu.my_root()
 -- headers
 local header_root = root:list('Headers', {}, '')
 local header_config = header_root:list('Configuration', {}, '')
+
+local img_ext = { 'png', 'jpg' , 'jpeg', 'gif' }
+header_root:text_input('Install from Zip', {'installfromzip'}, 'For zip files with only images inside (jpg, jpeg, png, gif), not tested with other formats.', function(input, click_type)
+  if click_type != 1 then
+    return
+  end
+  
+  local host, path = get_host_path(input)
+  if not host or not path then
+    util.toast("That doesn't look like a url.")
+    return
+  end
+  
+  if not path:endswith('.zip') then
+    util.toast("That doesn't look like a zip.")
+    return
+  end
+
+  local zip_path = filesystem.stand_dir() .. path:match("[^/]+$")
+
+  local downloading = true
+  async_http.init(host, path, function(body, headers, status_code)
+      if status_code ~= 200 then
+        util.toast('Failed to download zip.')
+        log($'Failed to download zip, got {status_code}')
+        goto continue
+      end
+
+      f = io.open(zip_path, 'wb')
+      f:write(body)
+      f:close()
+
+      ::continue::
+      downloading = false
+    end, function()
+      downloading = false
+    end)
+  async_http.dispatch()
+
+  while downloading do
+    util.toast('Downloading zip...')
+    util.yield()
+  end
+
+  empty_dir(dirs['header'])
+
+  local i = 0
+  local fr = soup.FileReader(zip_path)
+  local zr = soup.ZipReader(fr)
+  for zr:getFileList() as file do
+    local ext = file.name:match("%.([^.]+)$")
+
+    if table.contains(img_ext, ext) != nil then
+      local f = io.open(dirs['header'] .. file.name, 'wb')
+      f:write(zr:getFileContents(file))
+      f:close()
+    end
+    i += 1
+  end
+  
+  repeat 
+    util.yield()
+  until i == #zr:getFileList()
+
+  if get_ref('Stand>Settings>Appearance>Header>Header').value == 200 then
+    trigger_command('Stand>Settings>Appearance>Header>Header>Be Gone')
+  end
+  trigger_command('Stand>Settings>Appearance>Header>Header>Custom')
+  
+  fr = nil
+  zr = nil
+  collectgarbage('collect')
+  local success, _ = pcall(io.remove, zip_path)
+  if not success then
+    util.toast($'Failed to delete zip file {zip_path},you can delete it after you close GTA.')
+  end
+end)
+
 -- themes
 local theme_root = root:list('Themes', {}, '')
 local theme_config = theme_root:list('Configuration', {}, '')
@@ -556,8 +640,8 @@ header_config:action('Update List', {}, '', function()
   download_headers(true)
 end)
 
-local helpers = menu.list(menu.my_root(), 'Helpers', {}, '')
-helpers:list_action('Reset', {}, '', { 'Default Textures and Font', 'Default Font', 'Default Headers' }, function(index, menu_name, prev_index, click_type)
+local utils = menu.list(menu.my_root(), 'Utilities', {}, '')
+utils:list_action('Reset', {}, '', { 'Default Textures and Font', 'Default Font', 'Default Headers' }, function(index, menu_name, prev_index, click_type)
   if index == 1 then
     empty_dir(dirs['theme'])
     reload_textures()
@@ -570,19 +654,20 @@ helpers:list_action('Reset', {}, '', { 'Default Textures and Font', 'Default Fon
     hide_header()
   end
 end)
-helpers:toggle('Debug', {}, 'Logs detailed output to a log file and enables the developer preset.', function(s)
+utils:toggle('Debug', {}, 'Logs detailed output to a log file and enables the developer preset.', function(s)
   if s then
     trigger_command('Stand>Lua Scripts>Settings>Presets>Developer')
   else
     trigger_command('Stand>Lua Scripts>Settings>Presets>User')
   end
   bools['debug'] = s
-end, false)
-helpers:action('Restart Script', {}, '', util.restart_script)
-helpers:action('Update Script', {}, '', function()
+end, bools['debug'])
+utils:action('Restart Script', {}, '', util.restart_script)
+utils:action('Update Script', {}, '', function()
   auto_update_config.check_interval = 0
   auto_updater.run_auto_update(auto_update_config)
 end)
+utils:hyperlink('Credits', 'https://github.com/stagnate6628/stand-themerepo/wiki/Credits')
 
 -- idk if this is even a good method
 if math.random() > 0.8 then
@@ -590,12 +675,10 @@ if math.random() > 0.8 then
 end
 
 io.makedirs(dirs['resources'])
-io.makedirs(dirs['resources'] .. '\\Themes')
-io.makedirs(dirs['resources'] .. '\\Headers')
+io.makedirs(dirs['resources'] .. 'Themes')
+io.makedirs(dirs['resources'] .. 'Headers')
 
 download_themes()
 download_headers()
-
-root:hyperlink('Credits', 'https://github.com/stagnate6628/stand-themerepo/wiki/Credits')
 
 util.keep_running()
