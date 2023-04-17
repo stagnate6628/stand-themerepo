@@ -59,7 +59,7 @@ local bools = {
   ['is_downloading'] = false,
   ['is_header_downloading'] = false,
   ['prevent_redownloads'] = true,
-  ['debug'] = false,
+  ['debug'] = true,
   ['combine_profiles'] = false
 }
 
@@ -503,8 +503,7 @@ local function download_themes(update)
   local function parse_list(out)
     for out:split('\n') as theme_name do
       if theme_name == '' then continue end
-      local action_name = if filesystem.is_dir(dirs['resources'] .. 'Themes\\' .. theme_name) then '[I] ' .. theme_name else theme_name
-      theme_root:action(action_name, {}, '', function(click_type)
+      theme_root:action(theme_name, {}, '', function(click_type)
         if bools['is_downloading'] then
           menu.show_warning(theme_root, click_type,
               'A download has already started. You may need to wait for the theme to finish downloading. Continuing may lead to unexpected issues. Proceed?',
@@ -553,8 +552,7 @@ local function download_headers(update)
   local function parse_list(out)
     for out:split('\n') as v do
       if v == '' then continue end
-      local action_name = if filesystem.is_dir(dirs['resources'] .. 'Headers\\' .. v) then '[I] ' .. v else v
-      header_root:action(action_name, {}, '', function(click_type)
+      header_root:action(v, {}, '', function(click_type)
         if bools['is_header_downloading'] then
           menu.show_warning(header_root, click_type,
               'A download has already started. You may need to wait for the header to finish downloading. Continuing may lead to unexpected issues. Proceed?',
@@ -727,7 +725,7 @@ utils:hyperlink('Credits', 'https://github.com/stagnate6628/stand-themerepo/wiki
 
 -- idk if this is even a good method
 if math.random() > 0.8 then
-  util.toast('[ThemeRepo] Remember to maintain backups of textures as needed.')
+  util.toast('[ThemeRepo] Remember to maintain backups of textures as needed. (Utilities>Backup)')
 end
 
 io.makedirs(dirs['resources'])
