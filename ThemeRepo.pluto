@@ -59,7 +59,7 @@ local bools = {
   ['is_downloading'] = false,
   ['is_header_downloading'] = false,
   ['prevent_redownloads'] = true,
-  ['debug'] = true,
+  ['debug'] = false,
   ['combine_profiles'] = false
 }
 
@@ -346,8 +346,7 @@ local function load_profile(profile_name)
   trigger_command('Stand>Lua Scripts')
 
   if bools['combine_profiles'] then
-    for k, v in util.read_colons_and_tabs_file(
-        dirs['resources'] .. 'Themes\\' .. profile_name .. '\\' .. profile_name .. '.txt') do
+    for k, v in util.read_colons_and_tabs_file(dirs['resources'] .. 'Themes\\' .. profile_name .. '\\' .. profile_name .. '.txt') do
       if k:startswith('Stand>Settings>Appearance') or 
         k:startswith('Stand>Lua Scripts') or k:startswith('Players>Settings>Tags') then
         local ref = get_ref(k .. '>' .. v)
