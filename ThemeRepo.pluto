@@ -286,10 +286,10 @@ end)
 local theme_root = root:list('Themes', {}, '')
 local theme_config = theme_root:list('Configuration', {}, '')
 
-theme_config:toggle('Re-use Local Assets', {}, '', function(s)
+theme_config:toggle('Fast Install', {}, 'Looks for cached versions of files that are supposed to be downloaded. If they are not found, they will be downloaded and cached for next time.', function(s)
   bools['prevent_redownloads'] = s
 end, true)
-theme_config:toggle('Combine Profiles', {}, '', function(s)
+theme_config:toggle('Save to Active Profile', {}, 'Applies the theme to the active profile, which saves your settings. You may want to create a backup either way, to err on the side of caution.', function(s)
   bools['combine_profiles'] = s
 end, false)
 
@@ -301,7 +301,7 @@ local lang_map<const> = { 'langzh', 'langnl', 'langenuk', 'langenus', 'langfr', 
   'langpt', 'langru', 'langes', 'langtr', 'langsex', 'languwu', 'langhornyuwu' }
 local lang_index = 3 -- english uk
 
-theme_config:list_action('Language', {}, 'Some theme fonts may not support a language.', lang_list, function(index)
+theme_config:list_action('Language', {}, 'The language to use for the profile; some fonts may not support some languages.', lang_list, function(index)
   lang_index = index
   util.toast('[ThemeRepo] Profile language set to ' .. lang_list[lang_index])
 end)
