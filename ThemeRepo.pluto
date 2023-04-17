@@ -53,7 +53,7 @@ local auto_update_config = {
   verify_file_begins_with = '--',
   check_interval = 86400,
   silent_updates = true,
-  script_run_name = SCRIPT_NAME::lower()
+  script_run_name = SCRIPT_NAME:lower()
 }
 local bools = {
   ['is_downloading'] = false,
