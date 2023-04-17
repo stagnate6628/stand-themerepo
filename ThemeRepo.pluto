@@ -255,7 +255,12 @@ header_root:text_input('Install from Zip', {'installfromzip'}, 'For zip files wi
   local i = 0
   local fr = soup.FileReader(zip_path)
   local zr = soup.ZipReader(fr)
+  local bad_format = false
   for zr:getFileList() as file do
+    if file.name:endswith('/') then
+      bad_format = true
+      break
+    end
     local ext = file.name:match("%.([^.]+)$")
 
     if table.contains(img_ext, ext) != nil then
@@ -266,6 +271,11 @@ header_root:text_input('Install from Zip', {'installfromzip'}, 'For zip files wi
     i += 1
   end
   
+  if bad_format then
+    util.toast('Invalid zip format detected...')
+    return
+  end
+
   repeat 
     util.yield()
   until i == #zr:getFileList()
