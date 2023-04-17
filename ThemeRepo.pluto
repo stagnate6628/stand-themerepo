@@ -45,6 +45,7 @@ if auto_updater == true then
   error('Invalid auto-updater lib. Please delete your Stand/Lua Scripts/lib/auto-updater.lua and try again')
 end
 
+
 local crypto = require 'crypto'
 
 local auto_update_config = {
@@ -202,6 +203,7 @@ local dirs = {
 }
 
 local root = menu.my_root()
+root:divider('rel-1.2.1')
 -- headers
 local header_root = root:list('Headers', {}, '')
 local header_config = header_root:list('Configuration', {}, '')
