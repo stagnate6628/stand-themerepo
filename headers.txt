@@ -59,6 +59,7 @@ Showtime
 Smoke
 Square Maze
 Stand Glitch
+Stand Magenta Graident Fill
 Stand Rockstar
 StandHub
 Sunset Flasher Rays
