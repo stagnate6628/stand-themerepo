@@ -543,7 +543,9 @@ local function download_themes(update)
     if update then
       empty_list(theme_root)
       download_list()
-      script_ref:refByRelPath('Themes'):trigger()
+      if script_ref:refByRelPath('Themes'):isValid() then
+        script_ref:refByRelPath('Themes'):trigger()
+      end
       return
     else
       log('Found local theme list cache')
@@ -633,7 +635,9 @@ local function download_headers(update)
     if update then
       empty_list(header_root)
       download_list()
-      script_ref:refByRelPath('Headers'):trigger()
+      if script_ref:refByRelPath('Headers'):isValid() then
+        script_ref:refByRelPath('Headers'):trigger()
+      end
       return
     else
       log('Found local header list cache')
