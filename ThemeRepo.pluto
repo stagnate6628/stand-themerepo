@@ -662,7 +662,7 @@ utils:list_action('Reset', {}, '', { 'Default Textures and Font', 'Default Font'
     hide_header()
   end
 end)
-utils:toggle('Debug', {}, 'Logs detailed output to a log file and enables the developer preset.', function(s)
+utils:toggle('Debug', {}, '', function(s)
   if s then
     trigger_command('Stand>Lua Scripts>Settings>Presets>Developer')
   else
