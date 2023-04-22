@@ -1,0 +1,57 @@
+Finished Tutorial: Yes
+Understands Commands: Yes
+Understands Sliders: Yes
+Understands Profiles: Yes
+Understands Context Menu: Yes
+Understands Controller Open/Close: Yes
+Prompted For Controller Disables: Yes
+Understands Command Chaining: Yes
+Tree Compatibility Version: 46
+Stand
+	Settings
+		Appearance
+			Colours
+				Primary Colour: 3A4151FF
+				Focused Text Colour: 5395E0FF
+				Focused Texture Colour: 5395E0FF
+				Background Colour: 2D333FFF
+				HUD Colour: FFFFFFFF
+				AR Colour: FFFFFFFF
+			Position: 1485, 297
+			Address Bar
+				Address Bar: Off
+				Root Name: Hidden
+				Address Separator: Stand/Online
+				Show Cursor Position: On
+			Cursor
+				Scroll Gap: 5
+			Tabs
+				Width: 58
+				Position: Top
+				Text
+					Scale: 10
+				Text Alignment: Centre
+			Scrollbar
+				Scrollbar: Disabled
+			Command Info Text
+				Position: Bottom
+			Notifications
+				Border Colour: 3A4151FF
+				Flash Colour: 3A4151FF
+			Border
+				Width: 4
+				Rounded: On
+				Colour: 2E3440FF
+			Max Visible Commands: 10
+			List Width: 406
+			Spacer Size: 0
+			Font & Text
+				Command Box Input Text
+					Scale: 10
+				Small Text
+					Scale: 9
+					Y Offset: 6
+		Info Text
+			Position: 1656, 879
+			Alignment: Top Left
+			Scale: 10
