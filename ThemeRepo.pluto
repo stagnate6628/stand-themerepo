@@ -45,7 +45,6 @@ if auto_updater == true then
   error('Invalid auto-updater lib. Please delete your Stand/Lua Scripts/lib/auto-updater.lua and try again')
 end
 
-
 local crypto = require 'crypto'
 
 local auto_update_config = {
@@ -404,6 +403,15 @@ end
 local function download_theme(theme_name)
   log('Starting ' .. theme_name)
 
+  if bools.prevent_redownloads then
+    local f = io.open(dirs['resources'] .. 'Themes\\' .. theme_name .. '\\.manifest', 'rb')
+    local paths = f:read('*all'):split('\n')
+    f:close()
+
+    for paths as path do
+    end
+  end
+
   empty_dir(dirs['theme'])
   empty_dir(dirs['header'])
 
@@ -418,6 +426,8 @@ local function download_theme(theme_name)
   table.insert(req_url, req_url[1] .. '/Custom Header') -- 5=custom header
   table.insert(req_url, req_url[1] .. '/Lua Scripts') -- 6=lua scripts
   table.insert(req_url, req_url[1] .. '/Interaction Header') --7 only for epsilon/ozark i think?
+
+  local manifest_paths = {}
 
   for k1, v1 in req_url do
     local i = 0
@@ -486,6 +496,7 @@ local function download_theme(theme_name)
         if should_copy(paths[1]) and paths[2] != nil then
           io.copyto(paths[1], paths[2])
         else
+          table.insert(manifest_paths, (v2.path:gsub('/', '\\')))
           download_file(v2.path, paths)
         end
         i += 1
@@ -500,6 +511,14 @@ local function download_theme(theme_name)
     if k1 != 7 then 
       util.toast(string.format('[ThemeRepo] Finished path %s (%d/6)', path_map[k1], k1))
     end
+  end
+
+  if f := io.open(dirs['resources'] .. 'Themes\\' .. theme_name .. '\\.manifest', 'w') then
+    log($'Successfully wrote to Themes\\{theme_name}\\.manifest')
+    f:write(table.concat(manifest_paths, '\n'))
+    f:close()
+  else
+    log($'Failed to write to Themes\\{theme_name}\\.manifest')
   end
   load_profile(theme_name)
 end
