@@ -203,7 +203,7 @@ local dirs = {
 }
 
 local root = menu.my_root()
-root:divider('rel-1.2.1')
+root:divider('rel-1.2.2-dev')
 -- headers
 local header_root = root:list('Headers', {}, '')
 local header_config = header_root:list('Configuration', {}, '')
