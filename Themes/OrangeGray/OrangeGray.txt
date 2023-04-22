@@ -1,0 +1,111 @@
+Finished Tutorial: Yes
+Understands Commands: Yes
+Understands Sliders: Yes
+Understands Profiles: Yes
+Understands Context Menu: Yes
+Understands Controller Open/Close: Yes
+Prompted For Controller Disables: Yes
+Understands Command Chaining: Yes
+Tree Compatibility Version: 4
+Players
+	Settings
+		Tags
+			Brackets: STD
+			Self: 
+			Friend: 
+			Crew Member: 
+			In Timeout: 
+			Modder: 
+			Modder or Admin: 
+			Admin: 
+			Likely Modder: 
+			Attacked You: 
+			Host: 
+			Script Host: 
+			Invulnerable: 
+			Indestructible Vehicle: 
+			RC Vehicle: 
+			Off The Radar: 
+			In An Interior: 
+			Spectating: 
+			Typing: 
+			Dead: 
+Stand
+	Settings
+		Appearance
+			Colours
+				Primary Colour: 141414FF
+				Focused Text Colour: FF4D00FF
+				Focused Right-Bound Text Colour: FF4D00FF
+				Focused Texture Colour: FF4D00FF
+				Background Colour: 141414FF
+				Unfocused Text Colour: 646464FF
+				Unfocused Right-Bound Text Colour: 646464FF
+				Unfocused Texture Colour: 646464FF
+				HUD Colour: FFFFFFFF
+				Minigame Colour: FF0000FF
+			Position: 22, 35
+			Header
+				Header: Custom
+				Frame Interval: 30
+				Legacy Positioning: Off
+			Address Bar
+				Root Name: Hidden
+				Height: 18
+				Text
+					Scale: 10
+					Y Offset: 3
+			Cursor
+				Scroll Gap: 3
+				Colour: 787878FF
+			Tabs
+				Width: 57
+				Height: 29
+				Position: Top
+				Text
+					Y Offset: 6
+				Text Alignment: Centre
+				Show Name: Off
+				Show Icon Right: On
+			Scrollbar
+				Scrollbar: Disabled
+			Command Info Text
+				Position: Bottom
+				Indicate Slider Behaviour: Off
+			Notifications
+				Type: Game
+				Custom Position: 323, 1060
+				Width: 360
+				Border Colour: 9600C8FF
+				Flash Colour: 6464644B
+				Background Colour: 00000019
+			Commands
+				Text
+					Scale: 12
+					Y Offset: 6
+			Border
+				Width: 10
+				Colour: 141414FF
+			List Width: 399
+			List Height: 33
+			Spacer Size: 6
+			Smooth Scrolling: 100
+			Background Blur: 0
+			Font & Text
+				Command Box Input Text
+					Scale: 12
+					Y Offset: 3
+				Small Text
+					Scale: 10
+		Input
+			Controller Support: Off
+			Interrupt Holding On Wrap-Around: Off
+			Keep Cursor When Revisiting
+				Tabs: Off
+				Lists\: Reduced Effect For Huge Lists: Off
+			Key Repeat Interval: 70
+			Key Long-Hold Repeat Interval: 50
+		Info Text
+			Position: 1574, 451
+			Alignment: Centre
+			Scale: 13
