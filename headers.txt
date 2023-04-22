@@ -41,6 +41,8 @@ Paragone White (2)
 Paragone Yellow
 Paragone Yellow (2)
 Paragone Yellow (3)
+Phantom X Purple
+Phantom X Red
 Pink Storm
 Purple Clouds Animated
 Purple Explosion
@@ -63,9 +65,25 @@ Stand
 Stand (2)
 Stand (3)
 Stand (4)
+Stand (5)
+Stand (Transparent)
+Stand Avengers
+Stand Blue
+Stand Blue Transparent
+Stand Cyan
+Stand Cyan Sus
+Stand Cyan Transparent
+Stand Cyan Transparent Sus
 Stand Glitch
 Stand Magenta Gradient Fill
+Stand Orange
+Stand Orange Transparent
+Stand Pink Animated
+Stand Purple
+Stand Purple Transparent
 Stand Rockstar
+Stand Yellow
+Stand Yellow Transparent
 StandHub
 Sunset Flasher Rays
 Take-Two Animated

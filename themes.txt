@@ -3,6 +3,7 @@ Anime
 Aya
 BlackNWhite
 Blue Hour
+Capybara
 Cherax
 Circuit
 Discord
@@ -15,23 +16,25 @@ Kiddions
 Kokushibo
 Legacy Menu Beta
 Lewdsex
-Luna-Impulse
 Luna
+Luna-Impulse
 Marin
 Matrix
 Menyoo
 Mercyyy
 Midari Ikishima
 Midnight Violet
-Minimalistic Black & White
 Minimalistic
+Minimalistic Black & White
 Netflix
 Nocturnal
+Nordic Dark
 NowiryPulsive
 Off-White
 Old UI
 Onyx
 Optimum
+OrangeGray
 Ozark
 Paragon
 Paragone
@@ -45,6 +48,7 @@ Sensitive Content
 Space
 Spotify
 SPXC3
+Standsense
 Stoners
 Sunset
 Superior V
