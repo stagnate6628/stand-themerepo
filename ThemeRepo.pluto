@@ -188,7 +188,7 @@ local function empty_dir(dir)
   end
 end
 
-local filesystem, io, lib, menu, util = filesystem, io, lib, menu, util
+local filesystem, io, menu, util = filesystem, io, menu, util
 local path_map<const> = {'Root', 'Theme', 'Tags', 'Tabs', 'Custom Header', 'Lua Scripts'}
 local make_dirs<const> = {'Lua Scripts', 'Custom Header', 'Theme\\Custom', 'Theme\\Tabs'}
 
