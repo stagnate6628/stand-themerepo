@@ -231,9 +231,9 @@ header_root:text_input('Install from Zip', {'installfromzip'}, 'For zip files wi
         goto continue
       end
 
-      io.open(zip_path, 'wb')
-        :write(body)
-        :close()
+      local file = io.open(zip_path, 'wb')
+      file:write(body)
+      file:close()
 
       ::continue::
       downloading = false
@@ -242,10 +242,10 @@ header_root:text_input('Install from Zip', {'installfromzip'}, 'For zip files wi
     end)
   async_http.dispatch()
 
-  while downloading do
-    util.toast('Downloading zip...')
-    util.yield()
-  end
+  repeat 
+  	util.toast('Downloading zip...')
+  	util.yield()
+  until not downloading
 
   empty_dir(dirs['header'])
 
@@ -285,7 +285,7 @@ header_root:text_input('Install from Zip', {'installfromzip'}, 'For zip files wi
   fr = nil
   zr = nil
   collectgarbage('collect')
-  local success, _ = pcall(io.remove, zip_path)
+  local success = pcall(io.remove, zip_path)
   if not success then
     util.toast($'Failed to delete zip file {zip_path},you can delete it after you close GTA.')
   end
