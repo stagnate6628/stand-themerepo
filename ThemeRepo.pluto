@@ -46,6 +46,7 @@ if auto_updater == true then
 end
 
 local crypto = require 'crypto'
+local inspect = require('lib/inspect')
 
 local auto_update_config = {
   source_url = 'https://raw.githubusercontent.com/stagnate6628/stand-themerepo/main/ThemeRepo.pluto',
@@ -59,7 +60,7 @@ local bools = {
   ['is_downloading'] = false,
   ['is_header_downloading'] = false,
   ['prevent_redownloads'] = true,
-  ['debug'] = false,
+  ['debug'] = true,
   ['combine_profiles'] = false
 }
 
@@ -200,12 +201,12 @@ local dirs = {
 }
 
 local root = menu.my_root()
-root:divider('1.3.0-dev')
--- headers
+local script_version<constexpr> = '1.3.0-dev'
+root:divider(script_version)
+
 local header_root = root:list('Headers', {}, '')
 local header_config = header_root:list('Configuration', {}, '')
 
-local img_ext = { 'png', 'jpg' , 'jpeg', 'gif' }
 header_root:text_input('Install from Zip', {'installfromzip'}, 'For zip files with only images inside (jpg, jpeg, png, gif), not tested with other formats.', function(input, click_type)
   if click_type != 1 then
     return
@@ -226,7 +227,7 @@ header_root:text_input('Install from Zip', {'installfromzip'}, 'For zip files wi
   local downloading = true
   async_http.init(host, path, function(body, headers, status_code)
       if status_code ~= 200 then
-        util.toast('Failed to download zip.')
+        util.toast($'Failed to download zip ({status_code}).')
         log($'Failed to download zip {host}{path}, got {status_code}')
         goto continue
       end
@@ -257,7 +258,7 @@ header_root:text_input('Install from Zip', {'installfromzip'}, 'For zip files wi
     end
     local ext = file.name:match("%.([^.]+)$")
 
-    if table.contains(img_ext, ext) != nil then
+    if table.contains({ 'png', 'jpg' , 'jpeg', 'gif' }, ext) != nil then
       local f = io.open(dirs['header'] .. file.name, 'wb')
       f:write(zr:getFileContents(file))
       f:close()
@@ -266,7 +267,7 @@ header_root:text_input('Install from Zip', {'installfromzip'}, 'For zip files wi
   end
   
   if bad_format then
-    util.toast('Invalid zip format detected...')
+    util.toast('Bad zip format detected...')
     return
   end
 
@@ -398,16 +399,64 @@ end
 local function download_theme(theme_name)
   log('Starting ' .. theme_name)
 
-  if bools.prevent_redownloads then
-    local f = io.open(dirs['resources'] .. 'Themes\\' .. theme_name .. '\\.manifest', 'rb')
+  if bools['prevent_redownloads'] then
+    local skip = false
+    local manifest_path = dirs['resources'] .. 'Themes\\' .. theme_name .. '\\.manifest'
+    if not io.isfile(manifest_path) then
+      util.toast($'Manifest for {theme_name} not found!')
+      goto continue
+    end
+
+    local f = io.open(manifest_path, 'r')
     local paths = f:read('*all'):split('\n')
     f:close()
 
     for paths as path do
+      if not filesystem.exists(dirs['resources'] .. path) then
+        goto continue
+      end
     end
+    skip = true
+
+    if skip then
+      util.toast('Loading files from local cache!')
+
+      for paths as path do
+      	-- profile.txt
+      	local file_name, ext = path:match("^.+\\(.+)%.([^.]+)$")
+      	local file_name_ext = file_name .. '.' .. ext
+      	local path_ = dirs['resources'] .. path
+
+      	if file_name == theme_name and ext == 'txt' then
+      		io.copyto(path_, dirs['stand'] .. 'Profiles\\' .. file_name_ext)
+      	end
+
+      	local dir_before_file = path:match("^.+\\([^\\]+)\\[^\\]+$")
+      	
+      	switch dir_before_file do
+      		case theme_name:
+      			if file_name == theme_name and ext == 'txt' then
+      				io.copyto(path_, dirs['stand'] .. 'Profiles\\' .. file_name_ext)
+      			end
+      		break
+      		case 'Theme':
+				io.copyto(path_, dirs['stand'] .. 'Theme\\' .. file_name_ext)
+      		break
+      		case 'Custom Header':
+      			-- TODO: empty header beforehand
+				empty_dir(dirs['header'])
+	      		io.copyto(path_, dirs['header'] .. file_name_ext)
+      		break
+
+      	end 
+      end
+      load_profile(theme_name)
+      return
+    end
+    ::continue::
   end
 
-  empty_dir(dirs['theme'])
+  --[[empty_dir(dirs['theme'])
   empty_dir(dirs['header'])
 
   io.makedirs(dirs['theme'] .. 'Custom')
@@ -423,7 +472,6 @@ local function download_theme(theme_name)
   table.insert(req_url, req_url[1] .. '/Interaction Header') --7 only for epsilon/ozark i think?
 
   local manifest_paths = {}
-
   for k1, v1 in req_url do
     local i = 0
     local j = 0
@@ -509,13 +557,14 @@ local function download_theme(theme_name)
   end
 
   if f := io.open(dirs['resources'] .. 'Themes\\' .. theme_name .. '\\.manifest', 'w') then
-    log($'Successfully wrote to Themes\\{theme_name}\\.manifest')
     f:write(table.concat(manifest_paths, '\n'))
     f:close()
+    log($'Successfully wrote to Themes\\{theme_name}\\.manifest')
   else
     log($'Failed to write to Themes\\{theme_name}\\.manifest')
   end
   load_profile(theme_name)
+  ]]
 end
 local function empty_list(ref)
   for ref:getChildren() as child do
