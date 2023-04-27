@@ -301,7 +301,7 @@ local theme_config = theme_root:list('Configuration', {}, '')
 theme_config:toggle('Fast Install', {}, 'Looks for cached versions of files that are supposed to be downloaded. If they are not found, they will be downloaded and cached for next time.', function(s)
   bools['prevent_redownloads'] = s
 end, true)
-theme_config:toggle('Save to Active Profile', {}, 'Applies the theme to the active profile, which saves your settings. You may want to create a backup either way, to err on the side of caution.', function(s)
+theme_config:toggle('Save to Active Profile', {}, 'Applies the theme to the active profile, which saves your settings. You may want to create a backup to err on the side of caution.', function(s)
   bools['combine_profiles'] = s
 end, false)
 
@@ -692,7 +692,7 @@ local function recurse_dir(dir, paths)
   end
   return paths
 end
-utils:action('Backup', {}, 'Backup profiles, lua scripts, textures/fonts/tags/tabs, and headers to a directory.', function()
+utils:action('Backup', {}, 'Backup profiles, lua scripts, theme, and headers to a directory. You may experience some lag until completion. Duration depends on size of directories.', function()
   local date = os.date('%Y-%m-%d-%H:%M:%S')
   local hash = 'backup-' .. crypto.md5(date)
 
