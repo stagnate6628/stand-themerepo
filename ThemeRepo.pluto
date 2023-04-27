@@ -149,7 +149,6 @@ local tree_version<constexpr> = 46
 local function get_ref(ref) 
   return menu.ref_by_path(ref, tree_version)
 end
-local script_ref = get_ref('Stand>Lua Scripts>' .. SCRIPT_NAME)
 
 local function trigger_command(ref, args)
   local ref_ = get_ref(ref) 
@@ -533,9 +532,6 @@ local function download_themes(update)
     if update then
       empty_list(theme_root)
       download_list()
-      if script_ref:refByRelPath('Themes'):isValid() then
-        script_ref:refByRelPath('Themes'):trigger()
-      end
       return
     else
       log('Found local theme list cache')
@@ -622,9 +618,6 @@ local function download_headers(update)
     if update then
       empty_list(header_root)
       download_list()
-      if script_ref:refByRelPath('Headers'):isValid() then
-        script_ref:refByRelPath('Headers'):trigger()
-      end
       return
     else
       log('Found local header list cache')
