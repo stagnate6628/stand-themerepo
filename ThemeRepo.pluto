@@ -450,7 +450,7 @@ local function download_theme(theme_name)
     ::continue::
   end
 
-  --[[empty_dir(dirs['theme'])
+  empty_dir(dirs['theme'])
   empty_dir(dirs['header'])
 
   io.makedirs(dirs['theme'] .. 'Custom')
@@ -558,7 +558,6 @@ local function download_theme(theme_name)
     log($'Failed to write to Themes\\{theme_name}\\.manifest')
   end
   load_profile(theme_name)
-  ]]
 end
 local function empty_list(ref)
   for ref:getChildren() as child do
