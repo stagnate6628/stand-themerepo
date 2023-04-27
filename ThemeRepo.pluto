@@ -231,10 +231,7 @@ header_root:text_input('Install from Zip', {'installfromzip'}, 'For zip files wi
         goto continue
       end
 
-      local file = io.open(zip_path, 'wb')
-      file:write(body)
-      file:close()
-
+      io.open(zip_path, 'wb'):write(body):close()
       ::continue::
       downloading = false
     end, function()
