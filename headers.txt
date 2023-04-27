@@ -75,6 +75,7 @@ Stand Cyan Sus
 Stand Cyan Transparent
 Stand Cyan Transparent Sus
 Stand Glitch
+Stand Imperial
 Stand Magenta Gradient Fill
 Stand Orange
 Stand Orange Transparent
@@ -82,6 +83,7 @@ Stand Pink Animated
 Stand Purple
 Stand Purple Transparent
 Stand Rockstar
+Stand Splice
 Stand Yellow
 Stand Yellow Transparent
 StandHub

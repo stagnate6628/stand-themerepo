@@ -12,6 +12,7 @@ Fragment
 Gradient Pulsive
 Hexy
 Impulse
+JinxOnTop
 Kiddions
 Kokushibo
 Legacy Menu Beta
