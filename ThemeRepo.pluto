@@ -200,9 +200,6 @@ local dirs = {
 }
 
 local root = menu.my_root()
-local script_version<constexpr> = '1.2.2'
-root:readonly('Version', script_version)
-root:divider('')
 
 local header_root = root:list('Headers', {}, '')
 local header_config = header_root:list('Configuration', {}, '')
