@@ -189,8 +189,6 @@ local function empty_dir(dir)
 end
 
 local filesystem, io, lib, menu, util = filesystem, io, lib, menu, util
-math.randomseed(util.current_unix_time_seconds()) -- apparently this is good
-
 local path_map<const> = {'Root', 'Theme', 'Tags', 'Tabs', 'Custom Header', 'Lua Scripts'}
 local make_dirs<const> = {'Lua Scripts', 'Custom Header', 'Theme\\Custom', 'Theme\\Tabs'}
 
@@ -632,9 +630,6 @@ local function download_headers(update)
 
           bools['is_header_downloading'] = false
 
-          if math.random() > 0.8 then
-            util.toast('Tip: Make sure to save the current profile to load the Custom Header on start.')
-          end
           log('Done!')
           util.toast('Done!')
         end)
@@ -756,11 +751,6 @@ utils:action('Update Script', {}, '', function()
   auto_updater.run_auto_update(auto_update_config)
 end)
 utils:hyperlink('Credits', 'https://github.com/stagnate6628/stand-themerepo/wiki/Credits')
-
--- idk if this is even a good method
-if math.random() > 0.8 then
-  util.toast('[ThemeRepo] Remember to maintain backups of textures as needed. (Utilities>Backup)')
-end
 
 io.makedirs(dirs['resources'])
 io.makedirs(dirs['resources'] .. 'Themes')
