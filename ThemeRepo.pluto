@@ -103,9 +103,9 @@ local function make_request(url_path, callback)
   end
   async_http.dispatch()
 
-  while downloading do
+  repeat 
     util.yield()
-  end
+  until not downloading
 end
 local function download_file(url_path, file_path, callback)
   local downloading = true
@@ -137,9 +137,9 @@ local function download_file(url_path, file_path, callback)
   end
   async_http.dispatch()
 
-  while downloading do
+  repeat 
     util.yield()
-  end
+  until not downloading() 
 end
 local function get_host_path(url)
   return url:match("(https?://[%w.-]+)([%S]*)")
@@ -551,7 +551,7 @@ local function download_themes(update)
   local path = dirs['resources'] .. 'themes.txt'
   local function download_list()
     download_file('themes.txt', {path}, function(body, headers, status_code)
-      log(if not update then 'Creating themes cache' else 'Updating themes cache')
+      log(update ? 'Creating themes cache' : 'Updating themes cache')
       parse_list(body)
     end)
   end
