@@ -496,7 +496,7 @@ local function download_theme(theme_name)
         if should_copy(paths[1]) and paths[2] != nil then
           io.copyto(paths[1], paths[2])
         else
-          table.insert(manifest_paths, (v2.path:gsub('/', '\\')))
+          manifest_paths[#manifest_paths + 1] = v2.path:gsub('/', '\\')
           download_file(v2.path, paths)
         end
         i += 1
