@@ -45,682 +45,92 @@ if auto_updater == true then
   error('Invalid auto-updater lib. Please delete your Stand/Lua Scripts/lib/auto-updater.lua and try again')
 end
 
-local crypto = require 'crypto'
+local async_http, filesystem, io, util = async_http, filesystem, io, util
 
-local auto_update_config = {
-  source_url = 'https://raw.githubusercontent.com/stagnate6628/stand-themerepo/main/ThemeRepo.pluto',
-  script_relpath = SCRIPT_RELPATH,
-  verify_file_begins_with = '--',
-  check_interval = 86400,
-  silent_updates = true,
-  script_run_name = SCRIPT_NAME:lower()
-}
-local bools = {
-  ['is_downloading'] = false,
-  ['is_header_downloading'] = false,
-  ['prevent_redownloads'] = true,
-  ['debug'] = false,
-  ['combine_profiles'] = false
-}
-
-if not bools['debug'] then 
-  auto_updater.run_auto_update(auto_update_config)
+local inspect = require 'lib/inspect'
+local function log(what)
+	util.log(inspect(what))
 end
 
-local function write_file(path, body)
-  io.makedirs(path:match('^(.+)[\\/]'))
-  if file := io.open(path, 'wb') then 
-    file:write(body)
-    file:close()
-  end
-end
-local function get_github_auth()
-  if file := io.open(filesystem.resources_dir() .. 'ThemeRepo\\.github', 'r') then
-    local token = file:read('a')
-    file:close()
-    return token:startswith('ghp_') and token:len() == 40 and token or nil
-  end
-  return nil
-end
-local function handle_ratelimit()
-  for i = 0, 3 do
-    util.toast('You are currently ratelimited by Github. You can let it expire or a use a vpn.')
-  end
-  util.stop_script()
-end
-local function make_request(url_path, callback)
-  local downloading = true
-  async_http.init('https://api.github.com', '/repos/stagnate6628/stand-themerepo/contents/' .. url_path, 
-    function(body, headers, status_code)
-      downloading = false
-      if status_code == 403 then
-        handle_ratelimit()
-      end
-      callback(body, headers, status_code)
-  end)
-  if token := get_github_auth() then
-    async_http.add_header('Authorization', 'Bearer ' .. token)
-  end
-  async_http.dispatch()
-
-  while downloading do
-    util.yield()
-  end
-end
-local function download_file(url_path, file_path, callback)
-  local downloading = true
-  async_http.init('https://raw.githubusercontent.com', '/stagnate6628/stand-themerepo/main/' .. url_path,
-    function(body, headers, status_code)
-      if status_code == 403 then
-        handle_ratelimit()
-      elseif status_code == 404 then
-        goto continue
-      end
-
-      if type(file_path) == 'string' then
-        file_path = {file_path}
-      end
-
-      if type(file_path) == 'table' and #file_path > 0 then
-        for file_path as path do 
-          write_file(path, body)
-        end
-        pcall(callback, body, headers, status_code)
-      end
-      ::continue::
-      downloading = false
-    end, function()
-      downloading = false
-    end)
-  if token := get_github_auth() then
-    async_http.add_header('Authorization', 'Bearer ' .. token)
-  end
-  async_http.dispatch()
-
-  while downloading do
-    util.yield()
-  end
-end
-local function get_host_path(url)
-  return url:match("(https?://[%w.-]+)([%S]*)")
+local function get_github_auth() 
+	if file := io.open(filesystem.resources_dir() .. 'ThemeRepo\\.github', 'r') then
+		local token = file:read('a')
+		file:close()
+		return token:startswith('ghp_') and token:len() == 40 and token
+	end
+	return nil
 end
 
-local tree_version<constexpr> = 46
-local function get_ref(ref) 
-  return menu.ref_by_path(ref, tree_version)
+local function fetch(host, path, callback)
+	local downloading = true
+	async_http.init(host, path, function(body, headers, status_code)
+		log(headers)
+		if status_code == 403 then
+			local expire_at = os.date('%d-%m %H:%M', headers['X-Ratelimit-Reset'])
+			for i = 1, 5 do
+				util.toast($'You are currently being ratelimited by GitHub.\nThis will expire at {expire_at}.')
+			end
+			util.stop_script()
+		elseif status_code == 404 then
+			goto continue
+		end
+
+		pcall(callback, body, headers, status_code)
+		::continue::
+	end, function()
+		util.toast($'Request to {host}{path} failed to send.')
+	end)
+	if token := get_github_auth() then
+		async_http.add_header('Authorization', 'Bearer ' .. token)
+	end
+	async_http.dispatch()
+
+	repeat
+		util.yield()
+	until not downloading
 end
 
-local function trigger_command(ref, args)
-  local ref_ = get_ref(ref) 
-  if not ref_:isValid() then 
-    return
-  end
+local function download_file(host, path, file_path, callback)
+	fetch(host, path, function(body, headers, status_code)
+		if type(file_path) == 'string' then
+			file_path = {file_path}
+		end
 
-  if not args then
-    ref_:trigger()
-  else
-    menu.trigger_command(ref_, args)
-  end
-end
-local function hide_header()
-  trigger_command('Stand>Settings>Appearance>Header>Header>Be Gone')
-end
-local function use_custom_header()
-  trigger_command('Stand>Settings>Appearance>Header>Header>Custom')
-end
-local function reload_font()
-  trigger_command('Stand>Settings>Appearance>Font & Text>Reload Font')
-end
-local function reload_textures()
-  trigger_command('Stand>Settings>Appearance>Textures>Reload Textures')
-end
-local function empty_dir(dir)
-  for io.listdir(dir) as path1 do
-    if io.isfile(path1) then
-      io.remove(path1)
-    else 
-      for io.listdir(path1) as path2 do
-        io.remove(path2)
-      end
-      io.remove(path1)
-    end
-  end
+		for file_path as path do 
+			if not filesystem.is_dir(path:match('^(.+)[\\/]')) then
+				filesystem.mkdirs(path:match('^(.+)[\\/]'))
+			end
+
+			local file = io.open(path, 'wb')
+			file:write(body)
+			file:close()
+		end
+	end)
 end
 
-local filesystem, io, lib, menu, util = filesystem, io, lib, menu, util
+local resources_dir = filesystem.resources_dir() .. 'ThemeRepo\\'
+local themes_dir = resources_dir .. 'Themes'
+local headers_dir = resources_dir .. 'Headers'
 
-local path_map<const> = {'Root', 'Theme', 'Tags', 'Tabs', 'Custom Header', 'Lua Scripts'}
-local make_dirs<const> = {'Lua Scripts', 'Custom Header', 'Theme\\Custom', 'Theme\\Tabs'}
-
-local dirs = {
-  ['stand'] = filesystem.stand_dir(),
-  ['theme'] = filesystem.stand_dir() .. 'Theme\\',
-  ['header'] = filesystem.stand_dir() .. 'Headers\\Custom Header\\',
-  ['resources'] = filesystem.resources_dir() .. 'ThemeRepo\\'
-}
-
-local root = menu.my_root()
-
-local header_root = root:list('Headers', {}, '')
-local header_config = header_root:list('Configuration', {}, '')
-
-header_root:text_input('Install from Zip', {'installfromzip'}, 'For zip files with only images inside (jpg, jpeg, png, gif), not tested with other formats.', function(input, click_type)
-  if click_type != 1 then
-    return
-  end
-  
-  local host, path = get_host_path(input)
-  if not host or not path then
-    util.toast("That doesn't look like a url.")
-    return
-  end
-  
-  if not path:endswith('.zip') then
-    util.toast("That doesn't look like a zip.")
-    return
-  end
-
-  local zip_path = filesystem.stand_dir() .. path:match("[^/]+$")
-  local downloading = true
-  async_http.init(host, path, function(body, headers, status_code)
-      if status_code ~= 200 then
-        util.toast('Failed to download zip.')
-        log($'Failed to download zip {host}{path}, got {status_code}')
-        goto continue
-      end
-
-      io.open(zip_path, 'wb')
-        :write(body)
-        :close()
-
-      ::continue::
-      downloading = false
-    end, function()
-      downloading = false
-    end)
-  async_http.dispatch()
-
-  while downloading do
-    util.toast('Downloading zip...')
-    util.yield()
-  end
-
-  empty_dir(dirs['header'])
-
-  local i = 0
-  local fr = soup.FileReader(zip_path)
-  local zr = soup.ZipReader(fr)
-  local bad_format = false
-  for zr:getFileList() as file do
-    if file.name:endswith('/') then
-      bad_format = true
-      break
-    end
-    local ext = file.name:match("%.([^.]+)$")
-
-    if table.contains({ 'png', 'jpg' , 'jpeg', 'gif' }, ext) != nil then
-      local f = io.open(dirs['header'] .. file.name, 'wb')
-      f:write(zr:getFileContents(file))
-      f:close()
-    end
-    i += 1
-  end
-  
-  if bad_format then
-    util.toast('Invalid zip format detected...')
-    return
-  end
-
-  repeat 
-    util.yield()
-  until i == #zr:getFileList()
-
-  if get_ref('Stand>Settings>Appearance>Header>Header').value == 200 then
-    hide_header()
-  end
-  use_custom_header()
-  
-  fr = nil
-  zr = nil
-  collectgarbage('collect')
-  local success = pcall(io.remove, zip_path)
-  if not success then
-    util.toast($'Failed to delete zip file {zip_path},you can delete it after you close GTA.')
-  end
-end)
-
--- themes
-local theme_root = root:list('Themes', {}, '')
-local theme_config = theme_root:list('Configuration', {}, '')
-
-theme_config:toggle('Prevent Redownloads', {}, 'Looks for cached versions of files that are supposed to be downloaded. If they are not found, they will be downloaded and cached for next time.', function(s)
-  bools['prevent_redownloads'] = s
-end, true)
-theme_config:toggle('Save to Active Profile', {}, 'Applies the theme to the active profile, which saves your settings. You may want to create a backup to err on the side of caution.', function(s)
-  bools['combine_profiles'] = s
-end, false)
-
-local lang_list<const> = { "Chinese (Simplified) - 简体中文", "Dutch - Nederlands", "English (UK)", "English (US)",
-  "French - Français", "German - Deutsch", "Korean - 한국어", "Lithuanian - Lietuvių", "Polish - Polski",
-  "Portuguese - Português", "Russian - русский", "Spanish - Español", "Turkish - Türkçe", "Horny English",
-  "Engwish", "Howny Engwish" }
-local lang_map<const> = { 'langzh', 'langnl', 'langenuk', 'langenus', 'langfr', 'langde', 'langko', 'langlt', 'langpl',
-  'langpt', 'langru', 'langes', 'langtr', 'langsex', 'languwu', 'langhornyuwu' }
-local lang_index = 3 -- english uk
-
-theme_config:list_action('Language', {}, 'The language to use for the profile; some fonts may not support some languages.', lang_list, function(index)
-  lang_index = index
-  util.toast('[ThemeRepo] Profile language set to ' .. lang_list[lang_index])
-end)
-
-local function log(msg)
-  if not bools['debug'] then
-    return
-  end
-
-  local log_path = dirs['resources'] .. 'log.txt'
-  if not io.exists(log_path) then
-    io.open(log_path, 'wb'):close()
-  end
-
-  local log_file = io.open(log_path, 'a+')
-  log_file:write('[' .. os.date('%x %I:%M:%S %p') .. '] ' .. msg .. '\n')
-  log_file:close()
+for { themes_dir, headers_dir } as path do
+	if not filesystem.is_dir(path) then 
+		filesystem.mkdir(path)
+	end	
 end
-local function should_copy(file_path)
-  return io.exists(file_path) and io.isfile(file_path) and bools['prevent_redownloads']
+
+for { 'themes.txt', 'headers.txt' } as file do
+	local path = resources_dir .. file
+	if not filesystem.is_regular_file(path) then
+		download_file(
+			'https://raw.githubusercontent.com', 
+			'/stagnate6628/stand-themerepo/main/' .. file,
+			path
+		)
+	end
+
+	local f = io.open(path, 'r')
+	local content = f:read('*a'):split('\n')
+	f:close()
+
+	menu.my_root():list_select(file, {}, '', content, 1, function() end)
 end
-local function get_active_profile_name()
-  local file = util.read_colons_and_tabs_file(dirs['stand'] .. 'Meta State.txt')
-  return file['Active Profile'] or 'Main'
-end
-local function load_profile(profile_name)
-  log('Loading ' .. profile_name)
-
-  reload_textures()
-  reload_font()
-
-  trigger_command('Stand>Profiles')
-  util.yield(100)
-  trigger_command('Stand')
-  util.yield(100)
-  trigger_command('Stand>Profiles')
-
-  trigger_command('Stand>Lua Scripts')
-  util.yield(100)
-  trigger_command('Stand')
-  util.yield(100)
-  trigger_command('Stand>Lua Scripts')
-
-  if bools['combine_profiles'] then
-  	local path = dirs['resources'] .. 'Themes\\' .. profile_name .. '\\' .. profile_name .. '.txt'
-    for k, v in util.read_colons_and_tabs_file(path) do
-      if k:startswith('Stand>Settings>Appearance') or 
-        k:startswith('Stand>Lua Scripts') or k:startswith('Players>Settings>Tags') then
-        local ref = get_ref(k .. '>' .. v)
-        if not ref:isValid() then
-          trigger_command(k, v)
-        else
-          ref:trigger()
-        end
-      end
-      util.yield()
-    end
-    if lang_index != 3 then
-      menu.trigger_commands(lang_map[lang_index])
-    end
-    trigger_command('Stand>Profiles>' .. get_active_profile_name() .. '>Save')
-  else
-    local ref = get_ref('Stand>Profiles>' .. profile_name)
-    ref:refByRelPath('Active'):trigger()
-
-    if lang_index != 3 then
-      menu.trigger_command(lang_map[lang_index])
-      ref:refByRelPath('Save'):trigger()
-    end
-
-    ref:refByRelPath('Load'):trigger()
-    util.yield(100)
-    ref:refByRelPath('Load'):trigger()
-  end
-
-  log('Done!')
-  util.toast('Done!')
-end
-local function download_theme(theme_name)
-  log('Starting ' .. theme_name)
-
-  empty_dir(dirs['theme'])
-  empty_dir(dirs['header'])
-
-  filesystem.mkdir(dirs['theme'] .. 'Custom')
-  filesystem.mkdir(dirs['theme'] .. 'Tabs')
-
-  local req_url = {}
-  table.insert(req_url, 'Themes/' .. theme_name) -- 1=root
-  table.insert(req_url, req_url[1] .. '/Theme') -- 2=theme
-  table.insert(req_url, req_url[2] .. '/Custom') -- 3=tag_names
-  table.insert(req_url, req_url[2] .. '/Tabs') -- 4=tabs
-  table.insert(req_url, req_url[1] .. '/Custom Header') -- 5=custom header
-  table.insert(req_url, req_url[1] .. '/Lua Scripts') -- 6=lua scripts
-  table.insert(req_url, req_url[1] .. '/Interaction Header') --7 only for epsilon/ozark i think?
-
-  for k1, v1 in req_url do
-    local i = 0
-    local j = 0
-
-    make_request(v1, function(body, headers, status_code)
-      if status_code == 404 then
-        return
-      end
-
-      local success, body = pcall(soup.json.decode, body)
-      if not success then
-        log('Failed to parse json response [' .. k1 .. ']')
-        return
-      end
-
-      if k1 == 7 then
-        util.toast('Finishing up...')
-      end
-
-      j = #body
-      for body as v2 do
-        if v2.type == 'dir' then
-          j -= 1
-          continue
-        end
-
-        -- v2.path is nil on ratelimit
-        local paths = {dirs['resources'] .. v2.path:gsub('/', '\\')}
-        local file_name = v2.name
-
-        log(string.format('Downloading %s at path %s', v2.name, v2.path))
-
-        local path 
-        switch k1 do
-          case 1: -- root
-            if file_name:match("%.([^.]+)$") == 'txt' and not bools['combine_profiles'] then
-              path = dirs['stand'] .. 'Profiles\\'
-            end
-          break
-          case 2: -- theme
-              path = dirs['theme']
-          break         
-          case 3: -- custom/tags
-            path = dirs['theme'] .. 'Custom\\'
-          break
-          case 4: -- tabs
-            path = dirs['theme'] .. 'Tabs\\'
-          break
-          case 5: -- custom header
-            hide_header()
-            path = dirs['header']
-          break
-          case 6: -- lua scripts
-            path = filesystem.scripts_dir()
-          break
-          default: -- for dirs such as "Interaction Header"
-            path = dirs['resources'] .. 'Themes\\' .. theme_name .. '\\' .. v2.path:match('.*/(.*)/.*')
-          break
-        end
-        
-        if path then 
-          table.insert(paths, path .. file_name) 
-        end
-
-        if should_copy(paths[1]) and paths[2] != nil then
-          io.copyto(paths[1], paths[2])
-        else
-          download_file(v2.path, paths)
-        end
-        i += 1
-      end
-    end)
-
-    repeat
-      util.yield(250)
-      log($"Waiting at path {v1}: {i}/{j}")
-    until i == j
-
-    if k1 != 7 then 
-      util.toast(string.format('[ThemeRepo] Finished path %s (%d/6)', path_map[k1], k1))
-    end
-  end
-  load_profile(theme_name)
-end
-local function empty_list(ref)
-  for ref:getChildren() as child do
-    if child:getType() == COMMAND_ACTION then
-      child:delete()
-    end
-  end
-end
-local function download_themes(update)
-  local function parse_list(out)
-    for out:split('\n') as theme_name do
-      if theme_name == '' then continue end
-      theme_root:action(theme_name, {}, '', function(click_type)
-        if bools['is_downloading'] then
-          menu.show_warning(theme_root, click_type,
-              'A download has already started. You may need to wait for the theme to finish downloading. Continuing may lead to unexpected issues. Proceed?',
-              function()
-                bools['is_downloading'] = false
-              end)
-          return
-        end
-
-        bools['is_downloading'] = true
-        download_theme(theme_name)
-        bools['is_downloading'] = false
-      end)
-    end
-  end
-
-  local path = dirs['resources'] .. 'themes.txt'
-  local function download_list()
-    download_file('themes.txt', {path}, function(body, headers, status_code)
-      log(if not update then 'Creating themes cache' else 'Updating themes cache')
-      parse_list(body)
-    end)
-  end
-
-  if file := io.open(path, 'r') then
-    if update then
-      empty_list(theme_root)
-      download_list()
-      return
-    else
-      log('Found local theme list cache')
-    end
-
-    parse_list(file:read('*a'))
-    file:close()
-  else
-    download_list()
-  end
-end
-theme_config:action('Update List', {}, '', function()
-  download_themes(true)
-end)
-
-local function download_headers(update)
-  local function parse_list(out)
-    for out:split('\n') as v do
-      if v == '' then continue end
-      header_root:action(v, {}, '', function(click_type)
-        if bools['is_header_downloading'] then
-          menu.show_warning(header_root, click_type,
-              'A download has already started. You may need to wait for the header to finish downloading. Continuing may lead to unexpected issues. Proceed?',
-              function()
-                bools['is_header_downloading'] = false
-              end)
-          return
-        end
-
-        bools['is_header_downloading'] = true
-
-        empty_dir(dirs['header'])
-
-        make_request('Headers/' .. v, function(body, headers, status_code)
-          local success, body = pcall(soup.json.decode, body)
-          if not success then
-            log('Failed to parse json response [headers]')
-            return
-          end
-
-          io.makedirs(dirs['resources'] .. 'Headers\\' .. v .. '\\')
-
-          local i = 0
-          for body as v2 do
-            local paths = {dirs['resources'] .. 'Headers\\' .. v .. '\\' .. v2.name, dirs['header'] .. v2.name}
-            if should_copy(paths[1]) then
-              io.copyto(paths[1], paths[2])
-              log(string.format('Copied header %s (%d/%d)', v2.name, i + 1, #body))
-            else
-              download_file(v2.path, paths, function()
-                log(string.format('Downloaded header %s (%d/%d)', v2.name, i + 1, #body))
-              end)
-            end
-            i += 1
-          end
-
-          repeat
-            util.yield(250)
-          until i == #body
-          
-          if get_ref('Stand>Settings>Appearance>Header>Header').value == 200 then
-            hide_header()
-          end
-          use_custom_header()
-
-          bools['is_header_downloading'] = false
-
-          log('Done!')
-          util.toast('Done!')
-        end)
-      end)
-    end
-  end
-
-  local path = dirs['resources'] .. 'headers.txt'
-  local function download_list()
-    download_file('headers.txt', {path}, function(body, headers, status_code)
-      log(if not update then 'Creating headers cache' else 'Updating headers cache')
-      parse_list(body)
-    end)
-  end
-
-  if file := io.open(path, 'r') then 
-    if update then
-      empty_list(header_root)
-      download_list()
-      return
-    else
-      log('Found local header list cache')
-    end
-    parse_list(file:read('*a'))
-    file:close()
-  else
-    download_list()
-  end
-end
-header_config:action('Update List', {}, '', function()
-  download_headers(true)
-end)
-
-local utils = menu.list(menu.my_root(), 'Utilities', {}, '')
-utils:list_action('Reset', {}, '', { 'Default Textures and Font', 'Default Font', 'Default Headers' }, function(index, menu_name, prev_index, click_type)
-  if index == 1 then
-    empty_dir(dirs['theme'])
-    reload_textures()
-    reload_font()
-  elseif index == 2 then
-    io.remove(dirs['theme'] .. 'Font.spritefont')
-    reload_font()
-  else 
-    empty_dir(dirs['header'])
-    hide_header()
-  end
-end)
-utils:toggle('Debug', {}, '', function(s)
-  if s then
-    trigger_command('Stand>Lua Scripts>Settings>Presets>Developer')
-  else
-    trigger_command('Stand>Lua Scripts>Settings>Presets>User')
-  end
-  bools['debug'] = s
-end, bools['debug'])
-
-local dirs_to_copy = {
-  dirs['stand'] .. 'Headers',
-  dirs['stand'] .. 'Lua Scripts',
-  dirs['stand'] .. 'Profiles',
-  dirs['stand'] .. 'Theme'
-}
-local function recurse_dir(dir, paths)
-  paths ??= {}
-  for filesystem.list_files(dir) as path do
-    if filesystem.is_dir(path) then
-      recurse_dir(path, paths)
-    else
-      table.insert(paths, path)
-    end
-  end
-  return paths
-end
-utils:action('Backup', {}, 'Backup profiles, lua scripts, theme, and headers to a directory. You may experience some lag until completion. Duration depends on size of directories.', function()
-  local date = os.date('%Y-%m-%d-%H:%M:%S')
-  local hash = 'backup-' .. crypto.md5(date)
-
-  local backup_dir = dirs['resources'] .. 'Backups\\'
-  if filesystem.is_dir(backup_dir .. hash) then
-    util.toast('For some reason, this backup already exists...')
-    return
-  end
-
-  backup_dir ..= hash .. '\\'
-  io.makedirs(backup_dir .. 'Headers')
-  io.makedirs(backup_dir .. 'Lua Scripts')
-  io.makedirs(backup_dir .. 'Profiles')
-  io.makedirs(backup_dir .. 'Theme')
-  
-  for dirs_to_copy as v do
-    for recurse_dir(v) as v2 do
-      local new_path = v2:lstrip(dirs['stand'])
-      if not new_path:startswith('Lua Scripts\\resources\\ThemeRepo\\Backups\\') then
-        if f := io.open(v2, 'r') then
-          local path = backup_dir .. new_path
-          io.makedirs(path:match('^(.+)[\\/]'))
-          io.copyto(v2, path)
-          f:close()
-        end
-      end
-      util.yield()
-    end
-    util.yield()
-  end
-
-  io.open(backup_dir .. '.created_at', 'wb')
-    :write(date)
-    :close()
-
-  util.toast($'Backup created under "{hash}"!')
-  util.open_folder(backup_dir)
-end)
-utils:action('Restart Script', {}, '', util.restart_script)
-utils:action('Update Script', {}, '', function()
-  auto_update_config.check_interval = 0
-  auto_updater.run_auto_update(auto_update_config)
-end)
-utils:hyperlink('Credits', 'https://github.com/stagnate6628/stand-themerepo/wiki/Credits')
-
-io.makedirs(dirs['resources'])
-io.makedirs(dirs['resources'] .. 'Themes')
-io.makedirs(dirs['resources'] .. 'Headers')
-io.makedirs(dirs['resources'] .. 'Backups')
-
-download_themes()
-download_headers()
-
-util.keep_running()
