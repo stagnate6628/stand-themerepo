@@ -115,13 +115,13 @@ local function write_file(path, body)
 end
 
 local function download_file(host, path, file_path, callback)
-	fetch(host, path, function(body)
+	fetch(host, path, function(body, headers, status_code)
 		if type(file_path) == 'string' then
 			file_path = {file_path}
 		end
 
 		for file_path as path do 
-			--write_file(path)
+			write_file(path, body)
 		end
 	end)
 end
@@ -147,7 +147,7 @@ do
 			body = soup.json.decode(body)
 
 			for body as file do
-				if file.type == 'file' then 
+				if file.type == 'file' then
 					table.insert(files, file.path)
 					continue
 				end
@@ -158,18 +158,45 @@ do
 
 		return files
 	end
-
-	local function download_theme(theme_name)
-		local files = get_all_files('Themes/' .. theme_name)
-		local manifest = themes_dir .. theme_name .. '\\.manifest'
-
-		if not filesystem.is_regular_file(themes_dir .. theme_name .. '\\.manifest') then 
-			write_file(manifest, table.concat(files, '\n'))
-		end
+	
+	local function load_theme(theme_name)
 	end
 
-	local function download_header(header_name)
-		make_request('Headers/' .. header_name, function(body)
+	local function download_theme(theme_name)
+		local manifest = themes_dir .. theme_name .. '\\.manifest'
+
+		if not filesystem.is_regular_file(themes_dir .. theme_name .. '\\.manifest') then
+			local files = get_all_files('Themes/' .. theme_name)
+			write_file(manifest, table.concat(files, '\n'))
+
+			for files as path do
+				download_file(
+						'https://raw.githubusercontent.com',
+						'/stagnate6628/stand-themerepo/main/' .. path,
+						resources_dir .. path:gsub('/', '\\')
+				)
+			end
+		else
+			local file = io.open(manifest, 'r')
+			local files = file:read('*a'):split('\n')
+			file:close()
+
+			for files as path do
+				local path_ = resources_dir .. path:gsub('/', '\\')
+				if not filesystem.is_regular_file(path_) then
+					download_file(
+						'https://raw.githubusercontent.com',
+						'/stagnate6628/stand-themerepo/main/' .. path,
+						path_
+					)
+				end
+			end
+		end
+
+
+	end
+
+	local function download_header(header_name) 
 	end
 
 	for i, file in { 'themes.txt', 'headers.txt' } do
