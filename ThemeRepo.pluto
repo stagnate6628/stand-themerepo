@@ -100,7 +100,7 @@ end
 
 local function make_request(path, callback)
 	fetch('https://api.github.com', '/repos/stagnate6628/stand-themerepo/contents/' .. path, function(body, headers, status_code) 
-		pcall(body, headers, status_code)
+		pcall(callback, body, headers, status_code)
 	end)
 end
 
