@@ -200,48 +200,49 @@ do
 
 		util.yield(100)
 
-		menu.ref_by_path('Stand>Profiles>' .. theme_name .. '>Load'):trigger()
+		menu.ref_by_path('Stand>Profiles'):trigger()
+		menu.ref_by_path('Stand'):trigger()
+
+		menu.ref_by_path('Stand>Lua Scripts'):trigger()
+		menu.ref_by_path('Stand'):trigger()
+
+		local theme_ref = menu.ref_by_path('Stand>Profiles>' .. theme_name)
+		if not theme_ref:isValid() then
+			util.toast('Failed to load the theme.')
+			return
+		end
+
+		theme_ref:refByRelPath('Active'):trigger()
+		theme_ref:refByRelPath('Load'):trigger()
 	end
 
 	local function download_theme(theme_name)
+		util.toast($'Downloading {theme_name}...')
+		local files = nil
 		local manifest = themes_dir .. theme_name .. '\\.manifest'
 
 		if not filesystem.is_regular_file(themes_dir .. theme_name .. '\\.manifest') then
-			local files = get_all_files('Themes/' .. theme_name)
+			files = get_all_files('Themes/' .. theme_name)
 			write_file(manifest, table.concat(files, '\n'))
-
-			for files as path do
-				local path_ = resources_dir .. path:gsub('/', '\\')
-				download_file(
-						'https://raw.githubusercontent.com',
-						'/stagnate6628/stand-themerepo/main/' .. path,
-						path_
-				)
-
-				if stand_path := get_local_path(path) then
-					io.copyto(path_, stand_path)
-				end
-			end
 		else
 			local file = io.open(manifest, 'r')
-			local files = file:read('*a'):split('\n')
+			files = file:read('*a'):split('\n')
 			file:close()
+		end
 
-			for files as path do
-				local path_ = resources_dir .. path:gsub('/', '\\')
+		for files as path do
+			local path_ = resources_dir .. path:gsub('/', '\\')
 
-				if not filesystem.is_regular_file(path_) then
-					download_file(
-						'https://raw.githubusercontent.com',
-						'/stagnate6628/stand-themerepo/main/' .. path,
-						path_
-					)
-				end
+			if not filesystem.is_regular_file(path_) then
+				download_file(
+					'https://raw.githubusercontent.com',
+					'/stagnate6628/stand-themerepo/main/' .. path,
+					path_
+				)
+			end
 
-				if stand_path := get_local_path(path) then
-						--util.log($'{path_} -> {stand_path}')
-						io.copyto(path_, stand_path) 
-				end
+			if stand_path := get_local_path(path) then
+				io.copyto(path_, stand_path) 
 			end
 		end
 
@@ -266,11 +267,7 @@ do
 		f:close()
 
 		local fn = i == 1 ? download_theme : download_header
-		root:list_select(file, {}, '', body, 1, function(index, menu_name, previous_index, click_type) 
-			if click_type != 0 then 
-				return
-			end
-
+		root:list_action(file, {}, '', body, function(index, menu_name, click_type) 
 			fn(menu_name)
 		end)
 	end
