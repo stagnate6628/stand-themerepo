@@ -45,7 +45,13 @@ if auto_updater == true then
   error('Invalid auto-updater lib. Please delete your Stand/Lua Scripts/lib/auto-updater.lua and try again')
 end
 
-local async_http, filesystem, io, util = async_http, filesystem, io, util
+local async_http, filesystem, io, menu, util = async_http, filesystem, io, menu, util
+local og_toast = util.toast
+util.toast = function(message)
+	og_toast('[ThemeRepo] ' .. message)
+end
+
+local root = menu.my_root()
 
 local inspect = require 'lib/inspect'
 local function log(what)
@@ -62,9 +68,8 @@ local function get_github_auth()
 end
 
 local function fetch(host, path, callback)
-	local downloading = true
+	local finished = false
 	async_http.init(host, path, function(body, headers, status_code)
-		log(headers)
 		if status_code == 403 then
 			local expire_at = os.date('%d-%m %H:%M', headers['X-Ratelimit-Reset'])
 			for i = 1, 5 do
@@ -76,9 +81,12 @@ local function fetch(host, path, callback)
 		end
 
 		pcall(callback, body, headers, status_code)
+
 		::continue::
+		finished = true
 	end, function()
 		util.toast($'Request to {host}{path} failed to send.')
+		finished = true
 	end)
 	if token := get_github_auth() then
 		async_http.add_header('Authorization', 'Bearer ' .. token)
@@ -87,50 +95,107 @@ local function fetch(host, path, callback)
 
 	repeat
 		util.yield()
-	until not downloading
+	until finished
+end
+
+local function make_request(path, callback)
+	fetch('https://api.github.com', '/repos/stagnate6628/stand-themerepo/contents/' .. path, function(body, headers, status_code) 
+		pcall(body, headers, status_code)
+	end)
+end
+
+local function write_file(path, body)
+	if not filesystem.is_dir(path:match('^(.+)[\\/]')) then
+		filesystem.mkdirs(path:match('^(.+)[\\/]'))
+	end
+
+	local file = io.open(path, 'wb')
+	file:write(body)
+	file:close()
 end
 
 local function download_file(host, path, file_path, callback)
-	fetch(host, path, function(body, headers, status_code)
+	fetch(host, path, function(body)
 		if type(file_path) == 'string' then
 			file_path = {file_path}
 		end
 
 		for file_path as path do 
-			if not filesystem.is_dir(path:match('^(.+)[\\/]')) then
-				filesystem.mkdirs(path:match('^(.+)[\\/]'))
-			end
-
-			local file = io.open(path, 'wb')
-			file:write(body)
-			file:close()
+			--write_file(path)
 		end
 	end)
 end
 
 local resources_dir = filesystem.resources_dir() .. 'ThemeRepo\\'
-local themes_dir = resources_dir .. 'Themes'
-local headers_dir = resources_dir .. 'Headers'
+local themes_dir = resources_dir .. 'Themes\\'
+local headers_dir = resources_dir .. 'Headers\\'
+local backups_dir = resources_dir .. 'Backups\\'
 
-for { themes_dir, headers_dir } as path do
-	if not filesystem.is_dir(path) then 
-		filesystem.mkdir(path)
-	end	
-end
+do 
+	menu.ref_by_path('Stand>Lua Scripts>Settings>Presets>Developer'):trigger()
 
-for { 'themes.txt', 'headers.txt' } as file do
-	local path = resources_dir .. file
-	if not filesystem.is_regular_file(path) then
-		download_file(
-			'https://raw.githubusercontent.com', 
-			'/stagnate6628/stand-themerepo/main/' .. file,
-			path
-		)
+	for { themes_dir, headers_dir } as path do
+		if not filesystem.is_dir(path) then 
+			filesystem.mkdir(path)
+		end	
 	end
 
-	local f = io.open(path, 'r')
-	local content = f:read('*a'):split('\n')
-	f:close()
+	local function get_all_files(path, files)
+		files ??= {}
 
-	menu.my_root():list_select(file, {}, '', content, 1, function() end)
+		make_request(path, function(body, headers, status_code)
+			body = soup.json.decode(body)
+
+			for body as file do
+				if file.type == 'file' then 
+					table.insert(files, file.path)
+					continue
+				end
+
+				get_all_files(file.path, files)
+			end
+		end)
+
+		return files
+	end
+
+	local function download_theme(theme_name)
+		local files = get_all_files('Themes/' .. theme_name)
+		local manifest = themes_dir .. theme_name .. '\\.manifest'
+
+		if not filesystem.is_regular_file(themes_dir .. theme_name .. '\\.manifest') then 
+			write_file(manifest, table.concat(files, '\n'))
+		end
+	end
+
+	local function download_header(header_name)
+		make_request('Headers/' .. header_name, function(body)
+	end
+
+	for i, file in { 'themes.txt', 'headers.txt' } do
+		local path = resources_dir .. file
+		if not filesystem.is_regular_file(path) then
+			download_file(
+				'https://raw.githubusercontent.com', 
+				'/stagnate6628/stand-themerepo/main/' .. file,
+				path
+			)
+		end
+
+		local f = io.open(path, 'r')
+		local body = f:read('*a'):split('\n')
+		f:close()
+
+		local fn = i == 1 ? download_theme : download_header
+		root:list_select(file, {}, '', body, 1, function(index, menu_name, previous_index, click_type) 
+			if click_type != 0 then 
+				return
+			end
+
+			fn(menu_name)
+		end)
+	end
 end
+
+local config = root:list('Configuration', {}, '')
+config:list_action('Reset', {}, '', { 'Theme', 'Font', 'Header', 'Appearance' }, function(index, menu_name, click_type) end)
