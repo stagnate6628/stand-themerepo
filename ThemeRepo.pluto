@@ -120,11 +120,18 @@ local function download_file(host, path, file_path, callback)
 			file_path = {file_path}
 		end
 
-		for file_path as path do 
+		for file_path as path do
 			write_file(path, body)
 		end
 	end)
 end
+
+local stand_dir = filesystem.stand_dir()
+
+local header_dir = stand_dir .. 'Headers\\Custom Header\\'
+local theme_dir = stand_dir .. 'Theme\\'
+local custom_dir = theme_dir .. 'Custom\\'
+local tabs_dir = theme_dir .. 'Tabs\\'
 
 local resources_dir = filesystem.resources_dir() .. 'ThemeRepo\\'
 local themes_dir = resources_dir .. 'Themes\\'
@@ -158,8 +165,42 @@ do
 
 		return files
 	end
+
+	local function get_local_path(path)
+		local last_dir = path:match('.*/([^/]+)/[^/]+$')
+		local file_name, ext = path:match(".+/([^/]+)%.([^%.]+)$")
+
+		local return_dir = nil
+
+		if last_dir == 'Custom Header' then
+			return_dir = header_dir
+		elseif last_dir == 'Theme' then
+			return_dir = theme_dir
+		elseif last_dir == 'Tabs' then
+			return_dir = tabs_dir
+		elseif last_dir == 'Custom' then 
+			return_dir = custom_dir
+		else
+			if ext == 'txt' then
+				return_dir = stand_dir .. 'Profiles\\'
+			end
+		end
+
+		if return_dir then
+			return return_dir .. file_name .. '.' .. ext
+		end
+		return nil
+	end
 	
 	local function load_theme(theme_name)
+		util.toast($'Loading {theme_name}...')
+
+		menu.ref_by_path('Stand>Settings>Appearance>Textures>Reload Textures'):trigger()
+		menu.ref_by_path('Stand>Settings>Appearance>Font & Text>Reload Font'):trigger()
+
+		util.yield(100)
+
+		menu.ref_by_path('Stand>Profiles>' .. theme_name .. '>Load'):trigger()
 	end
 
 	local function download_theme(theme_name)
@@ -170,11 +211,16 @@ do
 			write_file(manifest, table.concat(files, '\n'))
 
 			for files as path do
+				local path_ = resources_dir .. path:gsub('/', '\\')
 				download_file(
 						'https://raw.githubusercontent.com',
 						'/stagnate6628/stand-themerepo/main/' .. path,
-						resources_dir .. path:gsub('/', '\\')
+						path_
 				)
+
+				if stand_path := get_local_path(path) then
+					io.copyto(path_, stand_path)
+				end
 			end
 		else
 			local file = io.open(manifest, 'r')
@@ -183,6 +229,7 @@ do
 
 			for files as path do
 				local path_ = resources_dir .. path:gsub('/', '\\')
+
 				if not filesystem.is_regular_file(path_) then
 					download_file(
 						'https://raw.githubusercontent.com',
@@ -190,10 +237,15 @@ do
 						path_
 					)
 				end
+
+				if stand_path := get_local_path(path) then
+						--util.log($'{path_} -> {stand_path}')
+						io.copyto(path_, stand_path) 
+				end
 			end
 		end
 
-
+		load_theme(theme_name)
 	end
 
 	local function download_header(header_name) 
