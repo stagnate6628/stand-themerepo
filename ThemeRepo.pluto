@@ -233,9 +233,11 @@ do
 
 		menu.ref_by_path('Stand>Profiles'):trigger()
 		menu.ref_by_path('Stand'):trigger()
+		menu.ref_by_path('Stand>Profiles'):trigger()
 
 		menu.ref_by_path('Stand>Lua Scripts'):trigger()
 		menu.ref_by_path('Stand'):trigger()
+		menu.ref_by_path('Stand>Lua Scripts'):trigger()
 
 		local ref = menu.ref_by_path('Stand>Profiles>' .. theme_name)
 		if not ref:isValid() then
@@ -324,7 +326,7 @@ do
 			local f = io.open(path, 'r')
 			for line in f:lines() do
 				r:action(line, {}, '', function()
-					util.toast($'hello {type}/{line}')
+					fn(line)
 				end)
 			end
 			f:close()
@@ -332,7 +334,10 @@ do
 
 		local function clear()
 			for r:getChildren() as child do
-				if child:getType() != COMMAND_ACTION then continue end
+				if child:getType() != COMMAND_ACTION then 
+					continue 
+				end
+				
 				if not filesystem.is_regular_file(themes_dir .. child.menu_name .. '\\.manifest') then
 					child:delete()
 				end
@@ -343,7 +348,7 @@ do
 		r:textslider('Filter', {}, '', { 'None', 'Installed' }, function(idx)
 			if idx == 1 then
 				populate()
-			elseif idx == 2 then
+			else
 				clear()
 			end
 		end)
