@@ -155,6 +155,10 @@ local themes_dir = resources_dir .. 'Themes\\'
 local headers_dir = resources_dir .. 'Headers\\'
 local backups_dir = resources_dir .. 'Backups\\'
 
+local stand_ref = menu.ref_by_path('Stand')
+local profiles_ref = stand_ref:refByRelPath('Profiles')
+local lua_scripts_ref = stand_ref:refByRelPath('Lua Scripts')
+
 local function reload_textures()
 	menu.ref_by_path('Stand>Settings>Appearance>Textures>Reload Textures'):trigger()
 end
@@ -234,19 +238,19 @@ do
 
 		util.yield(100)
 
-		menu.ref_by_path('Stand>Profiles'):trigger()
+		profiles_ref:trigger()
 		util.yield()
-		menu.ref_by_path('Stand'):trigger()
+		stand_ref:trigger()
 		util.yield()
-		menu.ref_by_path('Stand>Profiles'):trigger()
+		profiles_ref:trigger()
 
-		menu.ref_by_path('Stand>Lua Scripts'):trigger()
+		lua_scripts_ref:trigger()
 		util.yield()
-		menu.ref_by_path('Stand'):trigger()
+		stand_ref:trigger()
 		util.yield()
-		menu.ref_by_path('Stand>Lua Scripts'):trigger()
+		profiles_ref:trigger()
 
-		local ref = menu.ref_by_path('Stand>Profiles>' .. theme_name)
+		local ref = profiles_ref:refByRelPath(theme_name)
 		if not ref:isValid() then
 			util.toast('Failed to load the theme.')
 			return
@@ -323,7 +327,7 @@ do
 
 		local function populate()
 			for k, child in r:getChildren() do
-				if k == 1 or k == 2 then
+				if k == 1 then
 					continue
 				end
 
@@ -333,17 +337,15 @@ do
 
 			local f = io.open(path, 'r')
 			for line in f:lines() do
-				r:action(line, {}, '', function()
-					fn(line)
-				end)
+				r:action(line, {}, '', function() fn(line) end)
 			end
 			f:close()
 		end
 
-		local function clear()
+		local function filter()
 			for r:getChildren() as child do
 				if child:getType() != COMMAND_ACTION then 
-					continue 
+					continue
 				end
 
 				if not filesystem.is_regular_file(dir .. child.menu_name .. '\\.manifest') then
@@ -353,15 +355,13 @@ do
 			menu.collect_garbage()
 		end
 
-		r:textslider('Filter', {}, '"Installed" may or may not necessarily be indicative of its status.', { 'None', 'Installed' }, function(idx)
+		r:textslider('Filter', {}, '"Installed" may or may not be indicative of its availability.', { 'None', 'Installed' }, function(idx)
 			if idx == 1 then
 				populate()
-			else
-				clear()
+			elseif idx == 2 then
+				filter()
 			end
 		end)
-		r:divider(type)
-
 		populate()
 	end
 end
