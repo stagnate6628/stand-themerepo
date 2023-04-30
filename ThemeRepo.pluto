@@ -52,11 +52,16 @@ util.toast = function(message)
 end
 
 local root = menu.my_root()
+local headers_root = root:list('Headers', {}, '')
+local themes_root = root:list('Themes', {}, '')
+local config_root = root:list('Configuration', {}, '')
 
 local inspect = require 'lib/inspect'
 local function log(what)
 	util.log(inspect(what))
 end
+
+menu.ref_by_path('Stand>Lua Scripts>Settings>Presets>Developer'):trigger()
 
 local function get_github_auth() 
 	if file := io.open(filesystem.resources_dir() .. 'ThemeRepo\\.github', 'r') then
@@ -167,8 +172,6 @@ local function header_custom()
 end
 
 do 
-	menu.ref_by_path('Stand>Lua Scripts>Settings>Presets>Developer'):trigger()
-
 	for { themes_dir, headers_dir } as path do
 		if not filesystem.is_dir(path) then 
 			filesystem.mkdir(path)
@@ -232,11 +235,15 @@ do
 		util.yield(100)
 
 		menu.ref_by_path('Stand>Profiles'):trigger()
+		util.yield()
 		menu.ref_by_path('Stand'):trigger()
+		util.yield()
 		menu.ref_by_path('Stand>Profiles'):trigger()
 
 		menu.ref_by_path('Stand>Lua Scripts'):trigger()
+		util.yield()
 		menu.ref_by_path('Stand'):trigger()
+		util.yield()
 		menu.ref_by_path('Stand>Lua Scripts'):trigger()
 
 		local ref = menu.ref_by_path('Stand>Profiles>' .. theme_name)
@@ -246,6 +253,7 @@ do
 		end
 
 		ref:refByRelPath('Active'):trigger()
+		util.yield()
 		ref:refByRelPath('Load'):trigger()
 		util.yield()
 		ref:refByRelPath('Load'):trigger()
@@ -258,7 +266,7 @@ do
 		empty_dir(theme_dir)
 
 		local files
-		local manifest = themes_dir .. theme_name .. '\\.manifest'
+		local manifest = resources_dir .. 'Themes\\' .. theme_name .. '\\.manifest'
 
 		if not filesystem.is_regular_file(manifest) then
 			files = get_all_files('Themes/' .. theme_name)
@@ -311,8 +319,7 @@ do
 		local fn = i == 1 ? download_theme : download_header
 		local type = i == 1 ? 'Themes' : 'Headers'
 		local dir = i == 1 ? themes_dir : headers_dir
-
-		local r = root:list(type, {}, '')
+		local r = i == 1 ? themes_root : headers_root
 
 		local function populate()
 			for k, child in r:getChildren() do
@@ -346,7 +353,7 @@ do
 			menu.collect_garbage()
 		end
 
-		r:textslider('Filter', {}, '', { 'None', 'Installed' }, function(idx)
+		r:textslider('Filter', {}, '"Installed" may or may not necessarily be indicative of its status.', { 'None', 'Installed' }, function(idx)
 			if idx == 1 then
 				populate()
 			else
@@ -359,8 +366,7 @@ do
 	end
 end
 
-local config = root:list('Configuration', {}, '')
-config:textslider_stateful('Reset', {}, '', { 'Theme', 'Font', 'Header' }, function(idx) 
+config_root:textslider_stateful('Reset', {}, '', { 'Theme', 'Font', 'Header' }, function(idx) 
 	switch idx do
 		case 1:
 			empty_dir(theme_dir)
@@ -379,7 +385,7 @@ config:textslider_stateful('Reset', {}, '', { 'Theme', 'Font', 'Header' }, funct
 		break
 	end
 end)
-config:textslider_stateful('Update', {}, '', { 'Themes', 'Headers' }, function(idx)
+config_root:textslider_stateful('Update', {}, '', { 'Themes', 'Headers' }, function(idx)
 	local name = 'themes.txt'
 	if idx == 2 then
 		name = 'headers.txt'
