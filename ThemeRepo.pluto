@@ -354,7 +354,7 @@ do
 end
 
 local config = root:list('Configuration', {}, '')
-config:textslider_stateful('Reset', {}, '', { 'Theme', 'Font', 'Header', 'Appearance' }, function(idx) 
+config:textslider_stateful('Reset', {}, '', { 'Theme', 'Font', 'Header' }, function(idx) 
 	switch idx do
 		case 1:
 			empty_dir(theme_dir)
@@ -370,10 +370,6 @@ config:textslider_stateful('Reset', {}, '', { 'Theme', 'Font', 'Header', 'Appear
 			header_hide()
 			header_custom()
 			header_hide()
-		break
-		-- todo: default appearance
-		case 4:
-
 		break
 	end
 end)
