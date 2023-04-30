@@ -150,6 +150,22 @@ local themes_dir = resources_dir .. 'Themes\\'
 local headers_dir = resources_dir .. 'Headers\\'
 local backups_dir = resources_dir .. 'Backups\\'
 
+local function reload_textures()
+	menu.ref_by_path('Stand>Settings>Appearance>Textures>Reload Textures'):trigger()
+end
+
+local function reload_font()
+	menu.ref_by_path('Stand>Settings>Appearance>Font & Text>Reload Font'):trigger()
+end
+
+local function header_hide()
+	menu.ref_by_path('Stand>Settings>Appearance>Header>Header>Be Gone'):trigger()
+end
+
+local function header_custom()
+	menu.ref_by_path('Stand>Settings>Appearance>Header>Header>Custom'):trigger()
+end
+
 do 
 	menu.ref_by_path('Stand>Lua Scripts>Settings>Presets>Developer'):trigger()
 
@@ -203,14 +219,15 @@ do
 		if return_dir then
 			return return_dir .. file_name .. '.' .. ext
 		end
+
 		return nil
 	end
 	
 	local function load_theme(theme_name)
 		util.toast($'Loading {theme_name}...')
 
-		menu.ref_by_path('Stand>Settings>Appearance>Textures>Reload Textures'):trigger()
-		menu.ref_by_path('Stand>Settings>Appearance>Font & Text>Reload Font'):trigger()
+		reload_textures()
+		reload_font()
 
 		util.yield(100)
 
@@ -301,4 +318,27 @@ do
 end
 
 local config = root:list('Configuration', {}, '')
-config:list_action('Reset', {}, '', { 'Theme', 'Font', 'Header', 'Appearance' }, function(index, menu_name, click_type) end)
+config:list_action('Reset', {}, '', { 'Theme', 'Font', 'Header', 'Appearance' }, function(idx, menu_name, click_type) 
+	switch idx do
+		case 1:
+			empty_dir(theme_dir)
+			reload_textures()
+			reload_font()
+		break
+		case 2:
+			io.remove(theme_dir .. 'Font.spritefont')
+			reload_font()
+		break
+		case 3:
+			empty_dir(header_dir)
+			header_hide()
+			header_custom()
+			header_hide()
+		break
+		-- todo: default appearance
+		case 4:
+
+		break
+	end
+end)
+
