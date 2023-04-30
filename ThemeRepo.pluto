@@ -311,7 +311,8 @@ do
 		f:close()
 
 		local fn = i == 1 ? download_theme : download_header
-		root:list_action(file, {}, '', body, function(index, menu_name, click_type) 
+		local action = i == 1 ? 'Themes' : 'Headers'
+		root:list_action(action, {}, '', body, function(index, menu_name, click_type) 
 			fn(menu_name)
 		end)
 	end
