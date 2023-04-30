@@ -180,6 +180,8 @@ do
 			return_dir = tabs_dir
 		elseif last_dir == 'Custom' then 
 			return_dir = custom_dir
+		elseif last_dir == 'Lua Scripts' then
+			return_dir = filesystem.scripts_dir()
 		else
 			if ext == 'txt' then
 				return_dir = stand_dir .. 'Profiles\\'
@@ -214,10 +216,13 @@ do
 
 		theme_ref:refByRelPath('Active'):trigger()
 		theme_ref:refByRelPath('Load'):trigger()
+		util.yield()
+		theme_ref:refByRelPath('Load'):trigger()
 	end
 
 	local function download_theme(theme_name)
 		util.toast($'Downloading {theme_name}...')
+
 		local files = nil
 		local manifest = themes_dir .. theme_name .. '\\.manifest'
 
@@ -230,6 +235,7 @@ do
 			file:close()
 		end
 
+		local i = 0
 		for files as path do
 			local path_ = resources_dir .. path:gsub('/', '\\')
 
@@ -244,7 +250,13 @@ do
 			if stand_path := get_local_path(path) then
 				io.copyto(path_, stand_path) 
 			end
+
+			i += 1
 		end
+
+		repeat
+			util.yield()
+		until i == #files
 
 		load_theme(theme_name)
 	end
