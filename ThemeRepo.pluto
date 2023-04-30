@@ -306,15 +306,50 @@ do
 			)
 		end
 
-		local f = io.open(path, 'r')
-		local body = f:read('*a'):split('\n')
-		f:close()
-
 		local fn = i == 1 ? download_theme : download_header
-		local action = i == 1 ? 'Themes' : 'Headers'
-		root:list_action(action, {}, '', body, function(index, menu_name, click_type) 
-			fn(menu_name)
+		local type = i == 1 ? 'Themes' : 'Headers'
+
+		local r = root:list(type, {}, '')
+
+		local function populate()
+			for k, child in r:getChildren() do
+				if k == 1 or k == 2 then
+					continue
+				end
+
+				child:delete()
+			end
+			menu.collect_garbage()
+
+			local f = io.open(path, 'r')
+			for line in f:lines() do
+				r:action(line, {}, '', function()
+					util.toast($'hello {type}/{line}')
+				end)
+			end
+			f:close()
+		end
+
+		local function clear()
+			for r:getChildren() as child do
+				if child:getType() != COMMAND_ACTION then continue end
+				if not filesystem.is_regular_file(themes_dir .. child.menu_name .. '\\.manifest') then
+					child:delete()
+				end
+			end
+			menu.collect_garbage()
+		end
+
+		r:textslider('Filter', {}, '', { 'None', 'Installed' }, function(idx)
+			if idx == 1 then
+				populate()
+			elseif idx == 2 then
+				clear()
+			end
 		end)
+		r:divider('')
+
+		populate()
 	end
 end
 
@@ -342,4 +377,3 @@ config:list_action('Reset', {}, '', { 'Theme', 'Font', 'Header', 'Appearance' },
 		break
 	end
 end)
-
