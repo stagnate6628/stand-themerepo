@@ -126,6 +126,18 @@ local function download_file(host, path, file_path, callback)
 	end)
 end
 
+local function empty_dir(dir)
+  for io.listdir(dir) as path do
+  	if filesystem.is_regular_file(path) then
+  		io.remove(path)
+  		continue
+  	end
+
+  	empty_dir(path)
+  	io.remove(path)
+  end
+end
+
 local stand_dir = filesystem.stand_dir()
 
 local header_dir = stand_dir .. 'Headers\\Custom Header\\'
@@ -208,25 +220,28 @@ do
 		menu.ref_by_path('Stand>Lua Scripts'):trigger()
 		menu.ref_by_path('Stand'):trigger()
 
-		local theme_ref = menu.ref_by_path('Stand>Profiles>' .. theme_name)
-		if not theme_ref:isValid() then
+		local ref = menu.ref_by_path('Stand>Profiles>' .. theme_name)
+		if not ref:isValid() then
 			util.toast('Failed to load the theme.')
 			return
 		end
 
-		theme_ref:refByRelPath('Active'):trigger()
-		theme_ref:refByRelPath('Load'):trigger()
+		ref:refByRelPath('Active'):trigger()
+		ref:refByRelPath('Load'):trigger()
 		util.yield()
-		theme_ref:refByRelPath('Load'):trigger()
+		ref:refByRelPath('Load'):trigger()
 	end
 
 	local function download_theme(theme_name)
 		util.toast($'Downloading {theme_name}...')
 
-		local files = nil
+		empty_dir(header_dir)
+		empty_dir(theme_dir)
+
+		local files
 		local manifest = themes_dir .. theme_name .. '\\.manifest'
 
-		if not filesystem.is_regular_file(themes_dir .. theme_name .. '\\.manifest') then
+		if not filesystem.is_regular_file(manifest) then
 			files = get_all_files('Themes/' .. theme_name)
 			write_file(manifest, table.concat(files, '\n'))
 		else
