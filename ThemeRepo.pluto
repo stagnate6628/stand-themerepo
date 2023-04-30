@@ -310,6 +310,7 @@ do
 
 		local fn = i == 1 ? download_theme : download_header
 		local type = i == 1 ? 'Themes' : 'Headers'
+		local dir = i == 1 ? themes_dir : headers_dir
 
 		local r = root:list(type, {}, '')
 
@@ -337,8 +338,8 @@ do
 				if child:getType() != COMMAND_ACTION then 
 					continue 
 				end
-				
-				if not filesystem.is_regular_file(themes_dir .. child.menu_name .. '\\.manifest') then
+
+				if not filesystem.is_regular_file(dir .. child.menu_name .. '\\.manifest') then
 					child:delete()
 				end
 			end
