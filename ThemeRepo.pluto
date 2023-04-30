@@ -347,14 +347,14 @@ do
 				clear()
 			end
 		end)
-		r:divider('')
+		r:divider(type)
 
 		populate()
 	end
 end
 
 local config = root:list('Configuration', {}, '')
-config:list_action('Reset', {}, '', { 'Theme', 'Font', 'Header', 'Appearance' }, function(idx, menu_name, click_type) 
+config:textslider_stateful('Reset', {}, '', { 'Theme', 'Font', 'Header', 'Appearance' }, function(idx) 
 	switch idx do
 		case 1:
 			empty_dir(theme_dir)
@@ -376,4 +376,18 @@ config:list_action('Reset', {}, '', { 'Theme', 'Font', 'Header', 'Appearance' },
 
 		break
 	end
+end)
+config:textslider_stateful('Update', {}, '', { 'Themes', 'Headers' }, function(idx)
+	local name = 'themes.txt'
+	if idx == 2 then
+		name = 'headers.txt'
+	end
+
+	download_file(
+		'https://raw.githubusercontent.com', 
+		'/stagnate6628/stand-themerepo/main/' .. name,
+		resources_dir .. name
+	)
+
+	util.restart_script()
 end)
