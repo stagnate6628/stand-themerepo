@@ -1,0 +1,51 @@
+Finished Tutorial: Yes
+Understands Commands: Yes
+Understands Sliders: Yes
+Understands Profiles: Yes
+Understands Context Menu: Yes
+Understands Controller Open/Close: Yes
+Prompted For Controller Disables: Yes
+Understands Command Chaining: Yes
+Tree Compatibility Version: 46
+Stand
+	Settings
+		Appearance
+			Colours
+				Primary Colour: 00000000
+				Background Colour: 000000FF
+			Position: 1339, 385
+			Header
+				Header: Custom
+			Address Bar
+				Root Name: Hidden
+				Address Separator: Stand/Online
+				Height: 21
+				Text
+					Scale: 11
+				Show Cursor Position: On
+			Tabs
+				Width: 41
+				Height: 44
+				Text Alignment: Centre
+				Show Icon Left: On
+				Show Name: Off
+			Scrollbar
+				Width: 10
+			Command Info Text
+				Position: Bottom
+				Width: 280
+				Padding: 1
+			Notifications
+				Border Colour: FF0000FF
+				Background Colour: 0000009B
+			Border
+				Width: 2
+				Colour: FF0000FF
+			Max Visible Commands: 13
+			List Width: 423
+			List Height: 31
+			Spacer Size: 2
+	Lua Scripts
+		Pulsive: On
+			Primary Colour: FF0000FF
+			Animation Speed: 60

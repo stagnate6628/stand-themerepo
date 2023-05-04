@@ -1,0 +1,94 @@
+Finished Tutorial: Yes
+Understands Commands: Yes
+Understands Sliders: Yes
+Understands Profiles: Yes
+Understands Context Menu: Yes
+Understands Controller Open/Close: Yes
+Prompted For Controller Disables: Yes
+Understands Command Chaining: Yes
+Tree Compatibility Version: 46
+Players
+	Settings
+		Tags
+			Brackets: STD
+			Self: 
+			Friend: 
+			Crew Member: 
+			In Timeout: 
+			Modder: 
+			Admin: 
+			Likely Modder: 
+			Attacked You: 
+			Host: 
+			Next Host: 
+			Script Host: 
+			Invulnerable: 
+			Indestructible Vehicle: 
+			RC Vehicle: 
+			Off The Radar: 
+			In An Interior: 
+			Spectating: 
+			Typing: 
+			Dead: 
+			VPN: 
+Stand
+	Settings
+		Appearance
+			Colours
+				Primary Colour: EFF4EFFF
+				Focused Text Colour: 202121FF
+				Focused Right-Bound Text Colour: 202121FF
+				Focused Texture Colour: 202121FF
+				Background Colour: 202121FF
+				Unfocused Text Colour: EFF4EFFF
+				Unfocused Right-Bound Text Colour: EFF4EFFF
+				Unfocused Texture Colour: EFF4EFFF
+				HUD Colour: EFF4EFFF
+				AR Colour: EFF4EFFF
+				Minigame Colour: EFF4EFFF
+			Header
+				Header: Custom
+			Address Bar
+				Root Name: Hidden
+				Address Separator: Stand \ Online
+				Height: 27
+				Text
+					X Offset: 0
+					Y Offset: 3
+				Show Cursor Position: On
+			Cursor
+				Width: 2
+				Rounded: On
+				Colour: EFF4EFFF
+			Tabs
+				Width: 70
+				Position: Top
+				Text
+					X Offset: 0
+					Y Offset: 1
+				Text Alignment: Centre
+				Show Icon Left: On
+				Show Name: Off
+			Scrollbar
+				Width: 5
+			Notifications
+				Border Colour: EFF4EFFF
+				Flash Colour: 202121FF
+				Background Colour: 202121FF
+			Commands
+				Text
+					Y Offset: 3
+			Border
+				Width: 5
+				Rounded: On
+				Colour: 202121FF
+			List Width: 490
+			List Height: 33
+			Spacer Size: 13
+			Font & Text
+				Command Box Input Text
+					Y Offset: 3
+				Small Text
+					Y Offset: 3
+		Info Text
+			Scale: 18

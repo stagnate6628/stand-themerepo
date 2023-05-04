@@ -1,0 +1,43 @@
+Finished Tutorial: Yes
+Understands Commands: Yes
+Understands Sliders: Yes
+Understands Profiles: Yes
+Understands Context Menu: Yes
+Understands Controller Open/Close: Yes
+Prompted For Controller Disables: Yes
+Understands Command Chaining: Yes
+Tree Compatibility Version: 46
+Stand
+	Settings
+		Appearance
+			Colours
+				Primary Colour: FFFFFFFF
+				Focused Text Colour: 000000FF
+				Focused Right-Bound Text Colour: 000000FF
+				Background Colour: 000000FF
+			Position: 1250, 56
+			Address Bar
+				Address Bar: Off
+			Tabs
+				Tabs: Off
+			Scrollbar
+				Scrollbar: Disabled
+			Command Info Text
+				Position: Bottom
+				Show Help Text: Off
+				Show Command Syntax: Off
+				Indicate Slider Behaviour: Off
+				Indicate If Usable By Other Players: Off
+			Notifications
+				Border Colour: 000000FF
+				Flash Colour: 000000FF
+			Commands
+				Text
+					X Offset: 2
+					Y Offset: 5
+			Max Visible Commands: 30
+			List Width: 430
+			List Height: 30
+			Spacer Size: 0
+			Smooth Scrolling: 0
+			Background Blur: 2

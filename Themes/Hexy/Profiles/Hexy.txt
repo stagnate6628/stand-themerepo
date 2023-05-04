@@ -1,0 +1,86 @@
+Finished Tutorial: Yes
+Understands Commands: Yes
+Understands Sliders: Yes
+Understands Profiles: Yes
+Understands Context Menu: Yes
+Understands Controller Open/Close: Yes
+Prompted For Controller Disables: Yes
+Understands Command Chaining: Yes
+Tree Compatibility Version: 46
+Players
+	Settings
+		Tags
+			Self: 
+			Friend: 
+			Crew Member: 
+			In Timeout: 
+			Modder: 
+			Modder or Admin: 
+			Admin: 
+			Likely Modder: 
+			Attacked You: 
+			Host: 
+			Next Host: 
+			Script Host: 
+			Invulnerable: 
+			Indestructible Vehicle: 
+			RC Vehicle: 
+			Off The Radar: 
+			In An Interior: 
+			Spectating: 
+			Typing: 
+			Dead: 
+			VPN: 
+Stand
+	Settings
+		Appearance
+			Colours
+				Primary Colour: 000000FF
+				Focused Text Colour: AFAFAFFF
+				Focused Right-Bound Text Colour: AFAFAFFF
+				Background Colour: A5A5A55E
+				Unfocused Text Colour: 000000FF
+				Unfocused Right-Bound Text Colour: 000000FF
+				Unfocused Texture Colour: 000000FF
+				HUD Colour: FFFFFFFF
+				AR Colour: FFFFFFFF
+				Minigame Colour: FFFFFFFF
+			Position: 18, 130
+			Header
+				Header: Custom
+				Frame Interval: 37
+				Legacy Positioning: Off
+			Address Bar
+				Address Bar: Off
+				Height: 27
+			Cursor
+				Colour: AFAFAFFF
+			Tabs
+				Width: 64
+				Height: 30
+				Position: Top
+				Text Alignment: Centre
+				Show Icon Left: On
+				Show Name: Off
+			Command Info Text
+				Position: Bottom
+			Notifications
+				Type: Stand, Custom Position
+				Custom Position: 1500, 1070
+				Border Colour: FFFFFFFF
+				Flash Colour: FFFFFFFF
+				Background Colour: 333333FF
+			Border
+				Width: 2
+				Rounded: On
+				Colour: 000000FF
+			Max Visible Commands: 15
+			List Width: 448
+			List Height: 30
+			Spacer Size: 1
+			Smooth Scrolling: 100
+			Background Blur: 0
+		Info Text
+			Position: 300, 1044
+			Alignment: Bottom Left
+			Scale: 13
