@@ -342,17 +342,17 @@ end
 
 do
 	for { 'Headers', 'Themes' } as v do
-		local lower = v:lower()
+		local file_name = v:lower() .. '.txt'
 
-		local f = io.open(resources_dir .. lower .. '.txt', 'r')
+		local f = io.open(resources_dir .. file_name, 'r')
 		if not f then
-			util.toast($'Downloading missing file ({lower}.txt)...')
+			util.toast($'Downloading missing file ({file_name})...')
 			download_file(
 				'https://raw.githubusercontent.com',
-				$'/stagnate6628/stand-themerepo/main/{lower}.txt',
-				resources_dir .. lower .. '.txt'
+				$'/stagnate6628/stand-themerepo/main/{e}.txt',
+				resources_dir .. file_name
 			)
-			f = io.open(resources_dir .. lower .. '.txt', 'r')
+			f = io.open(resources_dir .. file_name, 'r')
 		end
 		local body = f:read('*a'):split('\n')
 		f:close()
@@ -366,7 +366,7 @@ do
 end
 
 local config_root = root:list('Configuration', {}, '')
-config_root:toggle('Display Download Status', {}, 'Displays a counter using the "Info Text" System.', function(s)
+config_root:toggle('Display Download Status', {}, 'Uses the "Info Text" system to display what is being downloaded and the file count.', function(s)
 	display_download_status = s
 end, display_download_status)
 config_root:textslider_stateful('Reset', {}, '', { 'Theme', 'Font', 'Header' }, function(idx) 
@@ -388,17 +388,12 @@ config_root:textslider_stateful('Reset', {}, '', { 'Theme', 'Font', 'Header' }, 
 		break
 	end
 end)
-config_root:textslider_stateful('Update', {}, '', { 'Themes', 'Headers' }, function(idx)
-	local name = 'themes.txt'
-	if idx == 2 then
-		name = 'headers.txt'
-	end
-
+config_root:textslider_stateful('Update', {}, '', { 'Themes', 'Headers' }, function(idx, value)
+	local name = value:lower() .. '.txt'
 	download_file(
 		'https://raw.githubusercontent.com',
 		'/stagnate6628/stand-themerepo/main/' .. name,
 		resources_dir .. name
 	)
-
 	util.restart_script()
 end)
