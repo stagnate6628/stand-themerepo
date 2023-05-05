@@ -6,7 +6,7 @@ local function get_header_path(i)
 	return filesystem.resources_dir() .. 'ThemeRepo\\Themes\\Impulse\\Header' .. i .. '.bmp'
 end
 
-for i = 0, 50 do
+for i = 1, 50 do
 	if not io.exists(get_header_path(i)) then
 		util.toast('[ThemeRepo] Header ' .. i .. ' not found!')
 		util.stop_script()

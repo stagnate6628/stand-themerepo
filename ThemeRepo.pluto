@@ -250,7 +250,6 @@ local function download_theme(theme_name)
 		debug_log($'Found manifest for theme: {theme_name}')
 	end
 
-	local i = 0
 	for files as file do
 		local path = file:gsub('Themes/' .. theme_name .. '/', '')
 		local dir = path:match('(.-)/[^/]-$') or 'none'
@@ -278,7 +277,6 @@ local function download_theme(theme_name)
 				{stand_dir .. path:gsub('/', '\\'), resources_dir .. file:gsub('/', '\\')}
 			)
 		end
-
 	end
 
 	load_theme(theme_name)
@@ -326,3 +324,10 @@ config_root:textslider_stateful('Update', {}, '', { 'Themes', 'Headers' }, funct
 
 	util.restart_script()
 end)
+
+if math.random() > 0.85 then
+	util.toast([[
+		Please make backups as needed.
+		The script will not do this for you.
+	]])
+end
