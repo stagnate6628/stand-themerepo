@@ -229,8 +229,6 @@ local function load_theme(theme_name)
 end
 
 local function download_theme(theme_name)
-	util.toast($'Downloading {theme_name}...')
-
 	empty_dir(theme_dir)
 	empty_dir(header_dir)
 
@@ -290,9 +288,60 @@ local function download_theme(theme_name)
 	load_theme(theme_name)
 end
 
+local function download_header(header_name)
+	empty_dir(header_dir)
+
+	header_hide()
+
+	local files
+	local path = headers_dir .. header_name .. '\\.manifest'
+
+	if not filesystem.exists(path) then
+		files = get_all_files('Headers/' .. header_name)
+		write_file(path, table.concat(files, '\n'))
+		debug_log($'Created manifest for theme: {header_name}')
+	else
+		local f = io.open(path, 'r')
+		files = f:read('*a'):split('\n')
+		f:close()
+		debug_log($'Found manifest for header: {header_name}')
+	end
+
+	local i = 0
+	if display_download_status then
+		util.create_tick_handler(function()
+			if i == #files then
+				return false
+			end
+			
+			util.draw_debug_text($'{header_name}: {i}/' .. #files)
+			return true
+		end)
+	end
+
+	for files as file do
+		i += 1
+		
+		local base_path = file:gsub('/', '\\')
+		local paths = {resources_dir .. base_path}
+		table.insert(paths, header_dir .. paths[1]:match('[^\\/]*$'))
+
+		if filesystem.exists(paths[1]) and not filesystem.exists(paths[2]) then
+			io.copyto(paths[1], paths[2])
+			continue
+		end
+		
+		download_file(
+			'https://raw.githubusercontent.com',
+			$'/stagnate6628/stand-themerepo/refactor-downloader/{file}',
+			paths
+		)
+	end
+	header_custom()
+end
+
 do
 	for { 'Headers', 'Themes' } as v do
-		util.log(v)
 		local lower = v:lower()
 
 		local f = io.open(resources_dir .. lower .. '.txt', 'r')
@@ -308,8 +357,9 @@ do
 		local body = f:read('*a'):split('\n')
 		f:close()
 
-		local fn = v == 'Headers' ? nil : download_theme
-		root:list_action(v, {}, '', body, function(_, menu_name) 
+		local fn = v == 'Headers' ? download_header : download_theme
+		root:list_action(v, {}, '', body, function(_, menu_name)
+			util.toast($'Downloading {menu_name}...')
 			fn(menu_name)
 		end)
 	end
