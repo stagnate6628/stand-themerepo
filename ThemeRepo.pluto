@@ -426,7 +426,7 @@ end, apply_to_active_profile)
 config_root:toggle('Display Download Status', {}, 'Uses the "Info Text" system to show what is being downloaded and the file count.', function(s)
 	display_download_status = s
 end, display_download_status)
-config_root:list_action('Reset', {}, 'Restores the file(s) associated with the selected option to its default state.', { 'Theme', 'Font', 'Header' }, function(index)
+config_root:list_action('Reset', {}, 'Restores the associated file(s) to their default state.', { 'Theme', 'Font', 'Header' }, function(index)
 	switch index do
 		case 1:
 			empty_dir(theme_dir)
