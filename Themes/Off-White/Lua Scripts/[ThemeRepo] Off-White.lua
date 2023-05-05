@@ -1,7 +1,8 @@
 local header_path = filesystem.resources_dir() .. 'ThemeRepo\\Themes\\Off-White\\Header.bmp'
 
 if not io.exists(header_path) then
-	util.toast('[ThemeRepo] Header not found, attempting download.')
+	util.toast('[ThemeRepo] Header not found!')
+	util.stop_script()
 end
 
 local header = directx.create_texture(header_path)
