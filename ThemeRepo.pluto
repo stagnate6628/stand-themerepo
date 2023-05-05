@@ -155,6 +155,11 @@ local themes_dir = resources_dir .. 'Themes\\'
 local headers_dir = resources_dir .. 'Headers\\'
 local backups_dir = resources_dir .. 'Backups\\'
 
+local display_download_status = true
+root:toggle('Display Download Status', {}, 'Displays a counter using the "Info Text" System.', function(s)
+	display_download_status = s
+end, display_download_status)
+
 local function debug_log(msg)
   local log_path = resources_dir .. 'log.txt'
   if not io.exists(log_path) then
@@ -251,14 +256,16 @@ local function download_theme(theme_name)
 	end
 
 	local i = 0
-	util.create_tick_handler(function()
-		if i == #files then
-			return false
-		end
-		
-		util.draw_debug_text($'{theme_name}: {i}/' .. #files)
-		return true
-	end)
+	if display_download_status then
+		util.create_tick_handler(function()
+			if i == #files then
+				return false
+			end
+			
+			util.draw_debug_text($'{theme_name}: {i}/' .. #files)
+			return true
+		end)
+	end
 
 	for files as file do
 		i += 1
