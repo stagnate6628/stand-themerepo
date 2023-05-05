@@ -256,7 +256,7 @@ local function download_theme(theme_name)
 			return false
 		end
 		
-		util.draw_centred_text($'{theme_name}: {i}/' .. #files)
+		util.draw_debug_text($'{theme_name}: {i}/' .. #files)
 		return true
 	end)
 
