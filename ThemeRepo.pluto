@@ -290,12 +290,19 @@ local function download_theme(theme_name)
 	load_theme(theme_name)
 end
 
-local f = io.open(resources_dir .. 'themes.txt', 'r')
-local body = f:read('*a'):split('\n')
-f:close()
-root:list_action('Themes', {}, '', body, function(_, menu_name)
-	download_theme(menu_name)
-end)
+do
+	for { 'Headers', 'Themes' } as v do
+		local f = io.open(resources_dir .. v .. '.txt', 'r')
+		local body = f:read('*a'):split('\n')
+		f:close()
+
+		local fn = v == 'Headers' ? nil : download_theme
+
+		root:list_action(v, {}, '', body, function(_, menu_name)
+			fn(menu_name)
+		end)
+	end
+end
 
 local config_root = root:list('Configuration', {}, '')
 config_root:toggle('Display Download Status', {}, 'Displays a counter using the "Info Text" System.', function(s)
