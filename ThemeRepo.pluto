@@ -332,5 +332,5 @@ config_root:textslider_stateful('Update', {}, '', { 'Themes', 'Headers' }, funct
 end)
 
 if math.random() > 0.85 then
-	util.toast('Please make backups as needed. The script will not do this for you.')
+	util.toast('Please make backups as needed. This will not be done for you.')
 end
