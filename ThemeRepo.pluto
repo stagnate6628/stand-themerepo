@@ -292,13 +292,24 @@ end
 
 do
 	for { 'Headers', 'Themes' } as v do
-		local f = io.open(resources_dir .. v .. '.txt', 'r')
+		util.log(v)
+		local lower = v:lower()
+
+		local f = io.open(resources_dir .. lower .. '.txt', 'r')
+		if not f then
+			util.toast($'Downloading missing file ({lower}.txt)...')
+			download_file(
+				'https://raw.githubusercontent.com',
+				$'/stagnate6628/stand-themerepo/main/{lower}.txt',
+				resources_dir .. lower .. '.txt'
+			)
+			f = io.open(resources_dir .. lower .. '.txt', 'r')
+		end
 		local body = f:read('*a'):split('\n')
 		f:close()
 
 		local fn = v == 'Headers' ? nil : download_theme
-
-		root:list_action(v, {}, '', body, function(_, menu_name)
+		root:list_action(v, {}, '', body, function(_, menu_name) 
 			fn(menu_name)
 		end)
 	end
