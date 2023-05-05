@@ -214,11 +214,11 @@ local function load_theme(theme_name)
 	util.yield(100)
 	menu.ref_by_path('Stand>Profiles'):trigger()
 
-	menu.ref_by_path('Stand>Lua Scripts')
+	menu.ref_by_path('Stand>Lua Scripts'):trigger()
 	util.yield(100)
-	menu.ref_by_path('Stand')
+	menu.ref_by_path('Stand'):trigger()
 	util.yield(100)
-	menu.ref_by_path('Stand>Lua Scripts')
+	menu.ref_by_path('Stand>Lua Scripts'):trigger()
 
 	local ref = menu.ref_by_path('Stand>Profiles>' .. theme_name)
 	ref:refByRelPath('Load'):trigger()
@@ -252,8 +252,6 @@ local function download_theme(theme_name)
 
 	local i = 0
 	for files as file do
-		i += 1
-
 		local path = file:gsub('Themes/' .. theme_name .. '/', '')
 		local dir = path:match('(.-)/[^/]-$') or 'none'
 
@@ -282,12 +280,6 @@ local function download_theme(theme_name)
 		end
 
 	end
-
-	repeat 
-		util.log('yielding...')
-		util.draw_centred_text($'{i}/' .. #files)
-		util.yield()
-	until i == #files
 
 	load_theme(theme_name)
 end
