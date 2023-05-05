@@ -52,10 +52,7 @@ util.toast = function(message)
 end
 
 local root = menu.my_root()
-local headers_root = root:list('Headers', {}, '')
 root:action('.', {}, '', util.restart_script)
-local themes_root = root:list('Themes', {}, '')
-local config_root = root:list('Configuration', {}, '')
 
 local inspect = require 'lib/inspect'
 local function log(what)
@@ -130,6 +127,7 @@ local function download_file(host, path, file_path, callback)
 		for file_path as path do
 			write_file(path, body)
 		end
+		log($'Wrote {path} to {file_path}')
 	end)
 end
 
@@ -157,9 +155,16 @@ local themes_dir = resources_dir .. 'Themes\\'
 local headers_dir = resources_dir .. 'Headers\\'
 local backups_dir = resources_dir .. 'Backups\\'
 
-local stand_ref = menu.ref_by_path('Stand')
-local profiles_ref = stand_ref:refByRelPath('Profiles')
-local lua_scripts_ref = stand_ref:refByRelPath('Lua Scripts')
+local function debug_log(msg)
+  local log_path = resources_dir .. 'log.txt'
+  if not io.exists(log_path) then
+    io.open(log_path, 'wb'):close()
+  end
+
+  local log_file = io.open(log_path, 'a+')
+  log_file:write('[' .. os.date('%x %I:%M:%S %p') .. '] ' .. msg .. '\n')
+  log_file:close()
+end
 
 local function reload_textures()
 	menu.ref_by_path('Stand>Settings>Appearance>Textures>Reload Textures'):trigger()
@@ -197,8 +202,39 @@ local function get_all_files(path, files = {})
 	return files
 end
 
+local function load_theme(theme_name)
+	util.toast($'Loading {theme_name} from profile...')
+
+	reload_textures()
+	reload_font()
+
+	menu.ref_by_path('Stand>Profiles'):trigger()
+	util.yield(100)
+	menu.ref_by_path('Stand'):trigger()
+	util.yield(100)
+	menu.ref_by_path('Stand>Profiles'):trigger()
+
+	menu.ref_by_path('Stand>Lua Scripts')
+	util.yield(100)
+	menu.ref_by_path('Stand')
+	util.yield(100)
+	menu.ref_by_path('Stand>Lua Scripts')
+
+	local ref = menu.ref_by_path('Stand>Profiles>' .. theme_name)
+	ref:refByRelPath('Load'):trigger()
+	util.yield(100)
+	ref:refByRelPath('Active'):trigger()
+	util.yield(100)
+	ref:refByRelPath('Load'):trigger()
+end
+
 local function download_theme(theme_name)
 	util.toast($'Downloading {theme_name}...')
+
+	empty_dir(theme_dir)
+	empty_dir(header_dir)
+
+	header_hide()
 
 	local files
 	local path = themes_dir .. theme_name .. '\\.manifest'
@@ -206,35 +242,64 @@ local function download_theme(theme_name)
 	if not filesystem.exists(path) then
 		files = get_all_files('Themes/' .. theme_name)
 		write_file(path, table.concat(files, '\n'))
+		debug_log($'Created manifest for theme: {theme_name}')
 	else
 		local f = io.open(path, 'r')
 		files = f:read('*a'):split('\n')
 		f:close()
+		debug_log($'Found manifest for theme: {theme_name}')
 	end
 
+	local i = 0
 	for files as file do
-		local path = file:gsub('Themes/' .. theme_name .. '/', '')
-		local dir = path:match('(.-)/[^/]-$')
+		i += 1
 
-		if not dir or not table.contains(
-				{ 'Lua Scripts', 'Theme', 'Theme/Tabs', 'Theme/Custom', 'Profiles', 'Headers/Custom Header' }, dir
-		) then
-			log($'{file} is not native to stand')
+		local path = file:gsub('Themes/' .. theme_name .. '/', '')
+		local dir = path:match('(.-)/[^/]-$') or 'none'
+
+		log($'{path} : {dir}')
+
+		-- todo: improve 
+		if not dir or not table.contains({ 'Lua Scripts', 'Theme', 'Theme/Tabs', 'Theme/Custom', 
+			'Profiles', 'Headers/Custom Header' 
+		}, dir) then
+			if not filesystem.exists(themes_dir .. theme_name .. $'\\{path}') then
+				download_file(
+					'https://raw.githubusercontent.com',
+					$'/stagnate6628/stand-themerepo/refactor-downloader/Themes/{theme_name}/{path}',
+					themes_dir .. theme_name .. $'\\{path}'
+				)
+			end
 			continue
 		end
 
+		if not filesystem.exists(file) then
+			download_file(
+				'https://raw.githubusercontent.com',
+				$'/stagnate6628/stand-themerepo/refactor-downloader/{file}',
+				{stand_dir .. path:gsub('/', '\\'), resources_dir .. file:gsub('/', '\\')}
+			)
+		end
 
-		log(dir)
-		log($'{file} goes to {path}')
 	end
+
+	repeat 
+		util.log('yielding...')
+		util.draw_centred_text($'{i}/' .. #files)
+		util.yield()
+	until i == #files
+
+	load_theme(theme_name)
 end
 
 local f = io.open(resources_dir .. 'themes.txt', 'r')
-for line in f:lines() do
-	themes_root:action(line, {}, '', function() download_theme(line) end)
-end
+local body = f:read('*a'):split('\n')
 f:close()
+root:list_action('Themes', {}, '', body, function(_, menu_name)
+	download_theme(menu_name)
+end)
 
+local config_root = root:list('Configuration', {}, '')
 config_root:textslider_stateful('Reset', {}, '', { 'Theme', 'Font', 'Header' }, function(idx) 
 	switch idx do
 		case 1:
@@ -254,6 +319,7 @@ config_root:textslider_stateful('Reset', {}, '', { 'Theme', 'Font', 'Header' }, 
 		break
 	end
 end)
+
 config_root:textslider_stateful('Update', {}, '', { 'Themes', 'Headers' }, function(idx)
 	local name = 'themes.txt'
 	if idx == 2 then
