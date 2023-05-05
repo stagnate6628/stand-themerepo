@@ -158,6 +158,8 @@ local backups_dir = resources_dir .. 'Backups\\'
 local display_download_status = true
 local apply_to_active_profile = false
 
+local is_downloading = false
+
 local function debug_log(msg)
   local log_path = resources_dir .. 'log.txt'
   if not io.exists(log_path) then
@@ -401,9 +403,18 @@ do
 		f:close()
 
 		local fn = v == 'Headers' ? download_header : download_theme
-		root:list_action(v, {}, '', body, function(_, menu_name)
+		root:list_action(v, {}, '', body, function(_, menu_name, click_type)
+			if is_downloading then
+				util.toast('It appears that a download is active. If that is not the case, then restart the script.')
+				return
+			end
+			
+			is_downloading = true
+			
 			util.toast($'Downloading {menu_name}...')
 			fn(menu_name)
+
+			is_downloading = false
 		end)
 	end
 end
