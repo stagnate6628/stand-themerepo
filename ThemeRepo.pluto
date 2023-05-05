@@ -250,33 +250,39 @@ local function download_theme(theme_name)
 		debug_log($'Found manifest for theme: {theme_name}')
 	end
 
+	local i = 0
+	util.create_tick_handler(function()
+		if i == #files then
+			return false
+		end
+		
+		util.draw_centred_text($'{theme_name}: {i}/' .. #files)
+		return true
+	end)
+
 	for files as file do
-		local path = file:gsub('Themes/' .. theme_name .. '/', '')
-		local dir = path:match('(.-)/[^/]-$') or 'none'
+		i += 1
 
-		log($'{path} : {dir}')
+		local base_path = file:gsub('/', '\\')
+		local local_path = base_path:gsub('Themes\\(.-)\\', '')
+		local dir = local_path:match('^(.-)[\\/][^\\/]*$')
+		local paths = {resources_dir .. base_path}
 
-		-- todo: improve 
-		if not dir or not table.contains({ 'Lua Scripts', 'Theme', 'Theme/Tabs', 'Theme/Custom', 
-			'Profiles', 'Headers/Custom Header' 
-		}, dir) then
-			if not filesystem.exists(themes_dir .. theme_name .. $'\\{path}') then
-				download_file(
-					'https://raw.githubusercontent.com',
-					$'/stagnate6628/stand-themerepo/refactor-downloader/Themes/{theme_name}/{path}',
-					themes_dir .. theme_name .. $'\\{path}'
-				)
-			end
+		if dir then
+			table.insert(paths, stand_dir .. local_path)
+		end
+		
+		if filesystem.exists(paths[1]) and (not paths[2] or filesystem.exists(paths[2])) then
+			log($'Found {file}')
 			continue
 		end
 
-		if not filesystem.exists(file) then
-			download_file(
-				'https://raw.githubusercontent.com',
-				$'/stagnate6628/stand-themerepo/refactor-downloader/{file}',
-				{stand_dir .. path:gsub('/', '\\'), resources_dir .. file:gsub('/', '\\')}
-			)
-		end
+		download_file(
+			'https://raw.githubusercontent.com',
+			$'/stagnate6628/stand-themerepo/refactor-downloader/{file}',
+			paths
+		)
+		log($'Downloaded {file}')
 	end
 
 	load_theme(theme_name)
@@ -326,8 +332,5 @@ config_root:textslider_stateful('Update', {}, '', { 'Themes', 'Headers' }, funct
 end)
 
 if math.random() > 0.85 then
-	util.toast([[
-		Please make backups as needed.
-		The script will not do this for you.
-	]])
+	util.toast('Please make backups as needed. The script will not do this for you.')
 end
