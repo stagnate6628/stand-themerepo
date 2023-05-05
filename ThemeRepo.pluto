@@ -374,7 +374,13 @@ local function download_header(header_name)
 			paths
 		)
 	end
+	
+	if math.random() > 0.86 then
+		util.toast('Save the header to the Active profile to use it on start.')
+	end
+
 	header_custom()
+	
 end
 
 do
