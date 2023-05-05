@@ -369,8 +369,8 @@ local config_root = root:list('Configuration', {}, '')
 config_root:toggle('Display Download Status', {}, 'Uses the "Info Text" system to display what is being downloaded and the file count.', function(s)
 	display_download_status = s
 end, display_download_status)
-config_root:textslider_stateful('Reset', {}, '', { 'Theme', 'Font', 'Header' }, function(idx) 
-	switch idx do
+config_root:list_action('Reset', {}, 'Restores the selected file(s) to its default state. Equivalent to deleting and refreshing.', { 'Theme', 'Font', 'Header' }, function(index)
+	switch index do
 		case 1:
 			empty_dir(theme_dir)
 			reload_textures()
@@ -388,8 +388,8 @@ config_root:textslider_stateful('Reset', {}, '', { 'Theme', 'Font', 'Header' }, 
 		break
 	end
 end)
-config_root:textslider_stateful('Update', {}, '', { 'Themes', 'Headers' }, function(idx, value)
-	local name = value:lower() .. '.txt'
+config_root:list_action('Update', {}, '', { 'Themes', 'Headers' }, function(_, menu_name)
+	local name = menu_name:lower() .. '.txt'
 	download_file(
 		'https://raw.githubusercontent.com',
 		'/stagnate6628/stand-themerepo/main/' .. name,
