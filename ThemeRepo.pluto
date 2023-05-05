@@ -366,10 +366,10 @@ do
 end
 
 local config_root = root:list('Configuration', {}, '')
-config_root:toggle('Display Download Status', {}, 'Uses the "Info Text" system to display what is being downloaded and the file count.', function(s)
+config_root:toggle('Display Download Status', {}, 'Uses the "Info Text" system to show what is being downloaded and the file count.', function(s)
 	display_download_status = s
 end, display_download_status)
-config_root:list_action('Reset', {}, 'Restores the selected file(s) to its default state. Equivalent to deleting and refreshing.', { 'Theme', 'Font', 'Header' }, function(index)
+config_root:list_action('Reset', {}, 'Restores the file(s) associated with the selected option to its default state.', { 'Theme', 'Font', 'Header' }, function(index)
 	switch index do
 		case 1:
 			empty_dir(theme_dir)
