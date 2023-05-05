@@ -156,6 +156,7 @@ local headers_dir = resources_dir .. 'Headers\\'
 local backups_dir = resources_dir .. 'Backups\\'
 
 local display_download_status = true
+local apply_to_active_profile = false
 
 local function debug_log(msg)
   local log_path = resources_dir .. 'log.txt'
@@ -209,23 +210,59 @@ local function load_theme(theme_name)
 	reload_font()
 
 	menu.ref_by_path('Stand>Profiles'):trigger()
-	util.yield(100)
+	util.yield(50)
 	menu.ref_by_path('Stand'):trigger()
-	util.yield(100)
+	util.yield(50)
 	menu.ref_by_path('Stand>Profiles'):trigger()
 
 	menu.ref_by_path('Stand>Lua Scripts'):trigger()
-	util.yield(100)
+	util.yield(50)
 	menu.ref_by_path('Stand'):trigger()
-	util.yield(100)
+	util.yield(50)
 	menu.ref_by_path('Stand>Lua Scripts'):trigger()
 
-	local ref = menu.ref_by_path('Stand>Profiles>' .. theme_name)
+	local ref = menu.ref_by_path($'Stand>Profiles>{theme_name}')
+	if apply_to_active_profile then
+		-- it may be better to search through stand>profiles and find the ref with Active
+		-- possible edge case: user has profile x active but there is no x.txt
+  		local meta_state = util.read_colons_and_tabs_file($'{stand_dir}Meta State.txt')
+		local active_profile = meta_state['Active Profile'] or 'Main'
+		
+		local path = $'{stand_dir}Profiles\\{theme_name}.txt'
+
+		ref = menu.ref_by_path($'Stand>Profiles>{active_profile}')
+
+		for k, v in util.read_colons_and_tabs_file(path) do
+			if k:startswith('Stand>Settings>Appearance') or 
+			   	k:startswith('Stand>Lua Scripts') or 
+			  	k:startswith('Players>Settings>Tags') then
+
+				local r = menu.ref_by_path($'{k}>{v}')
+				if not r:isValid() then
+					menu.trigger_command(menu.ref_by_path(k), v)
+				else
+					r:trigger()
+				end
+			end
+			util.yield()
+		end
+
+		-- TODO: remove script refs from profile
+		-- void util.write_colons_file(string file, table<string,string> data) 
+		-- or just ignore it
+
+		menu.ref_by_path('Stand>Tutorial>Dismiss'):trigger()
+		util.yield(50)
+		ref:refByRelPath('Save'):trigger()
+	end
+
 	ref:refByRelPath('Load'):trigger()
-	util.yield(100)
+	util.yield(50)
 	ref:refByRelPath('Active'):trigger()
-	util.yield(100)
+	util.yield(50)
 	ref:refByRelPath('Load'):trigger()
+
+	util.toast('Done!')
 end
 
 local function download_theme(theme_name)
@@ -366,6 +403,9 @@ do
 end
 
 local config_root = root:list('Configuration', {}, '')
+config_root:toggle('Apply to Active Profile', {}, 'Attempts to apply the downloaded theme appearance to the current profile. The implementation may not be perfect so you may want to keep this disabled or backup the active profile.', function(s)
+	apply_to_active_profile = s
+end, apply_to_active_profile)
 config_root:toggle('Display Download Status', {}, 'Uses the "Info Text" system to show what is being downloaded and the file count.', function(s)
 	display_download_status = s
 end, display_download_status)
