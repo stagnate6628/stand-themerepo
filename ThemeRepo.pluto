@@ -431,10 +431,10 @@ do
 end
 
 local config_root = root:list('Configuration', {}, '')
-config_root:toggle('Apply to Active Profile', {}, 'It is still recommended to maintain profile backups in the event this fails.', function(s)
+config_root:toggle('Apply To Active Profile', {}, 'It is still recommended to maintain profile backups in the event this fails or does not apply correctly.', function(s)
 	apply_to_active_profile = s
 end, apply_to_active_profile):setTemporary()
-config_root:toggle('Display Download Status', {}, 'Uses the "Info Text" system to show what is being downloaded and the file count.', function(s)
+config_root:toggle('Download Status', {}, 'Uses the "Info Text" system to show what is being downloaded and the file count.', function(s)
 	display_download_status = s
 end, display_download_status):setTemporary()
 
