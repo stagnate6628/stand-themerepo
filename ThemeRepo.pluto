@@ -431,12 +431,14 @@ do
 end
 
 local config_root = root:list('Configuration', {}, '')
+config_root:divider('Headers')
+config_root:toggle('Save to Profile', {}, 'Saves the Header state to "Custom" when you load a header.', function(s)
+
+end):setTemporary()
+config_root:divider('Themes')
 config_root:toggle('Apply To Active Profile', {}, 'It is still recommended to maintain profile backups in the event this fails or does not apply correctly.', function(s)
 	apply_to_active_profile = s
 end, apply_to_active_profile):setTemporary()
-config_root:toggle('Download Status', {}, 'Uses the "Info Text" system to show what is being downloaded and the file count.', function(s)
-	display_download_status = s
-end, display_download_status):setTemporary()
 
 local languages = {}
 for lang_children as child do
@@ -447,7 +449,12 @@ config_root:list_action('Language', {}, 'The language to use for the theme. Make
 	lang_index = index
 	util.toast($'Downloaded themes will now use: ' .. lang_children[index].menu_name)
 end)
-config_root:list_action('Reset', {}, 'Theme: The theme folder.\nFont: The menu font.\nHeader: The menu headers.', { 'Theme', 'Font', 'Header' }, function(index)
+
+config_root:divider('Other')
+config_root:toggle('Download Status', {}, 'Uses the "Info Text" system to show what is being downloaded and the file count.', function(s)
+	display_download_status = s
+end, display_download_status):setTemporary()
+config_root:list_action('Reset', {}, 'Theme: the theme folder.\nFont: the menu font.\nHeader: the custom headers folder.\n\nDeletes and refreshes the necessary files.', { 'Theme', 'Font', 'Header' }, function(index)
 	switch index do
 		case 1:
 			empty_dir(theme_dir)
