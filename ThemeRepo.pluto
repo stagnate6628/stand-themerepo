@@ -242,6 +242,8 @@ local function load_theme(theme_name)
 
 		ref = menu.ref_by_path($'Stand>Profiles>{active_profile}')
 
+		-- TODO: it might actually be better to just write to the active profile
+		-- the modifications instead of having to save
 		for k, v in util.read_colons_and_tabs_file(path) do
 			if k:startswith('Stand>Settings>Appearance') or 
 			   	k:startswith('Stand>Lua Scripts') or 
