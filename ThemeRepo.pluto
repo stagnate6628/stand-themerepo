@@ -47,7 +47,7 @@ end
 
 local async_http, filesystem, io, menu, util = async_http, filesystem, io, menu, util
 
-if math.random() > 0.85 then
+if not SCRIPT_SILENT_START and math.random() > 0.87 then
 	util.toast('Please make backups as needed. This will not be done for you.')
 end
 
@@ -144,6 +144,7 @@ local function empty_dir(dir)
 end
 
 local stand_dir = filesystem.stand_dir()
+local stand_ref = menu.ref_by_path('Stand')
 
 local header_dir = stand_dir .. 'Headers\\Custom Header\\'
 local theme_dir = stand_dir .. 'Theme\\'
@@ -159,6 +160,10 @@ local display_download_status = true
 local apply_to_active_profile = false
 
 local is_downloading = false
+
+local lang_index = 3
+local lang_ref = menu.ref_by_path('Stand>Settings>Language')
+local lang_children = lang_ref:getChildren()
 
 local function debug_log(msg)
   local log_path = resources_dir .. 'log.txt'
@@ -211,19 +216,22 @@ local function load_theme(theme_name)
 	reload_textures()
 	reload_font()
 
-	menu.ref_by_path('Stand>Profiles'):trigger()
-	util.yield(50)
-	menu.ref_by_path('Stand'):trigger()
-	util.yield(50)
-	menu.ref_by_path('Stand>Profiles'):trigger()
+	stand_ref:refByRelPath('Profiles'):trigger()
+	util.yield(100)
+	stand_ref:trigger()
+	util.yield(100)
+	stand_ref:refByRelPath('Profiles'):trigger()
+	util.yield(100)
 
-	menu.ref_by_path('Stand>Lua Scripts'):trigger()
-	util.yield(50)
-	menu.ref_by_path('Stand'):trigger()
-	util.yield(50)
-	menu.ref_by_path('Stand>Lua Scripts'):trigger()
+	stand_ref:refByRelPath('Lua Scripts'):trigger()
+	util.yield(100)
+	stand_ref:trigger()
+	util.yield(100)
+	stand_ref:refByRelPath('Lua Scripts'):trigger()
+	util.yield(100)
 
 	local ref = menu.ref_by_path($'Stand>Profiles>{theme_name}')
+
 	if apply_to_active_profile then
 		-- it may be better to search through stand>profiles and find the ref with Active
 		-- possible edge case: user has profile x active but there is no x.txt
@@ -252,19 +260,25 @@ local function load_theme(theme_name)
 		-- TODO: remove script refs from profile
 		-- void util.write_colons_file(string file, table<string,string> data) 
 		-- or just ignore it
-
 		menu.ref_by_path('Stand>Tutorial>Dismiss'):trigger()
-		util.yield(50)
+		util.yield()
 		ref:refByRelPath('Save'):trigger()
+		util.yield()
 	end
 
 	ref:refByRelPath('Load'):trigger()
-	util.yield(50)
-	ref:refByRelPath('Active'):trigger()
-	util.yield(50)
-	ref:refByRelPath('Load'):trigger()
+	util.yield()
 
-	util.toast('Done!')
+	lang_children[lang_index]:trigger()
+	ref:refByRelPath('Save'):trigger()
+	util.yield()
+
+	ref:refByRelPath('Active'):trigger()
+	util.yield()
+	ref:refByRelPath('Load'):trigger()
+	util.yield()
+
+	util.log('Done!')
 end
 
 local function download_theme(theme_name)
@@ -312,7 +326,7 @@ local function download_theme(theme_name)
 		end
 		
 		if filesystem.exists(paths[1]) and (not paths[2] or filesystem.exists(paths[2])) then
-			log($'Found {file}')
+			--log($'Found {file}')
 			continue
 		end
 
@@ -321,7 +335,7 @@ local function download_theme(theme_name)
 			$'/stagnate6628/stand-themerepo/refactor-downloader/{file}',
 			paths
 		)
-		log($'Downloaded {file}')
+		--log($'Downloaded {file}')
 	end
 
 	load_theme(theme_name)
@@ -376,13 +390,8 @@ local function download_header(header_name)
 			paths
 		)
 	end
-	
-	if math.random() > 0.86 then
-		util.toast('Save the header to the Active profile to use it on start.')
-	end
 
 	header_custom()
-	
 end
 
 do
@@ -422,10 +431,20 @@ end
 local config_root = root:list('Configuration', {}, '')
 config_root:toggle('Apply to Active Profile', {}, 'Attempts to apply the downloaded theme appearance to the current profile. The implementation may not be perfect so you may want to keep this disabled or backup the active profile.', function(s)
 	apply_to_active_profile = s
-end, apply_to_active_profile)
-config_root:toggle('Display Download Status', {}, 'Uses the "Info Text" system to show what is being downloaded and the file count.', function(s)
+end, apply_to_active_profile):setTemporary()
+config_root:toggle('Display Download Status', {}, '', function(s)
 	display_download_status = s
-end, display_download_status)
+end, display_download_status):setTemporary()
+
+local languages = {}
+for lang_children as child do
+	table.insert(languages, child.menu_name)
+end
+
+config_root:list_action('Language', {}, 'The language to use for the theme. Make sure the font supports the selected language.', languages, function(index)
+	lang_index = index
+	util.toast($'Downloaded themes will now use: ' .. lang_children[index].menu_name)
+end)
 config_root:list_action('Reset', {}, 'Restores the associated file(s) to their default state.', { 'Theme', 'Font', 'Header' }, function(index)
 	switch index do
 		case 1:
