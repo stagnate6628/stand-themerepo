@@ -431,10 +431,10 @@ do
 end
 
 local config_root = root:list('Configuration', {}, '')
-config_root:toggle('Apply to Active Profile', {}, 'Attempts to apply the downloaded theme appearance to the current profile. The implementation may not be perfect so you may want to keep this disabled or backup the active profile.', function(s)
+config_root:toggle('Apply to Active Profile', {}, 'It is still recommended to maintain profile backups in the event this fails.', function(s)
 	apply_to_active_profile = s
 end, apply_to_active_profile):setTemporary()
-config_root:toggle('Display Download Status', {}, '', function(s)
+config_root:toggle('Display Download Status', {}, 'Uses the "Info Text" system to show what is being downloaded and the file count.', function(s)
 	display_download_status = s
 end, display_download_status):setTemporary()
 
@@ -447,7 +447,7 @@ config_root:list_action('Language', {}, 'The language to use for the theme. Make
 	lang_index = index
 	util.toast($'Downloaded themes will now use: ' .. lang_children[index].menu_name)
 end)
-config_root:list_action('Reset', {}, 'Restores the associated file(s) to their default state.', { 'Theme', 'Font', 'Header' }, function(index)
+config_root:list_action('Reset', {}, 'Theme: The theme folder.\nFont: The menu font.\nHeader: The menu headers.', { 'Theme', 'Font', 'Header' }, function(index)
 	switch index do
 		case 1:
 			empty_dir(theme_dir)
@@ -463,6 +463,9 @@ config_root:list_action('Reset', {}, 'Restores the associated file(s) to their d
 			header_hide()
 			header_custom()
 			header_hide()
+		break
+		case 4:
+
 		break
 	end
 end)
