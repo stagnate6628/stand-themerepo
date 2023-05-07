@@ -10,6 +10,7 @@ Tree Compatibility Version: 46
 Players
 	Settings
 		Tags
+			Self: 
 			Friend: 
 			Crew Member: 
 			In Timeout: 
