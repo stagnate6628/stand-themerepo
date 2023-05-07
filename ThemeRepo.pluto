@@ -448,13 +448,12 @@ config_root:toggle('Download Status', {}, 'Uses the "Info Text" system to show w
 	display_download_status = s
 end, display_download_status):setTemporary()
 
-local search_root = config_root:list('Search', {}, '')
-
 local all_children = theme_list:getChildren()
 for header_list:getChildren() as child do
 	table.insert(all_children, child)
 end
 
+local search_root = config_root:list('Search', {}, '')
 search_root:text_input('Query', {'themereposearch'}, '', function(input, click_type)
 	if input != '' and click_type == 1 then
 		for search_root:getChildren() as child do
