@@ -274,18 +274,18 @@ local function load_theme(theme_name)
 		util.yield()
 	end
 
-	ref:refByRelPath('Load'):trigger()
-	util.yield()
-
-	lang_children[lang_index]:trigger()
-	ref:refByRelPath('Save'):trigger()
-	util.yield()
+	-- todo: this is broken and inconsistent
 
 	ref:refByRelPath('Active'):trigger()
-	util.yield()
-	ref:refByRelPath('Load'):trigger()
-	util.yield()
 
+	--[[ref:refByRelPath('Load'):trigger()
+	util.yield()
+	lang_children[lang_index]:trigger()
+	ref:refByRelPath('Save'):trigger()
+	util.yield()]]
+	ref:refByRelPath('Load'):trigger()
+	util.yield(100)
+	ref:refByRelPath('Load'):trigger()
 	util.log('Done!')
 end
 
@@ -489,14 +489,16 @@ search_root:text_input('Query', {'themereposearch'}, '', function(input)
 
 		for all_children as child do
 			if child.menu_name:lower():contains(input:lower()) then
-				search_root:link(child, true)
+				search_root:action(child.menu_name, {}, '', function()
+					child:trigger()
+				end
 			end
 		end
 		if #search_root:getChildren() == 1 then
 			util.toast($'No results found under {input}, try expanding your search query.')
 		end
 	end
-end)
+end):setTemporary()
 
 config_root:list_action('Reset', {}, 'Theme: the theme folder.\nFont: the menu font.\nHeader: the custom headers folder.\n\nDeletes and refreshes the necessary files.', { 'Theme', 'Font', 'Header' }, function(index)
 	switch index do
