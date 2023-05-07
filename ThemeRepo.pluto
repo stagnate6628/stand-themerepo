@@ -161,15 +161,6 @@ local apply_to_active_profile = false
 
 local is_downloading = false
 
-local lang_index = 3
-local lang_ref = menu.ref_by_path('Stand>Settings>Language')
-local lang_children = lang_ref:getChildren()
-
-local languages = {}
-for lang_children as child do
-	table.insert(languages, child.menu_name)
-end
-
 local function debug_log(msg)
   local log_path = resources_dir .. 'log.txt'
   if not io.exists(log_path) then
@@ -236,7 +227,7 @@ local function load_theme(theme_name)
 	util.yield(250)
 
 	local ref = menu.ref_by_path($'Stand>Profiles>{theme_name}')
-	
+
 	if apply_to_active_profile then
   		local meta_state = util.read_colons_and_tabs_file($'{stand_dir}Meta State.txt')
 		local active_profile = meta_state['Active Profile'] or 'Main'
@@ -446,15 +437,11 @@ config_root:divider('Headers')
 config_root:toggle('Save to Profile', {}, 'Saves the Header state to "Custom" when you load a header.', function(s)
 
 end):setTemporary()
+
 config_root:divider('Themes')
 config_root:toggle('Apply To Active Profile', {}, 'It is HIGHLY recommended to keep this disabled if you care about your Active Profile. Result is a hit or miss.', function(s)
 	apply_to_active_profile = s
 end, apply_to_active_profile):setTemporary()
-
-config_root:list_action('Language', {}, 'Make sure the theme font supports the selected language.', languages, function(index)
-	lang_index = index
-	util.toast('Now using: ' .. lang_children[index].menu_name)
-end):setTemporary()
 
 config_root:divider('Other')
 config_root:toggle('Download Status', {}, 'Uses the "Info Text" system to show what is being downloaded and the file count.', function(s)
