@@ -477,8 +477,8 @@ for header_list:getChildren() as child do
 	table.insert(all_children, child)
 end
 
-search_root:text_input('Query', {'themereposearch'}, '', function(input)
-	if input != '' then
+search_root:text_input('Query', {'themereposearch'}, '', function(input, click_type)
+	if input != '' and click_type == 1 then
 		for search_root:getChildren() as child do
 			if child:getType() == COMMAND_INPUT then
 				continue
@@ -495,7 +495,7 @@ search_root:text_input('Query', {'themereposearch'}, '', function(input)
 			end
 		end
 		if #search_root:getChildren() == 1 then
-			util.toast($'No results found under {input}, try expanding your search query.')
+			util.toast($'No results found under "{input}", try expanding your search query.')
 		end
 	end
 end):setTemporary()
