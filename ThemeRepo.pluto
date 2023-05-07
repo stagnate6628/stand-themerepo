@@ -491,7 +491,7 @@ search_root:text_input('Query', {'themereposearch'}, '', function(input)
 			if child.menu_name:lower():contains(input:lower()) then
 				search_root:action(child.menu_name, {}, '', function()
 					child:trigger()
-				end
+				end)
 			end
 		end
 		if #search_root:getChildren() == 1 then
