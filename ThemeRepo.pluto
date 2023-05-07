@@ -472,7 +472,7 @@ search_root:text_input('Query', {'themereposearch'}, '', function(input, click_t
 			end
 		end
 		if #search_root:getChildren() == 1 then
-			util.toast($'No results found under "{input}", try expanding your search query.')
+			util.toast($'No results found under "{input}", try expanding or even narrowing your search query.')
 		end
 	end
 end):setTemporary()
