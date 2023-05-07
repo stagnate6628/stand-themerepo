@@ -7,6 +7,27 @@ Understands Controller Open/Close: Yes
 Prompted For Controller Disables: Yes
 Understands Command Chaining: Yes
 Tree Compatibility Version: 46
+Players
+	Settings
+		Tags
+			Friend: 
+			Crew Member: 
+			In Timeout: 
+			Modder: 
+			Admin: 
+			Likely Modder: 
+			Attacked You: 
+			Host: 
+			Next Host: 
+			Script Host: 
+			Invulnerable: 
+			Indestructible Vehicle: 
+			RC Vehicle: 
+			Off The Radar: 
+			In An Interior: 
+			Spectating: 
+			Typing: 
+			Dead: 
 Stand
 	Settings
 		Appearance
