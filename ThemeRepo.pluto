@@ -222,33 +222,29 @@ local function load_theme(theme_name)
 	reload_font()
 
 	stand_ref:refByRelPath('Profiles'):trigger()
-	util.yield(100)
+	util.yield(250)
 	stand_ref:trigger()
-	util.yield(100)
+	util.yield(250)
 	stand_ref:refByRelPath('Profiles'):trigger()
-	util.yield(100)
 
 	stand_ref:refByRelPath('Lua Scripts'):trigger()
-	util.yield(100)
+	util.yield(250)
 	stand_ref:trigger()
-	util.yield(100)
+	util.yield(250)
 	stand_ref:refByRelPath('Lua Scripts'):trigger()
-	util.yield(100)
+
+	util.yield(250)
 
 	local ref = menu.ref_by_path($'Stand>Profiles>{theme_name}')
-
+	
 	if apply_to_active_profile then
-		-- it may be better to search through stand>profiles and find the ref with Active
-		-- possible edge case: user has profile x active but there is no x.txt
   		local meta_state = util.read_colons_and_tabs_file($'{stand_dir}Meta State.txt')
 		local active_profile = meta_state['Active Profile'] or 'Main'
 		
 		local path = $'{stand_dir}Profiles\\{theme_name}.txt'
 
 		ref = menu.ref_by_path($'Stand>Profiles>{active_profile}')
-
-		-- TODO: it might actually be better to just write to the active profile
-		-- the modifications instead of having to save
+		
 		for k, v in util.read_colons_and_tabs_file(path) do
 			if k:startswith('Stand>Settings>Appearance') or 
 			   	k:startswith('Stand>Lua Scripts') or 
@@ -257,36 +253,30 @@ local function load_theme(theme_name)
 				local r = menu.ref_by_path($'{k}>{v}')
 				if r:isValid() then
 					r:trigger()
-					continue
+				else
+					r = menu.ref_by_path(k)
+					if r:isValid() then
+						menu.trigger_command(r, v)
+					end
 				end
-
-				menu.trigger_command(menu.ref_by_path(k), v)
 			end
 			util.yield()
 		end
 
-		-- TODO: remove script refs from profile
-		-- void util.write_colons_file(string file, table<string,string> data) 
-		-- or just ignore it
-		menu.ref_by_path('Stand>Tutorial>Dismiss'):trigger()
-		util.yield()
 		ref:refByRelPath('Save'):trigger()
-		util.yield()
+		--log('Saved to active profile')
 	end
 
-	-- todo: this is broken and inconsistent
+	--log('Loading profile first time')
+	ref:refByRelPath('Load'):trigger()
+	--log('Loading profile second time')
+	ref:refByRelPath('Load'):trigger()
 
+	--log('Setting profile to active')
 	ref:refByRelPath('Active'):trigger()
-
-	--[[ref:refByRelPath('Load'):trigger()
-	util.yield()
-	lang_children[lang_index]:trigger()
-	ref:refByRelPath('Save'):trigger()
-	util.yield()]]
-	ref:refByRelPath('Load'):trigger()
 	util.yield(100)
-	ref:refByRelPath('Load'):trigger()
-	util.log('Done!')
+
+	log('Done!')
 end
 
 local function download_theme(theme_name)
@@ -444,9 +434,10 @@ do
 
 		if v == 'Headers' then
 			header_list = list_action
-		else
-			theme_list = list_action
+			continue
 		end
+
+		theme_list = list_action
 	end
 end
 
@@ -456,14 +447,14 @@ config_root:toggle('Save to Profile', {}, 'Saves the Header state to "Custom" wh
 
 end):setTemporary()
 config_root:divider('Themes')
-config_root:toggle('Apply To Active Profile', {}, 'It is still recommended to maintain profile backups in the event this fails or does not apply correctly.', function(s)
+config_root:toggle('Apply To Active Profile', {}, 'It is HIGHLY recommended to keep this disabled if you care about your Active Profile. Result is a hit or miss.', function(s)
 	apply_to_active_profile = s
 end, apply_to_active_profile):setTemporary()
 
 config_root:list_action('Language', {}, 'Make sure the theme font supports the selected language.', languages, function(index)
 	lang_index = index
-	util.toast($'Downloaded themes will now use: ' .. lang_children[index].menu_name)
-end)
+	util.toast('Now using: ' .. lang_children[index].menu_name)
+end):setTemporary()
 
 config_root:divider('Other')
 config_root:toggle('Download Status', {}, 'Uses the "Info Text" system to show what is being downloaded and the file count.', function(s)
