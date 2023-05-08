@@ -156,6 +156,7 @@ local themes_dir = resources_dir .. 'Themes\\'
 local headers_dir = resources_dir .. 'Headers\\'
 local backups_dir = resources_dir .. 'Backups\\'
 
+local script_tips = true
 local apply_to_active_profile = false
 local display_download_status = true
 
@@ -235,7 +236,7 @@ local function load_theme(theme_name)
 		local path = $'{stand_dir}Profiles\\{theme_name}.txt'
 
 		ref = menu.ref_by_path($'Stand>Profiles>{active_profile}')
-		
+
 		for k, v in util.read_colons_and_tabs_file(path) do
 			if k:startswith('Stand>Settings>Appearance') or 
 			   	k:startswith('Stand>Lua Scripts') or 
@@ -255,6 +256,14 @@ local function load_theme(theme_name)
 		end
 
 		--log('Saved to active profile')
+
+		util.toast('Done!')
+
+		if script_tips then
+			util.toast($'Make sure to save the profile "{active_profile}" to continue using this theme on each startup.')
+			ref:focus()
+		end
+		return
 	end
 
 	--log('Loading profile first time')
@@ -380,6 +389,10 @@ local function download_header(header_name)
 	end
 
 	header_custom()
+
+	if script_tips and math.random() > 0.8 then
+		util.toast('Make sure you save the Header state to "Custom" to ensure that the Header is loaded on inject.')
+	end
 end
 
 local all_children = {}
@@ -432,6 +445,9 @@ config_root:divider('Other')
 config_root:toggle('Download Status', {}, 'Uses the "Info Text" system to show what is being downloaded and the file count.', function(s)
 	display_download_status = s
 end, display_download_status):setTemporary()
+config_root:toggle('Tips', {}, '', function(s)
+	script_tips = s
+end, script_tips):setTemporary()
 
 local search_root = config_root:list('Search', {}, '')
 search_root:text_input('Query', {'themereposearch'}, '', function(input, click_type)
