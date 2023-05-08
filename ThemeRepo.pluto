@@ -156,7 +156,6 @@ local themes_dir = resources_dir .. 'Themes\\'
 local headers_dir = resources_dir .. 'Headers\\'
 local backups_dir = resources_dir .. 'Backups\\'
 
-local save_to_profile = false
 local apply_to_active_profile = false
 local display_download_status = true
 
@@ -424,11 +423,6 @@ do
 end
 
 local config_root = root:list('Configuration', {}, '')
-config_root:divider('Headers')
-config_root:toggle('Save to Profile', {}, 'Saves the Header state to "Custom" when you load a header.', function(s)
-	save_to_profile = s
-end, save_to_profile):setTemporary()
-
 config_root:divider('Themes')
 config_root:toggle('Apply To Active Profile', {}, 'Note that this only applies appearance settings to the Active Profile. Make sure you save the profile to ensure persistance.', function(s)
 	apply_to_active_profile = s
