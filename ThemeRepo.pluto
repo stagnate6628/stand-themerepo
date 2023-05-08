@@ -447,7 +447,7 @@ config_root:toggle('Download Status', {}, 'Uses the "Info Text" system to show w
 end, display_download_status):setTemporary()
 config_root:toggle('Reminders', {}, 'Provides useful information that you should want to know when loading a header or theme. Has around 15% chance of being shown.', function(s)
 	script_reminders = s
-end, script_reminders):setTemporary()
+end, script_reminders)
 
 local search_root = config_root:list('Search', {}, '')
 search_root:text_input('Query', {'themereposearch'}, '', function(input, click_type)
