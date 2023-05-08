@@ -395,7 +395,7 @@ do
 			util.toast($'Downloading missing file ({file_name})...')
 			download_file(
 				'https://raw.githubusercontent.com',
-				$'/stagnate6628/stand-themerepo/main/{e}.txt',
+				$'/stagnate6628/stand-themerepo/main/{file_name}',
 				resources_dir .. file_name
 			)
 			f = io.open(resources_dir .. file_name, 'r')
