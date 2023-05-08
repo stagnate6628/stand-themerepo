@@ -449,6 +449,8 @@ config_root:toggle('Reminders', {}, 'Provides useful information that you should
 	script_reminders = s
 end, script_reminders)
 
+config_root:divider('Tooling')
+
 local search_root = config_root:list('Search', {}, '')
 search_root:text_input('Query', {'themereposearch'}, '', function(input, click_type)
 	if input != '' and click_type == 1 then
