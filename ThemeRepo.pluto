@@ -156,8 +156,9 @@ local themes_dir = resources_dir .. 'Themes\\'
 local headers_dir = resources_dir .. 'Headers\\'
 local backups_dir = resources_dir .. 'Backups\\'
 
-local display_download_status = true
+local save_to_profile = false
 local apply_to_active_profile = false
+local display_download_status = true
 
 local is_downloading = false
 
@@ -383,8 +384,7 @@ local function download_header(header_name)
 	header_custom()
 end
 
-local header_list
-local theme_list
+local all_children = {}
 
 do
 	for { 'Headers', 'Themes' } as v do
@@ -409,7 +409,7 @@ do
 		f:close()
 
 		local fn = v == 'Headers' ? download_header : download_theme
-		local list_action = root:list_action(v, {}, '', body, function(_, menu_name, click_type)
+		local ref = root:list_action(v, {}, '', body, function(_, menu_name, click_type)
 			if is_downloading then
 				util.toast('It appears that a download is active. If that is not the case, then restart the script.')
 				return
@@ -423,20 +423,17 @@ do
 			is_downloading = false
 		end)
 
-		if v == 'Headers' then
-			header_list = list_action
-			continue
+		for ref:getChildren() as child do
+			table.insert(all_children, child)
 		end
-
-		theme_list = list_action
 	end
 end
 
 local config_root = root:list('Configuration', {}, '')
 config_root:divider('Headers')
 config_root:toggle('Save to Profile', {}, 'Saves the Header state to "Custom" when you load a header.', function(s)
-
-end):setTemporary()
+	save_to_profile = s
+end, save_to_profile):setTemporary()
 
 config_root:divider('Themes')
 config_root:toggle('Apply To Active Profile', {}, 'It is HIGHLY recommended to keep this disabled if you care about your Active Profile. Result is a hit or miss.', function(s)
@@ -447,11 +444,6 @@ config_root:divider('Other')
 config_root:toggle('Download Status', {}, 'Uses the "Info Text" system to show what is being downloaded and the file count.', function(s)
 	display_download_status = s
 end, display_download_status):setTemporary()
-
-local all_children = theme_list:getChildren()
-for header_list:getChildren() as child do
-	table.insert(all_children, child)
-end
 
 local search_root = config_root:list('Search', {}, '')
 search_root:text_input('Query', {'themereposearch'}, '', function(input, click_type)
