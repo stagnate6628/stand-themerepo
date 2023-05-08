@@ -437,7 +437,7 @@ end
 
 local config_root = root:list('Configuration', {}, '')
 config_root:divider('Themes')
-config_root:toggle('Apply To Active Profile', {}, 'Note that this only applies appearance settings to the Active Profile. Make sure you save the profile to ensure persistance.', function(s)
+config_root:toggle('Apply To Active Profile', {}, 'Note that this only applies appearance settings to the Active Profile. Make sure afterwards you save the profile to ensure persistance.', function(s)
 	apply_to_active_profile = s
 end, apply_to_active_profile):setTemporary()
 
