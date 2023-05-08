@@ -255,7 +255,6 @@ local function load_theme(theme_name)
 			util.yield()
 		end
 
-		ref:refByRelPath('Save'):trigger()
 		--log('Saved to active profile')
 	end
 
@@ -431,7 +430,7 @@ config_root:toggle('Save to Profile', {}, 'Saves the Header state to "Custom" wh
 end, save_to_profile):setTemporary()
 
 config_root:divider('Themes')
-config_root:toggle('Apply To Active Profile', {}, 'It is HIGHLY recommended to keep this disabled if you care about your Active Profile. Result is a hit or miss.', function(s)
+config_root:toggle('Apply To Active Profile', {}, 'Note that this only applies appearance settings to the Active Profile. Make sure you save the profile to ensure persistance.', function(s)
 	apply_to_active_profile = s
 end, apply_to_active_profile):setTemporary()
 
