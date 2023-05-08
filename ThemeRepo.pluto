@@ -401,11 +401,6 @@ do
 			f = io.open(resources_dir .. file_name, 'r')
 		end
 		local body = f:read('*a'):split('\n')
-		if v == 'Headers' then
-			headers_children = body
-		else
-			themes_children = body
-		end
 		f:close()
 
 		local fn = v == 'Headers' ? download_header : download_theme
