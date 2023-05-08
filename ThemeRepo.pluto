@@ -463,7 +463,7 @@ search_root:text_input('Query', {'themereposearch'}, '', function(input, click_t
 	end
 end):setTemporary()
 
-config_root:list_action('Reset', {}, 'Theme: the theme folder.\nFont: the menu font.\nHeader: the custom headers folder.\n\nDeletes and refreshes the necessary files.', { 'Theme', 'Font', 'Header' }, function(index)
+config_root:list_action('Reset', {}, 'Deletes and refreshes the necessary files to their defaults. This action is irreversible.', { 'Theme', 'Font', 'Header' }, function(index)
 	switch index do
 		case 1:
 			empty_dir(theme_dir)
