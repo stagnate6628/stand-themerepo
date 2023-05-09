@@ -161,7 +161,6 @@ local headers_dir = resources_dir .. 'Headers\\'
 local backups_dir = resources_dir .. 'Backups\\'
 
 local script_reminders = true
-local apply_to_active_profile = false
 local display_download_status = true
 
 local is_downloading = false
@@ -233,49 +232,12 @@ local function load_theme(theme_name)
 
 	local ref = menu.ref_by_path($'Stand>Profiles>{theme_name}')
 
-	if apply_to_active_profile then
-  		local meta_state = util.read_colons_and_tabs_file($'{stand_dir}Meta State.txt')
-		local active_profile = meta_state['Active Profile'] or 'Main'
-		
-		local path = $'{stand_dir}Profiles\\{theme_name}.txt'
-
-		ref = menu.ref_by_path($'Stand>Profiles>{active_profile}')
-
-		for k, v in util.read_colons_and_tabs_file(path) do
-			if k:startswith('Stand>Settings>Appearance') or 
-			   	k:startswith('Stand>Lua Scripts') or 
-			  	k:startswith('Players>Settings>Tags') then
-
-				local r = menu.ref_by_path($'{k}>{v}')
-				if r:isValid() then
-					r:trigger()
-				else
-					r = menu.ref_by_path(k)
-					if r:isValid() then
-						menu.trigger_command(r, v)
-					end
-				end
-			end
-			util.yield()
-		end
-
-		--log('Saved to active profile')
-
-		util.toast('Done!')
-
-		if script_reminders and math.random() > 0.85 then
-			util.toast($'Make sure to save the profile "{active_profile}" to continue using this theme on each startup.')
-			ref:focus()
-		end
-		return
-	end
-
-	--log('Loading profile first time')
+	log('Loading profile first time')
 	ref:refByRelPath('Load'):trigger()
-	--log('Loading profile second time')
+	log('Loading profile second time')
 	ref:refByRelPath('Load'):trigger()
 
-	--log('Setting profile to active')
+	log('Setting profile to active')
 	ref:refByRelPath('Active'):trigger()
 	util.yield(100)
 
@@ -440,20 +402,14 @@ do
 end
 
 local config_root = root:list('Configuration', {}, '')
-config_root:divider('Themes')
-config_root:toggle('Apply To Active Profile', {}, 'Note that this only applies appearance settings to the Active Profile. Make sure afterwards you save the profile to ensure persistance.', function(s)
-	apply_to_active_profile = s
-end, apply_to_active_profile):setTemporary()
-
-config_root:divider('Other')
 config_root:toggle('Download Status', {}, 'Uses the "Info Text" system to show what is being downloaded and the file count.', function(s)
 	display_download_status = s
 end, display_download_status):setTemporary()
-config_root:toggle('Reminders', {}, 'Provides useful information that you should want to know when loading a header or theme. Has around 15% chance of being shown.', function(s)
+config_root:toggle('Usage Reminders', {}, 'Provides useful information that you should want to know when loading a header or theme. Has around 15% chance of being shown.', function(s)
 	script_reminders = s
 end, script_reminders)
 
-config_root:divider('Tooling')
+config_root:divider('Utilities')
 
 local search_root = config_root:list('Search', {}, '')
 search_root:text_input('Query', {'themereposearch'}, '', function(input, click_type)
