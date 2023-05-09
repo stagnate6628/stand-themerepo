@@ -75,9 +75,13 @@ local function fetch(host, path, callback)
 	local finished = false
 	async_http.init(host, path, function(body, headers, status_code)
 		if status_code == 403 then
-			local expire_at = os.date('%d-%m %H:%M', headers['X-Ratelimit-Reset'])
+			local toast_msg = 'You are currently being ratelimited by Github.\n'
+			if headers['X-Ratelimit-Reset'] then
+				local expire_at = os.date('%d-%m %H:%M', headers['X-Ratelimit-Reset'])
+				toast_msg ..= $'This will expire at {expire_at}.'
+			end
 			for i = 1, 5 do
-				util.toast($'You are currently being ratelimited by GitHub.\nThis will expire at {expire_at}.')
+				util.toast(toast_msg)
 			end
 			util.stop_script()
 		elseif status_code == 404 then
@@ -415,7 +419,7 @@ do
 		f:close()
 
 		local fn = v == 'Headers' ? download_header : download_theme
-		local ref = root:list_action(v, {}, '', body, function(_, menu_name, click_type)
+		local ref = root:list_action(v, {}, '', body, function(_, menu_name)
 			if is_downloading then
 				util.toast('It appears that a download is active. If that is not the case, then restart the script.')
 				return
