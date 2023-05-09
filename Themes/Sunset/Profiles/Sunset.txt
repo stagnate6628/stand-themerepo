@@ -11,7 +11,7 @@ Stand
 	Settings
 		Appearance
 			Colours
-				Primary Colour: FF00FFFF
+				Primary Colour: 00000000
 				Background Colour: 191616FF
 				HUD Colour: A865FFF0
 				AR Colour: 460577F0
