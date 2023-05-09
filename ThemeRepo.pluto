@@ -160,6 +160,7 @@ local themes_dir = resources_dir .. 'Themes\\'
 local headers_dir = resources_dir .. 'Headers\\'
 local backups_dir = resources_dir .. 'Backups\\'
 
+local apply_to_active_profile = false
 local display_download_status = true
 
 local is_downloading = false
@@ -230,6 +231,37 @@ local function load_theme(theme_name)
 	util.yield(250)
 
 	local ref = menu.ref_by_path($'Stand>Profiles>{theme_name}')
+
+	if apply_to_active_profile then
+  		local meta_state = util.read_colons_and_tabs_file($'{stand_dir}Meta State.txt')
+		local active_profile = meta_state['Active Profile'] or 'Main'
+
+		local path = $'{stand_dir}Profiles\\{theme_name}.txt'
+
+		ref = menu.ref_by_path($'Stand>Profiles>{active_profile}')
+
+		for k, v in util.read_colons_and_tabs_file(path) do
+			if k:startswith('Stand>Settings>Appearance') or 
+			   	k:startswith('Stand>Lua Scripts') or 
+			  	k:startswith('Players>Settings>Tags') then
+
+				local r = menu.ref_by_path($'{k}>{v}')
+				if r:isValid() then
+					r:trigger()
+				else
+					r = menu.ref_by_path(k)
+					if r:isValid() then
+						menu.trigger_command(r, v)
+					end
+				end
+			end
+			util.yield()
+		end
+
+		--log('Saved to active profile')
+		util.toast('Done! Make sure you save the profile if you wish to keep its appearance.')
+		return
+	end
 
 	log('Loading profile first time')
 	ref:refByRelPath('Load'):trigger()
@@ -397,9 +429,19 @@ do
 end
 
 local config_root = root:list('Configuration', {}, '')
+config_root:divider('General')
 config_root:toggle('Download Status', {}, 'Uses the "Info Text" system to show what is being downloaded and the file count.', function(s)
 	display_download_status = s
 end, display_download_status)
+
+config_root:divider('Themes')
+config_root:toggle('Apply To Active Profile', {}, "Given how profiles work, it is best to use a profile that doesn't have any appearance settings applied.", function(s, click_type)
+	apply_to_active_profile = s
+
+	if apply_to_active_profile then
+		util.toast('Please make sure you are using most default appearance settings or you risk the theme not applying correctly.')
+	end
+end, apply_to_active_profile):setTemporary()
 
 config_root:divider('Utilities')
 
