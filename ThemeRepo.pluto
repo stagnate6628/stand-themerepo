@@ -435,11 +435,11 @@ config_root:toggle('Download Status', {}, 'Uses the "Info Text" system to show w
 end, display_download_status)
 
 config_root:divider('Themes')
-config_root:toggle('Apply To Active Profile', {}, "Given how profiles work, it is best to use a profile that doesn't have any appearance settings applied.", function(s, click_type)
+config_root:toggle('Apply To Active Profile', {}, 'Due to how profiles work, you should use a new profile or at minimum, default appearance settings. Does not save to the profile for you.', function(s, click_type)
 	apply_to_active_profile = s
 
 	if apply_to_active_profile then
-		util.toast('Please make sure you are using most default appearance settings or you risk the theme not applying correctly.')
+		util.toast('Please make sure you are using mostly default appearance settings or you risk the theme not applying correctly.')
 	end
 end, apply_to_active_profile):setTemporary()
 
