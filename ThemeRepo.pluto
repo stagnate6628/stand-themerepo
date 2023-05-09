@@ -404,7 +404,7 @@ end
 local config_root = root:list('Configuration', {}, '')
 config_root:toggle('Download Status', {}, 'Uses the "Info Text" system to show what is being downloaded and the file count.', function(s)
 	display_download_status = s
-end, display_download_status):setTemporary()
+end, display_download_status)
 config_root:toggle('Usage Reminders', {}, 'Provides useful information that you should want to know when loading a header or theme. Has around 15% chance of being shown.', function(s)
 	script_reminders = s
 end, script_reminders)
@@ -434,7 +434,7 @@ search_root:text_input('Query', {'themereposearch'}, '', function(input, click_t
 			util.toast($'No results found under "{input}", try expanding or even narrowing your search query.')
 		end
 	end
-end):setTemporary()
+end)
 
 config_root:list_action('Reset', {}, 'Deletes and refreshes the necessary files to their defaults. This action is irreversible.', { 'Theme', 'Font', 'Header' }, function(index)
 	switch index do
