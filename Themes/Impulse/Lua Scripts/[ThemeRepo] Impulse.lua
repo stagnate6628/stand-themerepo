@@ -31,7 +31,12 @@ util.create_tick_handler(function()
 		end
 	
 		util.yield(1000)
+	end
+	return true
+end)
 
+util.create_tick_handler(function()
+	if menu.is_open() then
 		local x, y, w, h = menu.get_main_view_position_and_size()
 		directx.draw_texture(header, 1, (w / 1080) + 0.05115, 0, 0, x, y - 146 / 1080, 0, 1, 1, 1, 1)
 		directx.draw_texture(subheader, 1, (w / 1080) + 0.016, 0, 0, x, (y - 35 / 1080), 0, 1, 1, 1, 1)
