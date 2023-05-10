@@ -28,17 +28,17 @@ local globe = directx.create_texture(interaction_header_path(1))
 util.create_tick_handler(function()
 	if menu.is_open() then
 		for i = 1, 18 do
-			util.yield(50)
+			--util.yield(50)
 			globe = directx.create_texture(interaction_header_path(i))
 		end
 	
-		util.yield(8 * 1000)
-
 		local x, y, w, h = menu.get_main_view_position_and_size()
 		directx.draw_texture(globe, 1, w / 1080 + 0.04984, 0, 0, x, y - 130 / 1080, 0, 1, 1, 1, 1)
 		directx.draw_texture(header, 1, w / 1080 + 0.04984, 0, 0, x, y - 130 / 1080, 0, 1, 1, 1, 1)
 		directx.draw_texture(subheader, 1, w / 1080 + 0.01274, 0, 0, x, y - 28 / 1080, 0, 1, 1, 1, 1)
 		directx.draw_texture(footer, 1, w / 1080 + 0.01368, 0, 0, x, y + h - (1 / 1080) + 0.0013, 0, 1, 1, 1, 1)
+
+		util.yield(8 * 1000)
 	end
 	return true
 end)
