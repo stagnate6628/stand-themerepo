@@ -52,15 +52,6 @@ if not SCRIPT_SILENT_START and math.random() > 0.85 then
 end
 
 local root = menu.my_root()
-root:action('Restart', {}, '', util.restart_script)
-
-local inspect = require 'lib/inspect'
-local function log(what)
-	util.log(inspect(what))
-end
-
-menu.ref_by_path('Stand>Lua Scripts>Settings>Presets>Developer'):trigger()
-menu.ref_by_path('Stand>Empty Log.txt'):trigger()
 
 local function get_github_auth() 
 	if file := io.open(filesystem.resources_dir() .. 'ThemeRepo\\.github', 'r') then
@@ -131,7 +122,6 @@ local function download_file(host, path, file_path, callback)
 		for file_path as path do
 			write_file(path, body)
 		end
-		log($'Wrote {path} to {file_path}')
 	end)
 end
 
@@ -164,17 +154,6 @@ local apply_to_active_profile = false
 local display_download_status = true
 
 local is_downloading = false
-
-local function debug_log(msg)
-  local log_path = resources_dir .. 'log.txt'
-  if not io.exists(log_path) then
-    io.open(log_path, 'wb'):close()
-  end
-
-  local log_file = io.open(log_path, 'a+')
-  log_file:write('[' .. os.date('%x %I:%M:%S %p') .. '] ' .. msg .. '\n')
-  log_file:close()
-end
 
 local function reload_textures()
 	menu.ref_by_path('Stand>Settings>Appearance>Textures>Reload Textures'):trigger()
@@ -257,21 +236,17 @@ local function load_theme(theme_name)
 			util.yield()
 		end
 
-		--log('Saved to active profile')
 		util.toast('Done! Make sure you save the profile if you wish to keep its appearance.')
 		return
 	end
 
-	log('Loading profile first time')
 	ref:refByRelPath('Load'):trigger()
-	log('Loading profile second time')
 	ref:refByRelPath('Load'):trigger()
 
-	log('Setting profile to active')
 	ref:refByRelPath('Active'):trigger()
 	util.yield(100)
 
-	log('Done!')
+	util.toast('Done!')
 end
 
 local function download_theme(theme_name)
@@ -286,12 +261,10 @@ local function download_theme(theme_name)
 	if not filesystem.exists(path) then
 		files = get_all_files('Themes/' .. theme_name)
 		write_file(path, table.concat(files, '\n'))
-		debug_log($'Created manifest for theme: {theme_name}')
 	else
 		local f = io.open(path, 'r')
 		files = f:read('*a'):split('\n')
 		f:close()
-		debug_log($'Found manifest for theme: {theme_name}')
 	end
 
 	local i = 0
@@ -324,7 +297,6 @@ local function download_theme(theme_name)
 		end
 		
 		if filesystem.exists(paths[1]) and (not paths[2] or filesystem.exists(paths[2])) then
-			--log($'Found {file}')
 			continue
 		end
 
@@ -333,8 +305,6 @@ local function download_theme(theme_name)
 			$'/stagnate6628/stand-themerepo/refactor-downloader/{file}',
 			paths
 		)
-		log(paths)
-		--log($'Downloaded {file}')
 	end
 
 	load_theme(theme_name)
@@ -351,12 +321,10 @@ local function download_header(header_name)
 	if not filesystem.exists(path) then
 		files = get_all_files('Headers/' .. header_name)
 		write_file(path, table.concat(files, '\n'))
-		debug_log($'Created manifest for theme: {header_name}')
 	else
 		local f = io.open(path, 'r')
 		files = f:read('*a'):split('\n')
 		f:close()
-		debug_log($'Found manifest for header: {header_name}')
 	end
 
 	local i = 0
