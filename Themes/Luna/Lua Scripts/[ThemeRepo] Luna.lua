@@ -13,7 +13,7 @@ local header = directx.create_texture(header_path)
 local footer = directx.create_texture(footer_path)
 local subheader = directx.create_texture(subheader_path)
 
-util.create_tick_handler(function())
+util.create_tick_handler(function()
 	if menu.is_open() then
 		local x, y, w, h = menu.get_main_view_position_and_size()
 		directx.draw_texture(header, 1, (125 / 1080) / 2, 0, 0, x, y - 139 / 1080, 0, 1, 1, 1, 1)
@@ -21,4 +21,4 @@ util.create_tick_handler(function())
 		directx.draw_texture(footer, 1, (34 / 1080) / 2, 0, 0, x, y + h - 1 / 1080, 0, 1, 1, 1, 1)
 	end
 	return true
-end
+end)
