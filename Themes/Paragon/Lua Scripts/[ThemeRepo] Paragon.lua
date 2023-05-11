@@ -23,4 +23,4 @@ util.create_tick_handler(function()
         directx.draw_rect(x + w, y, 2 / 1920, h, 72 / 255, 148 / 255, 234 / 255, 1)
     end
     return true
-end
+end)
