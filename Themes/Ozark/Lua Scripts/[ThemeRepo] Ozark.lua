@@ -12,7 +12,7 @@ for i = 1, 18 do
     end
 end
 
-if not filesystem.exists(header_path) or notfilesystem.exists(subheader_path) then
+if not filesystem.exists(header_path) or not filesystem.exists(subheader_path) then
 	util.toast('[ThemeRepo] One or more files are missing!')
 	util.stop_script()
 end
@@ -27,12 +27,17 @@ util.create_tick_handler(function()
             util.yield(50)
             globe = directx.create_texture(interaction_header_path(i))
         end
+        util.yield(8 * 1000)
+    end
+    return true
+end)
 
+util.create_tick_handler(function()
+    if menu.is_open() then
         local x, y, w, h = menu.get_main_view_position_and_size()
         directx.draw_texture(globe, 1, w / 1080 + 0.0498, 0, 0, x, y - 145 / 1080, 0, 1, 1, 1, 1)
         directx.draw_texture(header, 1, w / 1080 + 0.0498, 0, 0, x, y - 145 / 1080, 0, 1, 1, 1, 1)
-
-        util.yield(8 * 1000)
+        directx.draw_texture(subheader, 1, w / 1080 + 0.01694, 0, 0, x, y - 37 / 1080, 0, 1, 1, 1, 1)
     end
     return true
 end)
