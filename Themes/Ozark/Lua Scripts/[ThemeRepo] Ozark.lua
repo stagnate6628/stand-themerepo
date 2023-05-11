@@ -12,7 +12,7 @@ for i = 1, 18 do
     end
 end
 
-if not filesystem.exists(header_path) or notfilesystem.exists(subheader_path) then
+if not filesystem.exists(header_path) or not filesystem.exists(subheader_path) then
 	util.toast('[ThemeRepo] One or more files are missing!')
 	util.stop_script()
 end
