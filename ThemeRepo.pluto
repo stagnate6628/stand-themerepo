@@ -300,11 +300,9 @@ local function download_theme(theme_name)
 		end
 
 		if filesystem.exists(paths[1]) and (not paths[2] or filesystem.exists(paths[2]))  then
-			util.log($'continuing for ' .. paths[1])
 			continue
 		end
 
-		util.log($'downloading {file}')
 		download_file(
 			'https://raw.githubusercontent.com',
 			$'/stagnate6628/stand-themerepo/refactor-downloader/{file}',
