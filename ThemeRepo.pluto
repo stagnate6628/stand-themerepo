@@ -473,7 +473,7 @@ config_root:list_action('Reset', {}, 'Deletes and refreshes the necessary files 
 		break
 	end
 end)
-config_root:list_action('Update', {}, '', { 'Themes', 'Headers' }, function(_, menu_name)
+config_root:list_action('Update', {}, '', { 'Headers', 'Themes' }, function(_, menu_name)
 	local name = menu_name:lower() .. '.txt'
 	download_file(
 		'https://raw.githubusercontent.com',
