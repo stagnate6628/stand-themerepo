@@ -1,6 +1,5 @@
 -- InfOverlay
 -- by lev
--- https://github.com/Lev200501/InfOverlay/blob/main/InfOverlay.lua
 
 local SCRIPT_VERSION = "1.1"
 
