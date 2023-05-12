@@ -6,6 +6,7 @@ Blue Hour
 Capybara
 Cherax
 Circuit
+Delusion
 Discord
 Epsilon
 Fragment

@@ -1,0 +1,109 @@
+Finished Tutorial: Yes
+Understands Commands: Yes
+Understands Sliders: Yes
+Understands Profiles: Yes
+Understands Controller Open/Close: Yes
+Prompted For Controller Disables: Yes
+Understands Command Chaining: Yes
+Tree Compatibility Version: 46
+Players
+	Settings
+		InfOverlay Settings
+			X\:: 1340
+			Y\:: 730
+			Overlay colours
+				Title Bar Colour: 333333FF
+			Border
+				Width: 2
+				Colour: 323133FF
+			Background Blur: 10
+		Tags
+			Brackets: STD
+			Self: 
+			Friend: 
+			Crew Member: 
+			In Timeout: 
+			Modder: 
+			Admin: 
+			Likely Modder: 
+			Attacked You: 
+			Host: 
+			Next Host: 
+			Script Host: 
+			Invulnerable: 
+			Indestructible Vehicle: 
+			RC Vehicle: 
+			Off The Radar: 
+			In An Interior: 
+			Spectating: 
+			Typing: 
+			Dead: 
+			VPN: 
+Stand
+	Settings
+		Appearance
+			Colours
+				Primary Colour: 323133FF
+				Focused Text Colour: E2DEE5FF
+				Focused Right-Bound Text Colour: DEE5E5FF
+				Focused Texture Colour: FBF7FFFF
+				Background Colour: 161719F0
+				Unfocused Text Colour: E5E5E5FF
+				Unfocused Right-Bound Text Colour: E0E5E0FF
+				Unfocused Texture Colour: E0E5E0FF
+				HUD Colour: E5E0E0FF
+				AR Colour: E0E5E0FF
+				Minigame Colour: E0E5E0FF
+			Position: 1426, 268
+			Header
+				Header: Custom
+			Address Bar
+				Address Separator: Stand \ Online
+				Height: 26
+				Text
+					X Offset: 0
+					Y Offset: 3
+				Show Cursor Position: On
+			Cursor
+				Scroll Gap: 0
+				Rounded: On
+				Colour: EFF4EFFF
+			Tabs
+				Width: 70
+				Position: Top
+				Text
+					X Offset: 0
+					Y Offset: 1
+				Text Alignment: Centre
+				Show Icon Left: On
+				Show Name: Off
+			Scrollbar
+				Scrollbar: Disabled
+				Width: 3
+			Notifications
+				Border Colour: EFF4EFFF
+				Flash Colour: 202121FF
+				Background Colour: 202121FF
+			Commands
+				Text
+					Y Offset: 3
+			Border
+				Width: 3
+				Rounded: On
+				Colour: 202121FF
+			Max Visible Commands: 10
+			List Width: 490
+			List Height: 40
+			Spacer Size: 0
+			Smooth Scrolling: 150
+			Background Blur: 19
+			Font & Text
+				Command Box Input Text
+					X Offset: -3
+					Y Offset: 3
+				Small Text
+					Y Offset: 3
+		Info Text
+			Scale: 18
+	Lua Scripts
+		InfOverlay: On
