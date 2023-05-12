@@ -151,8 +151,10 @@ local themes_dir = resources_dir .. 'Themes\\'
 local headers_dir = resources_dir .. 'Headers\\'
 local backups_dir = resources_dir .. 'Backups\\'
 
-local apply_to_active_profile = false
 local display_download_status = true
+local download_only = false
+
+local apply_to_active_profile = false
 
 local is_downloading = false
 
@@ -289,23 +291,30 @@ local function download_theme(theme_name)
 		local paths = {resources_dir .. base_path}
 
 		-- this is kinda scuffed :|
-		if dir then
+		if dir and not download_only then
 			if dir == 'Interaction Header' then
 				table.insert(paths, resources_dir .. base_path)
 			else
 				table.insert(paths, stand_dir .. local_path)
 			end
 		end
-		
-		if filesystem.exists(paths[1]) and (not paths[2] or filesystem.exists(paths[2])) then
+
+		if filesystem.exists(paths[1]) and (not paths[2] or filesystem.exists(paths[2]))  then
+			util.log($'continuing for ' .. paths[1])
 			continue
 		end
 
+		util.log($'downloading {file}')
 		download_file(
 			'https://raw.githubusercontent.com',
 			$'/stagnate6628/stand-themerepo/refactor-downloader/{file}',
 			paths
 		)
+	end
+
+	if download_only then
+		util.toast('Done!')
+		return
 	end
 
 	load_theme(theme_name)
@@ -407,9 +416,12 @@ config_root:divider('General')
 config_root:toggle('Download Status', {}, 'Uses the "Info Text" system to show what is being downloaded and the file count.', function(s)
 	display_download_status = s
 end, display_download_status)
+config_root:toggle('Download Only', {}, 'When enabled, only downloads the necessary files to the resources directory; does not apply the header or theme.', function(s)
+	download_only = s
+end, download_only)
 
 config_root:divider('Themes')
-config_root:toggle('Apply To Active Profile', {}, 'Due to how profiles work, you should use a new profile or at minimum, default appearance settings. Does not save to the profile for you.', function(s, click_type)
+config_root:toggle('Apply To Active Profile', {}, 'Due to how profiles work, you should use a new profile or at minimum, default appearance settings. Make sure to save the profile if you want to keep the appearance. You may also want to stop this script beforehand.', function(s, click_type)
 	apply_to_active_profile = s
 
 	if apply_to_active_profile then
