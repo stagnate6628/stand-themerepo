@@ -127,15 +127,15 @@ local function download_file(host, path, file_path, callback)
 end
 
 local function empty_dir(dir)
-  for io.listdir(dir) as path do
-  	if filesystem.is_regular_file(path) then
-  		io.remove(path)
-  		continue
-  	end
+	for filesystem.list_files(dir) as path do
+		if filesystem.is_regular_file(path) then
+			io.remove(path)
+			continue
+		end
 
-  	empty_dir(path)
-  	io.remove(path)
-  end
+		empty_dir(path)
+		io.remove(path)
+	end
 end
 
 local stand_dir = filesystem.stand_dir()
@@ -197,17 +197,17 @@ local function load_theme(theme_name)
 	reload_font()
 
 	stand_ref:refByRelPath('Profiles'):trigger()
-	util.yield(250)
+	util.yield(100)
 	stand_ref:trigger()
-	util.yield(250)
+	util.yield(100)
 	stand_ref:refByRelPath('Profiles'):trigger()
 
 	stand_ref:refByRelPath('Lua Scripts'):trigger()
-	util.yield(250)
+	util.yield(100)
 	stand_ref:trigger()
-	util.yield(250)
+	util.yield(100)
 	stand_ref:refByRelPath('Lua Scripts'):trigger()
-	util.yield(250)
+	util.yield(100)
 
 	local ref = menu.ref_by_path($'Stand>Profiles>{theme_name}')
 
