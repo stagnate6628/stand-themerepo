@@ -303,7 +303,10 @@ local function download_theme(theme_name)
 			end
 		end
 
-		if filesystem.exists(paths[1]) and (not paths[2] or filesystem.exists(paths[2]))  then
+		if filesystem.exists(paths[1]) then
+			if paths[2] and not filesystem.exists(paths[2]) then
+				io.copyto(paths[1], paths[2])
+			end
 			continue
 		end
 
