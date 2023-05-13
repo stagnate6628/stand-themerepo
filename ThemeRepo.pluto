@@ -226,11 +226,14 @@ local function load_theme(theme_name)
 			   	k:startswith('Stand>Lua Scripts') or 
 			  	k:startswith('Players>Settings>Tags') then
 
-				local r = menu.ref_by_path(k)
-				if r:isValid() and r:refByRelPath(v):isValid() then
-					r:refByRelPath(v):trigger()
-				else
+				local r = menu.ref_by_path($'{k}>{v}')
+				if r:isValid() then
 					r:trigger()
+				else
+					r = menu.ref_by_path(k)
+					if r:isValid() then
+						menu.trigger_command(r, v)
+					end
 				end
 			end
 			util.yield()
@@ -449,7 +452,7 @@ search_root:text_input('Query', {'themereposearch'}, '', function(input, click_t
 			util.toast($'No results found under "{input}", try expanding or even narrowing your search query.')
 		end
 	end
-end)
+end):setTemporary()
 
 config_root:list_action('Reset', {}, 'Deletes and refreshes the necessary files to their defaults. This action is irreversible.', { 'Theme', 'Font', 'Header' }, function(index)
 	switch index do
