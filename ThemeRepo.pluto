@@ -48,7 +48,7 @@ end
 local async_http, filesystem, io, menu, util = async_http, filesystem, io, menu, util
 
 if not async_http.have_access() then
-	util.toast('Looks like internet access is not available, functionality will be limited.')	
+	util.toast('Looks like internet access is disabled. Unless you have used this script to download something before, then this script will probably break.')	
 end
 
 local root = menu.my_root()
@@ -68,6 +68,10 @@ local function get_github_auth()
 end
 
 local function fetch(host, path, callback)
+	if not async_http.have_access() then
+		return
+	end
+
 	local finished = false
 	async_http.init(host, path, function(body, headers, status_code)
 		if status_code == 403 then
@@ -341,7 +345,7 @@ local function download_header(header_name)
 		files = f:read('*a'):split('\n')
 		f:close()
 	end
-
+	
 	local i = 0
 	if display_download_status then
 		util.create_tick_handler(function()
