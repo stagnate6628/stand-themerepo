@@ -47,6 +47,10 @@ end
 
 local async_http, filesystem, io, menu, util = async_http, filesystem, io, menu, util
 
+if not async_http.have_access() then
+	util.toast('Looks like internet access is not available, functionality will be limited.')	
+end
+
 local root = menu.my_root()
 local SCRIPT_VERSION = '1.5.0'
 
