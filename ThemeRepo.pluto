@@ -451,7 +451,7 @@ search_root:text_input('Query', {'themereposearch'}, '', function(input, click_t
 		if not search_root:isFocused() then
 			search_root:trigger()
 		end
-		
+
 		for search_root:getChildren() as child do
 			if child:getType() == COMMAND_INPUT then
 				continue
