@@ -447,7 +447,11 @@ config_root:divider('Utilities')
 
 local search_root = config_root:list('Search', {}, '')
 search_root:text_input('Query', {'themereposearch'}, '', function(input, click_type)
-	if input != '' and click_type == 1 then
+	if input != '' and click_type == 1 or click_type == 4 then
+		if not search_root:isFocused() then
+			search_root:trigger()
+		end
+		
 		for search_root:getChildren() as child do
 			if child:getType() == COMMAND_INPUT then
 				continue
