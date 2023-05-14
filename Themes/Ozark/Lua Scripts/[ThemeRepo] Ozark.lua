@@ -31,7 +31,6 @@ util.create_tick_handler(function()
     end
     return true
 end)
-<<<<<<< HEAD
 
 util.create_tick_handler(function()
     if menu.is_open() then
@@ -42,5 +41,3 @@ util.create_tick_handler(function()
     end
     return true
 end)
-=======
->>>>>>> 562cb570061468a7887a7733ffc5a7d361826a7e
