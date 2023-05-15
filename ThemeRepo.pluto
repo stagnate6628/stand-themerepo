@@ -435,11 +435,11 @@ config_root:toggle('Download Only', {}, 'When enabled, only downloads the necess
 end, download_only)
 
 config_root:divider('Themes')
-config_root:toggle('Apply To Active Profile', {}, 'Due to how profiles work, you should use a new profile or at minimum, default appearance settings. Make sure to save the profile if you want to keep the appearance. You may also want to stop this script beforehand.', function(s, click_type)
+config_root:toggle('Apply To Active Profile', {}, 'Not guaranteed to apply correctly.', function(s, click_type)
 	apply_to_active_profile = s
 
 	if apply_to_active_profile then
-		util.toast('Please make sure you are using mostly default appearance settings or you risk the theme not applying correctly.')
+		util.toast('It may help to use a fresh profile or default appearance.')
 	end
 end, apply_to_active_profile):setTemporary()
 
