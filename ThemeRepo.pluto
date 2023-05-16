@@ -251,7 +251,7 @@ local function load_theme(theme_name)
 			util.yield()
 		end
 
-		util.toast('Done! Make sure you save the profile if you wish to keep its appearance.')
+		util.toast('Done! Make sure you save the profile if you want to keep its appearance.')
 		return
 	end
 
@@ -389,16 +389,16 @@ local all_children = {}
 do
 	for { 'Headers', 'Themes' } as v do
 		local file_name = v:lower() .. '.txt'
+		local path = resources_dir .. file_name
 
-		local f = io.open(resources_dir .. file_name, 'r')
+		local f = io.open(path, 'r')
 		if not f then
 			util.toast($'Downloading missing file ({file_name})...')
 			download_file(
 				'https://raw.githubusercontent.com',
-				$'/stagnate6628/stand-themerepo/main/{file_name}',
-				resources_dir .. file_name
+				$'/stagnate6628/stand-themerepo/main/{file_name}', path
 			)
-			f = io.open(resources_dir .. file_name, 'r')
+			f = io.open(path, 'r')
 		end
 		local body = f:read('*a'):split('\n')
 		f:close()
