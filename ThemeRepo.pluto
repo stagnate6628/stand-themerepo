@@ -223,6 +223,10 @@ local function load_theme(theme_name)
 	util.yield(100)
 
 	local ref = menu.ref_by_path($'Stand>Profiles>{theme_name}')
+	if not ref:isValid() then
+		util.toast($'The profile {theme_name} could not be found...')
+		return
+	end
 
 	if apply_to_active_profile then
   		local meta_state = util.read_colons_and_tabs_file($'{stand_dir}Meta State.txt')
