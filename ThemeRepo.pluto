@@ -75,10 +75,10 @@ local function fetch(host, path, callback)
 	local finished = false
 	async_http.init(host, path, function(body, headers, status_code)
 		if status_code == 403 then
-			local toast_msg = 'You are currently being ratelimited by Github.\n'
+			local toast_msg = 'You are currently being ratelimited by Github.'
 			if headers['X-Ratelimit-Reset'] then
 				local expire_at = os.date('%d-%m %H:%M', headers['X-Ratelimit-Reset'])
-				toast_msg ..= $'This will expire at {expire_at}.'
+				toast_msg ..= $'\nThis will expire at {expire_at}.'
 			end
 			for i = 1, 5 do
 				util.toast(toast_msg)
