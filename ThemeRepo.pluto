@@ -162,7 +162,6 @@ local tabs_dir = theme_dir .. 'Tabs\\'
 local resources_dir = filesystem.resources_dir() .. 'ThemeRepo\\'
 local themes_dir = resources_dir .. 'Themes\\'
 local headers_dir = resources_dir .. 'Headers\\'
-local backups_dir = resources_dir .. 'Backups\\'
 
 local display_download_status = true
 
