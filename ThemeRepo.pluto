@@ -470,7 +470,7 @@ search_root:text_input('Query', {'themereposearch'}, '', function(input, click_t
 	end
 end):setTemporary()
 
-config_root:list_action('Reset', {}, 'Deletes and refreshes the necessary files to their defaults. This action is irreversible.', { 'Theme', 'Font', 'Header' }, function(index)
+config_root:list_action('Reset', {}, 'Deletes and refreshes the necessary files to their defaults. This action is irreversible.', { 'Theme', 'Header', 'Font', 'Tags', 'Tabs' }, function(index)
 	switch index do
 		case 1:
 			empty_dir(theme_dir)
@@ -478,14 +478,22 @@ config_root:list_action('Reset', {}, 'Deletes and refreshes the necessary files 
 			reload_font()
 		break
 		case 2:
-			io.remove(theme_dir .. 'Font.spritefont')
-			reload_font()
-		break
-		case 3:
 			empty_dir(header_dir)
 			header_hide()
 			header_custom()
 			header_hide()
+		break
+		case 3:
+			io.remove(theme_dir .. 'Font.spritefont')
+			reload_font()
+		break
+		case 4:
+			empty_dir(custom_dir)
+			reload_textures()
+		break
+		case 5:
+			empty_dir(tabs_dir)
+			reload_textures()
 		break
 	end
 end)
