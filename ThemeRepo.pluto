@@ -118,13 +118,18 @@ local function write_file(path, body)
 	end
 
 	local file = io.open(path, 'wb')
+	local file_name = path:match('[^\\]*$')
 	if file == nil then
-		util.toast('Failed to write to file ' .. path:match('[^\\]*$'))
+		util.toast($'Failed to open {file_name} at {path}.')
 		return
 	end
-
-	file:write(body)
+	
+	local success, error = file:write(body)
 	file:close()
+	if not success then
+		util.toast('Failed to write to {file_name} at {path}.\nReason: {error}')
+		return
+	end
 end
 
 local function download_file(host, path, file_path, callback)
