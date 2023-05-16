@@ -429,12 +429,12 @@ end
 
 local config_root = root:list('Configuration', {}, '')
 config_root:divider('General')
-config_root:toggle('Download Status', {}, 'Uses the "Info Text" system to show what is being downloaded and the file count.', function(s)
+config_root:toggle('Download Status', {}, 'Displays a counter using the "Info Text" system to show what is being downloaded and the file count.', function(s)
 	display_download_status = s
 end, display_download_status)
 
 config_root:divider('Themes')
-config_root:toggle('Apply To Active Profile', {}, 'Not guaranteed to apply correctly.', function(s, click_type)
+config_root:toggle('Apply To Active Profile', {}, 'Not guaranteed to apply properly. Reliability is a hit or miss.', function(s, click_type)
 	apply_to_active_profile = s
 
 	if apply_to_active_profile then
