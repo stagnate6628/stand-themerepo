@@ -19,7 +19,7 @@ if not status then
 			local file = io.open(filesystem.scripts_dir() .. 'lib\\auto-updater.lua', 'wb')
 			if file == nil then
 				util.toast(error_prefix .. 'Could not open file for writing.', TOAST_ALL)
-			return false
+				return false
 			end
 			file:write(result)
 			file:close()
