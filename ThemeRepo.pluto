@@ -119,7 +119,7 @@ local function write_file(path, body)
 
 	local file = io.open(path, 'wb')
 	if file == nil then
-		util.toast('Failed to write to file.')
+		util.toast('Failed to write to file ' .. path:match('[^\\]*$'))
 		return
 	end
 
