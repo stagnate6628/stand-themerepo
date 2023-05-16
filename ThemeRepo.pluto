@@ -165,7 +165,6 @@ local headers_dir = resources_dir .. 'Headers\\'
 local backups_dir = resources_dir .. 'Backups\\'
 
 local display_download_status = true
-local download_only = false
 
 local apply_to_active_profile = false
 
@@ -304,7 +303,7 @@ local function download_theme(theme_name)
 		local paths = {resources_dir .. base_path}
 
 		-- this is kinda scuffed :|
-		if dir and not download_only then
+		if dir then
 			if dir == 'Interaction Header' then
 				table.insert(paths, resources_dir .. base_path)
 			else
@@ -370,7 +369,7 @@ local function download_header(header_name)
 		local paths = {resources_dir .. base_path}
 		table.insert(paths, header_dir .. paths[1]:match('[^\\/]*$'))
 
-		if filesystem.exists(paths[1]) and not filesystem.exists(paths[2]) and not download_only then
+		if filesystem.exists(paths[1]) and not filesystem.exists(paths[2]) then
 			io.copyto(paths[1], paths[2])
 			continue
 		end
@@ -380,11 +379,6 @@ local function download_header(header_name)
 			$'/stagnate6628/stand-themerepo/refactor-downloader/{file}',
 			paths
 		)
-	end
-
-	if download_only then
-		util.toast('Done!')
-		return
 	end
 
 	header_custom()
@@ -435,9 +429,6 @@ config_root:divider('General')
 config_root:toggle('Download Status', {}, 'Uses the "Info Text" system to show what is being downloaded and the file count.', function(s)
 	display_download_status = s
 end, display_download_status)
-config_root:toggle('Download Only', {}, 'When enabled, only downloads the necessary files to the resources directory; does not apply the header or theme.', function(s)
-	download_only = s
-end, download_only)
 
 config_root:divider('Themes')
 config_root:toggle('Apply To Active Profile', {}, 'Not guaranteed to apply correctly.', function(s, click_type)
