@@ -93,7 +93,7 @@ local function fetch(host, path, callback)
 		::continue::
 		finished = true
 	end, function()
-		util.toast($'Request to {host}{path} failed to send.')
+		util.toast($'Request to {host}{path} failed to send.', TOAST_ALL)
 		finished = true
 	end)
 	if token := get_github_auth() then
@@ -120,14 +120,14 @@ local function write_file(path, body)
 	local file = io.open(path, 'wb')
 	local file_name = path:match('[^\\]*$')
 	if file == nil then
-		util.toast($'Failed to open {file_name} at {path}.')
+		util.toast($'Failed to open {path}.', TOAST_ALL)
 		return
 	end
 	
 	local success, error = file:write(body)
 	file:close()
 	if not success then
-		util.toast('Failed to write to {file_name} at {path}.\nReason: {error}')
+		util.toast($'Failed to write to {path}.\nReason: {error}', TOAST_ALL)
 		return
 	end
 end
@@ -209,7 +209,7 @@ local function get_all_files(path, files = {})
 end
 
 local function load_theme(theme_name)
-	util.toast($'Loading {theme_name}...')
+	util.toast($'Loading {theme_name}...', TOAST_ALL)
 
 	reload_textures()
 	reload_font()
@@ -229,7 +229,7 @@ local function load_theme(theme_name)
 
 	local ref = menu.ref_by_path($'Stand>Profiles>{theme_name}')
 	if not ref:isValid() then
-		util.toast($'The profile {theme_name} could not be found...')
+		util.toast($'The profile {theme_name} could not be found...', TOAST_ALL)
 		return
 	end
 
@@ -401,7 +401,7 @@ do
 
 		local f = io.open(path, 'r')
 		if not f then
-			util.toast($'Downloading missing file ({file_name})...')
+			util.toast($'Downloading missing file ({file_name})...', TOAST_ALL)
 			download_file(
 				'https://raw.githubusercontent.com',
 				$'/stagnate6628/stand-themerepo/main/{file_name}', path
@@ -420,7 +420,7 @@ do
 			
 			is_downloading = true
 			
-			util.toast($'Downloading {menu_name}...')
+			util.toast($'Downloading {menu_name}...', TOAST_ALL)
 			fn(menu_name)
 
 			is_downloading = false
