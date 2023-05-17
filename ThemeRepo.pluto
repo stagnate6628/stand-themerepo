@@ -54,6 +54,8 @@ end
 local root = menu.my_root()
 local SCRIPT_VERSION = '1.5.0'
 
+local inspect = require('lib/inspect')
+
 if not SCRIPT_SILENT_START and math.random() > 0.85 then
 	util.toast('Please make backups as needed. This will not be done for you.')
 end
@@ -140,6 +142,9 @@ local function download_file(host, path, file_path, callback)
 
 		for file_path as path do
 			write_file(path, body)
+
+			path = path:gsub(filesystem.stand_dir(), '')
+			util.log($'Downloaded file to path: {path}')
 		end
 	end)
 end
@@ -208,8 +213,45 @@ local function get_all_files(path, files = {})
 	return files
 end
 
+local function create_or_get_manifest(path, type, menu_name)
+	local files = {}
+
+	path ..= $'{menu_name}\\.manifest.'
+
+	if not filesystem.is_regular_file(path) then
+		files = get_all_files($'{type}/{menu_name}')
+		write_file(path, table.concat(files, '\n'))
+	else
+		local f, msg = io.open(path, 'r')
+		if f == nil then
+			msg = msg:gsub('^.-: ', '')
+			error($'Failed to open {type} {menu_name} manifest.\nReason: {msg}')
+			return
+		end
+		
+		files = f:read('*a')
+		if not files then
+			error($'Failed to read {type} {menu_name} manifest.')
+			f:close()
+			return
+		end
+
+		files = files:split('\n')
+		
+		if not (#files > 1) then
+			error($'No data found in {type} {menu_name} manifest.')
+			f:close()
+			return
+		end
+		
+		f:close()
+	end
+
+	return files
+end
+
 local function load_theme(theme_name)
-	util.toast($'Loading {theme_name}...', TOAST_ALL)
+	util.toast($'Loading {theme_name}.', TOAST_ALL)
 
 	reload_textures()
 	reload_font()
@@ -229,7 +271,7 @@ local function load_theme(theme_name)
 
 	local ref = menu.ref_by_path($'Stand>Profiles>{theme_name}')
 	if not ref:isValid() then
-		util.toast($'The profile {theme_name} could not be found...', TOAST_ALL)
+		util.toast($'The profile for {theme_name} could not be found.', TOAST_ALL)
 		return
 	end
 
@@ -278,16 +320,10 @@ local function download_theme(theme_name)
 
 	header_hide()
 
-	local files
-	local path = themes_dir .. theme_name .. '\\.manifest'
-
-	if not filesystem.exists(path) then
-		files = get_all_files('Themes/' .. theme_name)
-		write_file(path, table.concat(files, '\n'))
-	else
-		local f = io.open(path, 'r')
-		files = f:read('*a'):split('\n')
-		f:close()
+	local success, files = pcall(create_or_get_manifest, themes_dir, 'Themes', theme_name)
+	if not success then
+		util.toast(files, TOAST_ALL)
+		return
 	end
 
 	local i = 0
@@ -319,9 +355,14 @@ local function download_theme(theme_name)
 			end
 		end
 
-		if filesystem.exists(paths[1]) then
-			if paths[2] and not filesystem.exists(paths[2]) then
-				io.copyto(paths[1], paths[2])
+		if filesystem.is_regular_file(paths[1]) then
+			if paths[2] then
+				local success = pcall(io.copyto, paths[1], paths[2])
+				if not success then
+					util.toast('Stopping the script for you, check Log.txt for reason.')
+					util.stop_script()
+				end
+				util.log('Copying ' .. paths[1] ' to ' .. paths[2])
 			end
 			continue
 		end
@@ -346,16 +387,10 @@ local function download_header(header_name)
 
 	header_hide()
 
-	local files
-	local path = headers_dir .. header_name .. '\\.manifest'
-
-	if not filesystem.exists(path) then
-		files = get_all_files('Headers/' .. header_name)
-		write_file(path, table.concat(files, '\n'))
-	else
-		local f = io.open(path, 'r')
-		files = f:read('*a'):split('\n')
-		f:close()
+	local success, files = pcall(create_or_get_manifest, headers_dir, 'Headers', header_name)
+	if not success then
+		util.toast(files, TOAST_ALL)
+		return
 	end
 
 	local i = 0
@@ -377,11 +412,11 @@ local function download_header(header_name)
 		local paths = {resources_dir .. base_path}
 		table.insert(paths, header_dir .. paths[1]:match('[^\\/]*$'))
 
-		if filesystem.exists(paths[1]) and not filesystem.exists(paths[2]) then
+		if filesystem.is_regular_file(paths[1]) and not filesystem.exists(paths[2]) then
 			io.copyto(paths[1], paths[2])
 			continue
 		end
-		
+
 		download_file(
 			'https://raw.githubusercontent.com',
 			$'/stagnate6628/stand-themerepo/refactor-downloader/{file}',
@@ -399,16 +434,36 @@ do
 		local file_name = v:lower() .. '.txt'
 		local path = resources_dir .. file_name
 
-		local f = io.open(path, 'r')
-		if not f then
-			util.toast($'Downloading missing file ({file_name})...', TOAST_ALL)
+		if not filesystem.is_regular_file(path) then
+			util.toast($'Downloading missing file ({file_name}).', TOAST_ALL)
 			download_file(
 				'https://raw.githubusercontent.com',
 				$'/stagnate6628/stand-themerepo/main/{file_name}', path
 			)
-			f = io.open(path, 'r')
+
+			local f, reason = io.open(path, 'r')
+			if not f then
+				local msg = $'Failed to open {file_name}.'
+				if reason then
+					msg ..= '\nReason: {reason}'
+				end
+
+				util.toast(msg, TOAST_ALL)
+				continue
+			end
 		end
-		local body = f:read('*a'):split('\n')
+
+		local f = io.open(path, 'r')
+
+		local body = f:read('*a')
+
+		if not body then
+			util.toast($'Failed to read {file_name}.')
+			f:close()
+			continue
+		end
+
+		body = body:split('\n')
 		f:close()
 
 		local fn = v == 'Headers' ? download_header : download_theme
@@ -420,7 +475,7 @@ do
 			
 			is_downloading = true
 			
-			util.toast($'Downloading {menu_name}...', TOAST_ALL)
+			util.toast($'Downloading {menu_name}.', TOAST_ALL)
 			fn(menu_name)
 
 			is_downloading = false
