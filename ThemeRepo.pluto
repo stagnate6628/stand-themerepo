@@ -54,8 +54,6 @@ end
 local root = menu.my_root()
 local SCRIPT_VERSION = '1.5.0'
 
-local inspect = require('lib/inspect')
-
 if not SCRIPT_SILENT_START and math.random() > 0.85 then
 	util.toast('Please make backups as needed. This will not be done for you.')
 end
@@ -150,15 +148,11 @@ local function download_file(host, path, file_path, callback)
 end
 
 local function empty_dir(dir)
-	for filesystem.list_files(dir) as path do
-		if filesystem.is_regular_file(path) then
-			io.remove(path)
-			continue
-		end
+	io.remove(dir, true)
 
-		empty_dir(path)
-		io.remove(path)
-	end
+	repeat
+		util.yield()
+	until not filesystem.is_dir(dir)
 end
 
 local stand_dir = filesystem.stand_dir()
