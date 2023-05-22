@@ -45,6 +45,14 @@ if auto_updater == true then
 	error('Invalid auto-updater lib. Please delete your Stand/Lua Scripts/lib/auto-updater.lua and try again')
 end
 
+auto_updater.run_auto_update({
+	source_url = 'https://raw.githubusercontent.com/stagnate6628/stand-themerepo/main/ThemeRepo.pluto',
+	script_relpath = SCRIPT_RELPATH,
+	script_run_name = SCRIPT_NAME:lower()
+	verify_file_begins_with = '--',
+	check_interval = 86400,
+})
+
 local async_http, filesystem, io, menu, util = async_http, filesystem, io, menu, util
 local has_internet_access = async_http.have_access() -- afaik this cant be changed until stop
 
