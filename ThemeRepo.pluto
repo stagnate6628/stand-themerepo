@@ -48,7 +48,7 @@ end
 auto_updater.run_auto_update({
 	source_url = 'https://raw.githubusercontent.com/stagnate6628/stand-themerepo/main/ThemeRepo.pluto',
 	script_relpath = SCRIPT_RELPATH,
-	script_run_name = SCRIPT_NAME:lower()
+	script_run_name = SCRIPT_NAME:lower(),
 	verify_file_begins_with = '--',
 	check_interval = 86400,
 })
