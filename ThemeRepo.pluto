@@ -46,10 +46,7 @@ if auto_updater == true then
 end
 
 local async_http, filesystem, io, menu, util = async_http, filesystem, io, menu, util
-
-if not async_http.have_access() then
-	util.toast('Looks like internet access is disabled. Unless you have used this script to download something before, then this script will probably break.')	
-end
+local has_internet_access = async_http.have_access() -- afaik this cant be changed until stop
 
 local root = menu.my_root()
 local SCRIPT_VERSION = '1.5.0'
@@ -58,7 +55,7 @@ if not SCRIPT_SILENT_START and math.random() > 0.85 then
 	util.toast('Please make backups as needed. This will not be done for you.')
 end
 
-local function get_github_auth() 
+local function get_github_auth()
 	if file := io.open(filesystem.resources_dir() .. 'ThemeRepo\\.github', 'r') then
 		local token = file:read('a')
 		file:close()
@@ -68,7 +65,7 @@ local function get_github_auth()
 end
 
 local function fetch(host, path, callback)
-	if not async_http.have_access() then
+	if not has_internet_access then
 		return
 	end
 
@@ -97,7 +94,7 @@ local function fetch(host, path, callback)
 		finished = true
 	end)
 	if token := get_github_auth() then
-		async_http.add_header('Authorization', 'Bearer ' .. token)
+		async_http.add_header('Authorization', $'Bearer {token}')
 	end
 	async_http.dispatch()
 
@@ -112,24 +109,21 @@ local function make_request(path, callback)
 	end)
 end
 
+local function read_file(path)
+	local file = io.open(path, 'r')
+	local content = file:read('*a')
+	file:close()
+	return content
+end
+
 local function write_file(path, body)
 	if not filesystem.is_dir(path:match('^(.+)[\\/]')) then
 		filesystem.mkdirs(path:match('^(.+)[\\/]'))
 	end
 
 	local file = io.open(path, 'wb')
-	local file_name = path:match('[^\\]*$')
-	if file == nil then
-		util.toast($'Failed to open {path}.', TOAST_ALL)
-		return
-	end
-	
-	local success, error = file:write(body)
+	file:write(body)
 	file:close()
-	if not success then
-		util.toast($'Failed to write to {path}.\nReason: {error}', TOAST_ALL)
-		return
-	end
 end
 
 local function download_file(host, path, file_path, callback)
@@ -140,19 +134,26 @@ local function download_file(host, path, file_path, callback)
 
 		for file_path as path do
 			write_file(path, body)
-
-			path = path:gsub(filesystem.stand_dir(), '')
-			util.log($'Downloaded file to path: {path}')
 		end
 	end)
 end
 
 local function empty_dir(dir)
+	-- recurse
 	io.remove(dir, true)
 
+	local i = 0
+
+	-- dir should not exist atp
 	repeat
-		util.yield()
-	until not filesystem.is_dir(dir)
+		util.yield(250)
+		i += 1
+	until not filesystem.is_dir(dir) or i == 10
+
+	if i == 30 then
+		local count = #filesystem.list_files(dir, true)
+		util.toast($'Failed to empty {dir} in time, total files remaining: {count}', TOAST_ALL)
+	end
 end
 
 local stand_dir = filesystem.stand_dir()
@@ -207,38 +208,17 @@ local function get_all_files(path, files = {})
 	return files
 end
 
-local function create_or_get_manifest(path, type, menu_name)
+local function get_manifest(path, type, menu_name)
 	local files = {}
-
 	path ..= $'{menu_name}\\.manifest.'
 
 	if not filesystem.is_regular_file(path) then
 		files = get_all_files($'{type}/{menu_name}')
 		write_file(path, table.concat(files, '\n'))
 	else
-		local f, msg = io.open(path, 'r')
-		if f == nil then
-			msg = msg:gsub('^.-: ', '')
-			error($'Failed to open {type} {menu_name} manifest.\nReason: {msg}')
-			return
-		end
-		
-		files = f:read('*a')
-		if not files then
-			error($'Failed to read {type} {menu_name} manifest.')
-			f:close()
-			return
-		end
-
-		files = files:split('\n')
-		
-		if not (#files > 1) then
-			error($'No data found in {type} {menu_name} manifest.')
-			f:close()
-			return
-		end
-		
-		f:close()
+		local file = io.open(path, 'r')
+		files = f:read('*a'):split('\n')
+		file:close()
 	end
 
 	return files
@@ -314,19 +294,14 @@ local function download_theme(theme_name)
 
 	header_hide()
 
-	local success, files = pcall(create_or_get_manifest, themes_dir, 'Themes', theme_name)
-	if not success then
-		util.toast(files, TOAST_ALL)
-		return
-	end
-
+	local files = get_manifest(themes_dir, 'Themes', theme_name)
 	local i = 0
+
 	if display_download_status then
 		util.create_tick_handler(function()
 			if i == #files then
 				return false
 			end
-			
 			util.draw_debug_text($'{theme_name}: {i}/' .. #files)
 			return true
 		end)
@@ -351,12 +326,7 @@ local function download_theme(theme_name)
 
 		if filesystem.is_regular_file(paths[1]) then
 			if paths[2] then
-				local success = pcall(io.copyto, paths[1], paths[2])
-				if not success then
-					util.toast('Stopping the script for you, check Log.txt for reason.')
-					util.stop_script()
-				end
-				util.log('Copying ' .. paths[1] ' to ' .. paths[2])
+				io.copyto(paths[1], paths[2])
 			end
 			continue
 		end
@@ -368,11 +338,6 @@ local function download_theme(theme_name)
 		)
 	end
 
-	if download_only then
-		util.toast('Done!')
-		return
-	end
-
 	load_theme(theme_name)
 end
 
@@ -381,13 +346,9 @@ local function download_header(header_name)
 
 	header_hide()
 
-	local success, files = pcall(create_or_get_manifest, headers_dir, 'Headers', header_name)
-	if not success then
-		util.toast(files, TOAST_ALL)
-		return
-	end
-
+	local files = get_manifest(headers_dir, 'Headers', header_name)
 	local i = 0
+
 	if display_download_status then
 		util.create_tick_handler(function()
 			if i == #files then
@@ -406,7 +367,7 @@ local function download_header(header_name)
 		local paths = {resources_dir .. base_path}
 		table.insert(paths, header_dir .. paths[1]:match('[^\\/]*$'))
 
-		if filesystem.is_regular_file(paths[1]) and not filesystem.exists(paths[2]) then
+		if filesystem.is_regular_file(paths[1]) and not filesystem.is_regular_file(paths[2]) then
 			io.copyto(paths[1], paths[2])
 			continue
 		end
@@ -434,30 +395,10 @@ do
 				'https://raw.githubusercontent.com',
 				$'/stagnate6628/stand-themerepo/main/{file_name}', path
 			)
-
-			local f, reason = io.open(path, 'r')
-			if not f then
-				local msg = $'Failed to open {file_name}.'
-				if reason then
-					msg ..= '\nReason: {reason}'
-				end
-
-				util.toast(msg, TOAST_ALL)
-				continue
-			end
 		end
 
 		local f = io.open(path, 'r')
-
-		local body = f:read('*a')
-
-		if not body then
-			util.toast($'Failed to read {file_name}.')
-			f:close()
-			continue
-		end
-
-		body = body:split('\n')
+		local body = f:read('*a'):split('\n')
 		f:close()
 
 		local fn = v == 'Headers' ? download_header : download_theme
@@ -494,7 +435,7 @@ config_root:toggle('Apply To Active Profile', {}, 'Not guaranteed to apply prope
 	if apply_to_active_profile then
 		util.toast('It may help to use a fresh profile or default appearance.')
 	end
-end, apply_to_active_profile):setTemporary()
+end, apply_to_active_profile)
 
 config_root:divider('Utilities')
 
