@@ -117,11 +117,12 @@ local function make_request(path, callback)
 	end)
 end
 
-local function read_file(path)
-	local file = io.open(path, 'r')
-	local content = file:read('*a')
-	file:close()
-	return content
+local function get_file_name(path, use_backslashes = false)
+	local regex = '.+/([^/]+)$'
+	if use_backslashes then
+		regex = '.+\\([^\\]+)$'
+	end
+	return path:match(regex)
 end
 
 local function write_file(path, body)
@@ -140,33 +141,35 @@ local function download_file(host, path, file_path, callback)
 			file_path = {file_path}
 		end
 
-		for file_path as path do
-			write_file(path, body)
+		local file_name = get_file_name(path)
+		for file_path as _path do
+			write_file(_path, body)
+			util.log($'Downloaded {file_name} to {_path}')
 		end
 	end)
 end
 
 local function empty_dir(dir)
-	-- recurse
+	if not filesystem.is_dir(dir) then
+		util.log($'Directory {dir} not found, skipping.')
+		return
+	end
+
+	util.log($'Emptying {dir} (%d)':format(#filesystem.list_files(dir)))
+
 	io.remove(dir, true)
 
-	local i = 0
-
-	-- dir should not exist atp
 	repeat
-		util.yield(250)
-		i += 1
-	until not filesystem.is_dir(dir) or i == 10
+		util.yield()
+	until not filesystem.is_dir(dir)
 
-	if i == 30 then
-		local count = #filesystem.list_files(dir, true)
-		util.toast($'Failed to empty {dir} in time, total files remaining: {count}', TOAST_ALL)
-	end
+	util.yield(100)
+
+	util.log($'Recreating {dir}')
+	filesystem.mkdirs(dir)
 end
 
 local stand_dir = filesystem.stand_dir()
-local stand_ref = menu.ref_by_path('Stand')
-
 local header_dir = stand_dir .. 'Headers\\Custom Header\\'
 local theme_dir = stand_dir .. 'Theme\\'
 local custom_dir = theme_dir .. 'Custom\\'
@@ -223,10 +226,12 @@ local function get_manifest(path, type, menu_name)
 	if not filesystem.is_regular_file(path) then
 		files = get_all_files($'{type}/{menu_name}')
 		write_file(path, table.concat(files, '\n'))
+		util.log($'Creating manifest for {menu_name} at {path}')
 	else
 		local file = io.open(path, 'r')
-		files = f:read('*a'):split('\n')
+		files = file:read('*a'):split('\n')
 		file:close()
+		util.log($'Found manifest for {menu_name} at {path}')
 	end
 
 	return files
@@ -238,22 +243,22 @@ local function load_theme(theme_name)
 	reload_textures()
 	reload_font()
 
-	stand_ref:refByRelPath('Profiles'):trigger()
+	menu.ref_by_path('Stand'):refByRelPath('Profiles'):trigger()
 	util.yield(100)
-	stand_ref:trigger()
+	menu.ref_by_path('Stand'):trigger()
 	util.yield(100)
-	stand_ref:refByRelPath('Profiles'):trigger()
+	menu.ref_by_path('Stand'):refByRelPath('Profiles'):trigger()
 
-	stand_ref:refByRelPath('Lua Scripts'):trigger()
+	menu.ref_by_path('Stand'):refByRelPath('Lua Scripts'):trigger()
 	util.yield(100)
-	stand_ref:trigger()
+	menu.ref_by_path('Stand'):trigger()
 	util.yield(100)
-	stand_ref:refByRelPath('Lua Scripts'):trigger()
+	menu.ref_by_path('Stand'):refByRelPath('Lua Scripts'):trigger()
 	util.yield(100)
 
 	local ref = menu.ref_by_path($'Stand>Profiles>{theme_name}')
 	if not ref:isValid() then
-		util.toast($'The profile for {theme_name} could not be found.', TOAST_ALL)
+		util.toast($'Profile {theme_name} could not be found.', TOAST_ALL)
 		return
 	end
 
@@ -362,7 +367,7 @@ local function download_header(header_name)
 			if i == #files then
 				return false
 			end
-			
+
 			util.draw_debug_text($'{header_name}: {i}/' .. #files)
 			return true
 		end)
@@ -370,7 +375,7 @@ local function download_header(header_name)
 
 	for files as file do
 		i += 1
-		
+
 		local base_path = file:gsub('/', '\\')
 		local paths = {resources_dir .. base_path}
 		table.insert(paths, header_dir .. paths[1]:match('[^\\/]*$'))
@@ -391,7 +396,6 @@ local function download_header(header_name)
 end
 
 local all_children = {}
-
 do
 	for { 'Headers', 'Themes' } as v do
 		local file_name = v:lower() .. '.txt'
@@ -415,9 +419,9 @@ do
 				util.toast('It appears that a download is active. If that is not the case, then restart the script.')
 				return
 			end
-			
+
 			is_downloading = true
-			
+
 			util.toast($'Downloading {menu_name}.', TOAST_ALL)
 			fn(menu_name)
 
