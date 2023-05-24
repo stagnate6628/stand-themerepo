@@ -246,7 +246,7 @@ local function get_manifest(path, type, menu_name)
 end
 
 local function load_theme(theme_name)
-	util.toast($'Loading {theme_name}.', TOAST_ALL)
+	util.toast($'Loading "{theme_name}".', TOAST_ALL)
 
 	reload_textures()
 	reload_font()
@@ -410,7 +410,7 @@ do
 		local path = resources_dir .. file_name
 
 		if not filesystem.is_regular_file(path) then
-			util.toast($'Downloading missing file ({file_name}).', TOAST_ALL)
+			util.toast($'Downloading missing file "{file_name}".', TOAST_ALL)
 			download_file(
 				'https://raw.githubusercontent.com',
 				$'/stagnate6628/stand-themerepo/main/{file_name}', path
