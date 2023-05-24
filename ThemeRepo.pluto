@@ -164,9 +164,6 @@ local function empty_dir(dir)
 	until not filesystem.is_dir(dir)
 
 	util.yield(100)
-
-	util.log($'Recreating {dir}')
-	filesystem.mkdirs(dir)
 end
 
 local stand_dir = filesystem.stand_dir()
@@ -226,12 +223,12 @@ local function get_manifest(path, type, menu_name)
 	if not filesystem.is_regular_file(path) then
 		files = get_all_files($'{type}/{menu_name}')
 		write_file(path, table.concat(files, '\n'))
-		util.log($'Creating manifest for {menu_name} at {path}')
+		util.log($'Creating manifest for "{menu_name}" at {path}')
 	else
 		local file = io.open(path, 'r')
 		files = file:read('*a'):split('\n')
 		file:close()
-		util.log($'Found manifest for {menu_name} at {path}')
+		util.log($'Found manifest for "{menu_name}" at {path}')
 	end
 
 	return files
@@ -307,6 +304,12 @@ local function download_theme(theme_name)
 
 	header_hide()
 
+	filesystem.mkdirs(theme_dir)
+	filesystem.mkdirs(custom_dir)
+	filesystem.mkdirs(tabs_dir)
+	filesystem.mkdirs(header_dir)
+
+
 	local files = get_manifest(themes_dir, 'Themes', theme_name)
 	local i = 0
 
@@ -358,6 +361,8 @@ local function download_header(header_name)
 	empty_dir(header_dir)
 
 	header_hide()
+
+	filesystem.mkdirs(header_dir)
 
 	local files = get_manifest(headers_dir, 'Headers', header_name)
 	local i = 0
@@ -422,7 +427,7 @@ do
 
 			is_downloading = true
 
-			util.toast($'Downloading {menu_name}.', TOAST_ALL)
+			util.toast($'Downloading {v} "{menu_name}".', TOAST_ALL)
 			fn(menu_name)
 
 			is_downloading = false
