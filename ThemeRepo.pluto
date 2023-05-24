@@ -421,7 +421,7 @@ do
 		local fn = v == 'Headers' ? download_header : download_theme
 		local ref = root:list_action(v, {}, '', body, function(_, menu_name)
 			if is_downloading then
-				util.toast('It appears that a download is active. If that is not the case, then restart the script.')
+				util.toast('A download has already started. Restart the script if that is not the case.')
 				return
 			end
 
