@@ -125,6 +125,17 @@ local function get_file_name(path, use_backslashes = false)
 	return path:match(regex)
 end
 
+local og_io_copyto = io.copyto
+io.copyto = function (from, to)
+	if not filesystem.is_dir(to:match('^(.+)[\\/]')) then
+		filesystem.mkdirs(to:match('^(.+)[\\/]'))
+	end
+
+	local file_name = get_file_name(from, true)
+	og_io_copyto(from, to)
+	util.log($'Copying {file_name} to {to}')
+end
+
 local function write_file(path, body)
 	if not filesystem.is_dir(path:match('^(.+)[\\/]')) then
 		filesystem.mkdirs(path:match('^(.+)[\\/]'))
@@ -304,12 +315,6 @@ local function download_theme(theme_name)
 
 	header_hide()
 
-	filesystem.mkdirs(theme_dir)
-	filesystem.mkdirs(custom_dir)
-	filesystem.mkdirs(tabs_dir)
-	filesystem.mkdirs(header_dir)
-
-
 	local files = get_manifest(themes_dir, 'Themes', theme_name)
 	local i = 0
 
@@ -361,8 +366,6 @@ local function download_header(header_name)
 	empty_dir(header_dir)
 
 	header_hide()
-
-	filesystem.mkdirs(header_dir)
 
 	local files = get_manifest(headers_dir, 'Headers', header_name)
 	local i = 0
