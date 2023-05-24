@@ -464,9 +464,7 @@ search_root:text_input('Query', {'themereposearch'}, '', function(input, click_t
 
 		for all_children as child do
 			if child.menu_name:lower():contains(input:lower()) then
-				search_root:action(child.menu_name, {}, child:getParent().menu_name .. ' > ' .. child.menu_name, function()
-					child:trigger()
-				end)
+				search_root:link(child, true)
 			end
 		end
 
