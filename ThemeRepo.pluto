@@ -430,7 +430,7 @@ do
 
 			is_downloading = true
 
-			util.toast($'Downloading {v} "{menu_name}".', TOAST_ALL)
+			util.toast($'Downloading "{menu_name}".', TOAST_ALL)
 			fn(menu_name)
 
 			is_downloading = false
@@ -486,7 +486,7 @@ search_root:text_input('Query', {'themereposearch'}, '', function(input, click_t
 	end
 end):setTemporary()
 
-config_root:list_action('Reset', {}, 'Deletes and refreshes the necessary files to their defaults. This action is irreversible.', { 'Theme', 'Header', 'Font', 'Tags', 'Tabs' }, function(index)
+config_root:list_action('Reset', {}, 'Deletes and refreshes the selection item to their defaults.', { 'Theme (folder)', 'Header (folder)', 'Font (folder)', 'Tags (folder)', 'Tabs (folder)', 'Appearance' }, function(index)
 	switch index do
 		case 1:
 			empty_dir(theme_dir)
@@ -510,6 +510,22 @@ config_root:list_action('Reset', {}, 'Deletes and refreshes the necessary files 
 		case 5:
 			empty_dir(tabs_dir)
 			reload_textures()
+		break
+		case 6:
+			local meta_state = util.read_colons_and_tabs_file($'{stand_dir}Meta State.txt')
+			local active_profile = meta_state['Active Profile'] or 'Main'
+
+			for k in util.read_colons_and_tabs_file(
+				$'{stand_dir}Profiles\\{active_profile}.txt'
+			) do
+				if k:startswith('Stand>Settings>Appearance') then
+					local ref = menu.ref_by_path(k)
+					if ref:isValid() then
+						ref:applyDefaultState()
+					end
+				end
+				util.yield()
+			end
 		break
 	end
 end)
