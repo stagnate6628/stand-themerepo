@@ -486,7 +486,14 @@ search_root:text_input('Query', {'themereposearch'}, '', function(input, click_t
 	end
 end):setTemporary()
 
-config_root:list_action('Reset', {}, 'Deletes and refreshes the selection item to their defaults.', { 'Theme (folder)', 'Header (folder)', 'Font (folder)', 'Tags (folder)', 'Tabs (folder)', 'Appearance' }, function(index)
+config_root:list_action('Reset', {}, '', {
+	{ 'Theme', {}, $'The "Theme" folder.\n{theme_dir}' },
+	{ 'Header', {}, $'The "Headers" folder.\n{header_dir}' },
+	{ 'Font', {}, 'The menu font found in the Themes folder.' },
+	{ 'Tags', {}, $'The menu "tags".\n{custom_dir}' },
+	{ 'Tabs', {}, $'The menu "tabs".\n{tabs_dir}' },
+	{ 'Appearance', {}, 'Applies commands to get to default appearance. Does not save the profile for you.' },
+}, function(index)
 	switch index do
 		case 1:
 			empty_dir(theme_dir)
