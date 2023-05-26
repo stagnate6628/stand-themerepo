@@ -492,7 +492,7 @@ config_root:list_action('Reset', {}, '', {
 	{ 'Font', {}, 'The menu font found in the Themes folder.' },
 	{ 'Tags', {}, $'The menu "tags".\n{custom_dir}' },
 	{ 'Tabs', {}, $'The menu "tabs".\n{tabs_dir}' },
-	{ 'Appearance', {}, 'Applies commands to get to default appearance. Does not save the profile for you.' },
+	{ 'Appearance', {}, 'Reverts any appearance changes found in the Active Profile. Does not save the profile for you.' },
 }, function(index)
 	switch index do
 		case 1:
