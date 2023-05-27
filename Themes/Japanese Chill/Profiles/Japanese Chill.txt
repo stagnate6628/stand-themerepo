@@ -1,0 +1,112 @@
+Finished Tutorial: Yes
+Understands Commands: Yes
+Understands Sliders: Yes
+Understands Profiles: Yes
+Understands Context Menu: Yes
+Understands Controller Open/Close: Yes
+Prompted For Controller Disables: Yes
+Understands Command Chaining: Yes
+Tree Compatibility Version: 46
+Players
+	Settings
+		Tags
+			Brackets: STD
+			Self: 
+			Friend: 
+			Crew Member: 
+			In Timeout: 
+			Modder: 
+			Modder or Admin: 
+			Admin: 
+			Likely Modder: 
+			Attacked You: 
+			Host: 
+			Next Host: 
+			Script Host: 
+			Invulnerable: 
+			Indestructible Vehicle: 
+			RC Vehicle: 
+			Off The Radar: 
+			In An Interior: 
+			Spectating: 
+			Typing: 
+			Dead: 
+			VPN: 
+Stand
+	Settings
+		Appearance
+			Colours
+				Primary Colour: 1C1C33FF
+				Focused Text Colour: 544FFFFE
+				Focused Right-Bound Text Colour: 908CFFFF
+				Focused Texture Colour: 544FFFFF
+				Background Colour: 020000B4
+				Unfocused Text Colour: 544FFFFF
+				Unfocused Right-Bound Text Colour: 908CFFFF
+				Unfocused Texture Colour: 908CFFFF
+				HUD Colour: 6B65FFFF
+				AR Colour: 908CFF0A
+				Minigame Colour: 908CFFFF
+			Position: 1520, 498
+			Header
+				Header: Custom
+				Frame Interval: 60
+			Address Bar
+				Height: 20
+				Text
+					Scale: 10
+				Show Cursor Position: On
+			Cursor
+				Scroll Gap: 6
+				Width: 2
+				Rounded: On
+				Colour: D88CFFFF
+			Tabs
+				Width: 53
+				Height: 34
+				Position: Top
+				Text
+					Scale: 12
+					Y Offset: 4
+				Text Alignment: Centre
+				Show Name: Off
+				Show Icon Right: On
+			Scrollbar
+				Scrollbar: Disabled
+				Width: 5
+			Command Info Text
+				Position: Bottom
+			Notifications
+				Type: Stand, Custom Position
+				Custom Position: 1507, 377
+				Border Colour: 908CFFFF
+				Flash Colour: 14191EFF
+				Background Colour: 10161CDE
+			Commands
+				Text
+					Scale: 12
+					X Offset: 0
+					Y Offset: 4
+				Colour Commands
+					Preview Colour In Texture: Off
+				Prefill Current Value For Command Box
+					Text Inputs: Off
+				Number Sliders
+					Selectable N/A Sliders: On
+			Border
+				Width: 2
+				Rounded: On
+				Colour: 908CFFFF
+			Max Visible Commands: 13
+			List Width: 369
+			Spacer Size: 5
+			Smooth Scrolling: 100
+			Background Blur: 10
+			Font & Text
+				Small Text
+					Scale: 11
+					X Offset: 0
+		Info Text
+			Position: 304, 1010
+			Alignment: Top Left
+			Scale: 10
