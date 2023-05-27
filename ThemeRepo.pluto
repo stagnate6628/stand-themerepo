@@ -54,7 +54,6 @@ auto_updater.run_auto_update({
 })
 
 local async_http, filesystem, io, menu, util = async_http, filesystem, io, menu, util
-local has_internet_access = async_http.have_access() -- afaik this cant be changed until stop
 
 local root = menu.my_root()
 local SCRIPT_VERSION = '1.5.0'
@@ -73,7 +72,7 @@ local function get_github_auth()
 end
 
 local function fetch(host, path, callback)
-	if not has_internet_access then
+	if not async_http.have_access() then
 		return
 	end
 
