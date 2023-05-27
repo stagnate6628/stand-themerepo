@@ -131,7 +131,7 @@ io.copyto = function (from, to)
 
 	local file_name = get_file_name(from, true)
 	og_io_copyto(from, to)
-	util.log($'Copying {file_name} to {to}')
+	--util.log($'Copying {file_name} to {to}')
 end
 
 local function write_file(path, body)
@@ -153,18 +153,18 @@ local function download_file(host, path, file_path, callback)
 		local file_name = get_file_name(path)
 		for file_path as _path do
 			write_file(_path, body)
-			util.log($'Downloaded {file_name} to {_path}')
+			--util.log($'Downloaded {file_name} to {_path}')
 		end
 	end)
 end
 
 local function empty_dir(dir)
 	if not filesystem.is_dir(dir) then
-		util.log($'Directory {dir} not found, skipping.')
+		--util.log($'Directory {dir} not found, skipping.')
 		return
 	end
 
-	util.log($'Emptying {dir} (%d)':format(#filesystem.list_files(dir)))
+	--util.log($'Emptying {dir} (%d)':format(#filesystem.list_files(dir)))
 
 	io.remove(dir, true)
 
@@ -232,12 +232,12 @@ local function get_manifest(path, type, menu_name)
 	if not filesystem.is_regular_file(path) then
 		files = get_all_files($'{type}/{menu_name}')
 		write_file(path, table.concat(files, '\n'))
-		util.log($'Creating manifest for "{menu_name}" at {path}')
+		--util.log($'Creating manifest for "{menu_name}" at {path}')
 	else
 		local file = io.open(path, 'r')
 		files = file:read('*a'):split('\n')
 		file:close()
-		util.log($'Found manifest for "{menu_name}" at {path}')
+		--util.log($'Found manifest for "{menu_name}" at {path}')
 	end
 
 	return files
