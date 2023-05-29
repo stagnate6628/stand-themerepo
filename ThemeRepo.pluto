@@ -180,14 +180,14 @@ local function empty_dir(dir)
 end
 
 local stand_dir = filesystem.stand_dir()
-local header_dir = stand_dir .. 'Headers\\Custom Header\\'
-local theme_dir = stand_dir .. 'Theme\\'
-local custom_dir = theme_dir .. 'Custom\\'
-local tabs_dir = theme_dir .. 'Tabs\\'
+local header_dir = $'{stand_dir}Headers\\Custom Header\\'
+local theme_dir = $'{stand_dir}Theme\\'
+local custom_dir = $'{theme_dir}Custom\\'
+local tabs_dir = $'{theme_dir}Tabs\\'
 
 local resources_dir = filesystem.resources_dir() .. 'ThemeRepo\\'
-local themes_dir = resources_dir .. 'Themes\\'
-local headers_dir = resources_dir .. 'Headers\\'
+local themes_dir = $'{resources_dir}Themes\\'
+local headers_dir = $'{resources_dir}Headers\\'
 
 local display_download_status = true
 
@@ -542,8 +542,8 @@ config_root:list_action('Update', {}, '', { 'Headers', 'Themes' }, function(_, m
 	local name = menu_name:lower() .. '.txt'
 	download_file(
 		'https://raw.githubusercontent.com',
-		'/stagnate6628/stand-themerepo/main/' .. name,
-		resources_dir .. name
+		$'/stagnate6628/stand-themerepo/main/{name}',
+		$'{resources_dir}{name}'
 	)
 	util.restart_script()
 end)
