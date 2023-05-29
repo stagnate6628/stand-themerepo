@@ -56,6 +56,9 @@ local async_http, filesystem, io, menu, util = async_http, filesystem, io, menu,
 local root = menu.my_root()
 local SCRIPT_VERSION = '1.5.0'
 
+root:readonly('Version', SCRIPT_VERSION)
+root:divider('')
+
 if not SCRIPT_SILENT_START and math.random() > 0.85 then
 	util.toast('Backup your current theme and profile if you need to.')
 end
@@ -121,6 +124,8 @@ local function get_file_name(path, use_backslashes = false)
 	end
 	return path:match(regex)
 end
+
+-- todo: ozark rebound
 
 local og_io_copyto = io.copyto
 io.copyto = function (from, to)
@@ -542,5 +547,3 @@ config_root:list_action('Update', {}, '', { 'Headers', 'Themes' }, function(_, m
 	)
 	util.restart_script()
 end)
-config_root:divider('')
-config_root:readonly('Version', SCRIPT_VERSION)
