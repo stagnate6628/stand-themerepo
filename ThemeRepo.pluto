@@ -427,7 +427,7 @@ do
 			util.toast($'Downloading "{menu_name}".', TOAST_ALL)
 			fn(menu_name)
 
-			util.yield(1000)
+			util.yield(250)
 
 			is_downloading = false
 		end)
