@@ -1,6 +1,6 @@
 local header_path = filesystem.resources_dir() .. 'ThemeRepo\\Themes\\Rebound\\Header.bmp'
-local subheader_path = filesystem.resources_dir() .. 'ThemeRepo\\Themes\\Rebound\\Subheader.png'
-local footer_path = filesystem.resources_dir() .. 'ThemeRepo\\Themes\\Rebound\\Footer.png'
+local subheader_path = filesystem.resources_dir() .. 'ThemeRepo\\Themes\\Rebound\\Subheader.bmp'
+local footer_path = filesystem.resources_dir() .. 'ThemeRepo\\Themes\\Rebound\\Footer.bmp'
 
 if not filesystem.exists(header_path) or not filesystem.exists(footer_path) or not
 	filesystem.exists(subheader_path) then
