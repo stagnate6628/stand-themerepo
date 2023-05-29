@@ -39,5 +39,5 @@ while true do
         directx.draw_texture(header, 1, w / 1080 + 0.0498, 0, 0, x, y - 145 / 1080, 0, 1, 1, 1, 1)
         directx.draw_texture(subheader, 1, w / 1080 + 0.01694, 0, 0, x, y - 37 / 1080, 0, 1, 1, 1, 1)
     end
-    return true
+    util.yield()
 end
