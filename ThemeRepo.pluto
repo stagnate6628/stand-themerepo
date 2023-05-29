@@ -207,7 +207,6 @@ local function header_custom()
 end
 
 local function get_all_files(path, files = {})
-	path ..= '?ref=refactor-downloader'
 	make_request(path, function(body, headers, status_code)
 		body = soup.json.decode(body)
 
