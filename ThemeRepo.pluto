@@ -56,9 +56,6 @@ local async_http, filesystem, io, menu, util = async_http, filesystem, io, menu,
 local root = menu.my_root()
 local SCRIPT_VERSION = '1.5.0'
 
---local r = root:action('Version', {}, '', function() end)
---r.value = SCRIPT_VERSION
-
 if not SCRIPT_SILENT_START and math.random() > 0.85 then
 	util.toast('Backup your current theme and profile if you need to.')
 end
@@ -124,8 +121,6 @@ local function get_file_name(path, use_backslashes = false)
 	end
 	return path:match(regex)
 end
-
--- todo: ozark rebound
 
 local og_io_copyto = io.copyto
 io.copyto = function (from, to)
@@ -336,15 +331,10 @@ local function download_theme(theme_name)
 		local base_path = file:gsub('/', '\\')
 		local local_path = base_path:gsub('Themes\\(.-)\\', '')
 		local dir = local_path:match('^(.-)[\\/][^\\/]*$')
-		local paths = {resources_dir .. base_path}
+		local paths = {$'{resources_dir}{base_path}'}
 
-		-- this is kinda scuffed :|
-		if dir then
-			if dir == 'Interaction Header' then
-				table.insert(paths, resources_dir .. base_path)
-			else
-				table.insert(paths, stand_dir .. local_path)
-			end
+		if dir and dir != 'Interaction Header' then
+			table.insert(paths, $'{stand_dir}{local_path}')
 		end
 
 		if filesystem.is_regular_file(paths[1]) then
@@ -387,8 +377,10 @@ local function download_header(header_name)
 		i += 1
 
 		local base_path = file:gsub('/', '\\')
-		local paths = {resources_dir .. base_path}
-		table.insert(paths, header_dir .. paths[1]:match('[^\\/]*$'))
+		local paths = {
+			$'{resources_dir}{base_path}'
+		}
+		table.insert(paths, $'{header_dir}' .. paths[1]:match('[^\\/]*$'))
 
 		if filesystem.is_regular_file(paths[1]) and not filesystem.is_regular_file(paths[2]) then
 			io.copyto(paths[1], paths[2])
@@ -509,7 +501,7 @@ config_root:list_action('Reset', {}, '', {
 			header_hide()
 		break
 		case 3:
-			io.remove(theme_dir .. 'Font.spritefont')
+			io.remove($'{theme_dir}Font.spritefont')
 			reload_font()
 		break
 		case 4:
