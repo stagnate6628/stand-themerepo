@@ -346,7 +346,7 @@ local function download_theme(theme_name)
 
 		download_file(
 			'https://raw.githubusercontent.com',
-			$'/stagnate6628/stand-themerepo/refactor-downloader/{file}',
+			$'/stagnate6628/stand-themerepo/main/{file}',
 			paths
 		)
 	end
@@ -389,7 +389,7 @@ local function download_header(header_name)
 
 		download_file(
 			'https://raw.githubusercontent.com',
-			$'/stagnate6628/stand-themerepo/refactor-downloader/{file}',
+			$'/stagnate6628/stand-themerepo/main/{file}',
 			paths
 		)
 	end
