@@ -428,7 +428,7 @@ do
 			fn(menu_name)
 
 			util.yield(1000)
-			
+
 			is_downloading = false
 		end)
 
