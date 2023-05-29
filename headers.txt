@@ -15,6 +15,7 @@ Halloween
 Hills
 Himiko Toga
 Jinx
+Jinxscript Dark
 Killua
 Madara Uchiha Animated
 MyMenuIsNoWork
@@ -70,20 +71,29 @@ Stand (Transparent)
 Stand Avengers
 Stand Blue
 Stand Blue Transparent
+Stand Corporate Dark
+Stand Corporate Light
 Stand Cyan
 Stand Cyan Sus
 Stand Cyan Transparent
 Stand Cyan Transparent Sus
+Stand Forest
+Stand Future
 Stand Glitch
 Stand Imperial
+Stand Liquid
 Stand Magenta Gradient Fill
+Stand Moon Knight
 Stand Orange
 Stand Orange Transparent
+Stand Pink
 Stand Pink Animated
 Stand Purple
 Stand Purple Transparent
 Stand Rockstar
+Stand Skeletons
 Stand Splice
+Stand Waves
 Stand Yellow
 Stand Yellow Transparent
 StandHub
