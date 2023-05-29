@@ -1,12 +1,29 @@
 # ThemeRepo
 Lua script to apply headers and themes blazingly fast for Stand
 
-### [Creating Themes](https://github.com/stagnate6628/stand-themerepo/wiki/Creating-Themes)
+Includes
+- "Replica" themes of popular menus
+- Most themes/headers from the Discord
 
-### [Credits](https://github.com/stagnate6628/stand-themerepo/wiki/Credits)
+**Installation**
 
-### [Installation](https://github.com/stagnate6628/stand-themerepo/wiki/Installation)
+<https://github.com/stagnate6628/stand-themerepo/releases/tag/1.5.0>
 
-### [Theme list/previews](https://github.com/stagnate6628/stand-themerepo/wiki/Themes)
+Save `ThemeRepo.pluto` to `%appdata%\Stand\Lua Scripts`
 
-### [Troubleshooting](https://github.com/stagnate6628/stand-themerepo/wiki/Troubleshooting)
+**Warning**
+
+You will lose current headers/textures (tags, tabs)/fonts when downloading a header or theme. It is recommended to make backups if you need to. 
+
+**Links**
+
+Wiki https://github.com/stagnate6628/stand-themerepo/wiki
+
+Creating themes https://github.com/stagnate6628/stand-themerepo/wiki/Contributing
+
+Theme list/previews https://github.com/stagnate6628/stand-themerepo/wiki/Theme-Previews
+
+Troubleshooting https://github.com/stagnate6628/stand-themerepo/wiki/Troubleshooting
+
+Credits https://github.com/stagnate6628/stand-themerepo/wiki/Credits
+
