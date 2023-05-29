@@ -56,8 +56,8 @@ local async_http, filesystem, io, menu, util = async_http, filesystem, io, menu,
 local root = menu.my_root()
 local SCRIPT_VERSION = '1.5.0'
 
-root:readonly('Version', SCRIPT_VERSION)
-root:divider('')
+--local r = root:action('Version', {}, '', function() end)
+--r.value = SCRIPT_VERSION
 
 if not SCRIPT_SILENT_START and math.random() > 0.85 then
 	util.toast('Backup your current theme and profile if you need to.')
@@ -112,7 +112,7 @@ local function fetch(host, path, callback)
 end
 
 local function make_request(path, callback)
-	fetch('https://api.github.com', $'/repos/stagnate6628/stand-themerepo/contents/{path}', function(body, headers, status_code) 
+	fetch('https://api.github.com', $'/repos/stagnate6628/stand-themerepo/contents/{path}', function(body, headers, status_code)
 		pcall(callback, body, headers, status_code)
 	end)
 end
@@ -547,3 +547,4 @@ config_root:list_action('Update', {}, '', { 'Headers', 'Themes' }, function(_, m
 	)
 	util.restart_script()
 end)
+config_root:readonly('Version', SCRIPT_VERSION)
