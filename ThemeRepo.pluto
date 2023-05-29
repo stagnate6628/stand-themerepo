@@ -49,7 +49,6 @@ auto_updater.run_auto_update({
 	source_url = 'https://raw.githubusercontent.com/stagnate6628/stand-themerepo/main/ThemeRepo.pluto',
 	script_relpath = SCRIPT_RELPATH,
 	script_run_name = SCRIPT_NAME:lower(),
-	verify_file_begins_with = '--'
 })
 
 local async_http, filesystem, io, menu, util = async_http, filesystem, io, menu, util
@@ -543,4 +542,5 @@ config_root:list_action('Update', {}, '', { 'Headers', 'Themes' }, function(_, m
 	)
 	util.restart_script()
 end)
+config_root:divider('')
 config_root:readonly('Version', SCRIPT_VERSION)
