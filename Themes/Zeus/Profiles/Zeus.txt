@@ -1,0 +1,95 @@
+Finished Tutorial: Yes
+Understands Commands: Yes
+Understands Sliders: Yes
+Understands Profiles: Yes
+Understands Context Menu: Yes
+Understands Controller Open/Close: Yes
+Prompted For Controller Disables: Yes
+Understands Command Chaining: Yes
+Tree Compatibility Version: 46
+Players
+	Settings
+		Tags
+			Self: 
+			Friend: 
+			Crew Member: 
+			In Timeout: 
+			Modder: 
+			Admin: 
+			Likely Modder: 
+			Attacked You: 
+			Host: 
+			Next Host: 
+			Script Host: 
+			Invulnerable: 
+			Indestructible Vehicle: 
+			RC Vehicle: 
+			Off The Radar: 
+			In An Interior: 
+			Spectating: 
+			Typing: 
+			Dead: 
+			Invisible: 
+			VPN: 
+Stand
+	Settings
+		Appearance
+			Colours
+				Primary Colour: 000000FF
+				Focused Text Colour: 3BFF14FF
+				Focused Right-Bound Text Colour: 3BFF14FF
+				Focused Texture Colour: 3BFF14FF
+				Background Colour: 000000C8
+				Unfocused Text Colour: 3BFF14FF
+				Unfocused Right-Bound Text Colour: 3BFF14FF
+				Unfocused Texture Colour: 3BFF14FF
+				HUD Colour: 000000FF
+				AR Colour: FF0000FF
+			Position: 1261, 344
+			Header
+				Header: Custom
+				Frame Interval: 55
+			Address Bar
+				Address Separator: Stand>Online
+				Width Affected By Scrollbar: On
+				Show Cursor Position: On
+				Cursor Position Includes Dividers: On
+			Cursor
+				Scroll Gap: 0
+				Width: 1
+				Rounded: On
+				Colour: 00FF00FF
+			Tabs
+				Width: 60
+				Height: 56
+				Text
+					Scale: 24
+				Text Alignment: Centre
+				Show Icon Left: On
+				Show Name: Off
+			Notifications
+				Type: Stand, Custom Position
+				Custom Position: 724, 6
+				Invert Flow: On
+				Width: 520
+				Border Colour: 000000FF
+				Flash Colour: 000000FF
+			Commands
+				Text
+					X Offset: -3
+				Number Sliders
+					Selectable N/A Sliders: On
+				Selectable Dividers: On
+			Border
+				Width: 1
+				Rounded: On
+				Colour: 00FF00FF
+			Max Visible Commands: 22
+			List Width: 595
+			Spacer Size: 1
+			Smooth Scrolling: 30
+			Background Blur: 0
+		Info Text
+			Position: 2, 1
+			Alignment: Top Left
+			Scale: 15

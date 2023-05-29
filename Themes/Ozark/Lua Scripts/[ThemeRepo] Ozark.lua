@@ -5,11 +5,6 @@ local interaction_header_path = function(i)
     return filesystem.resources_dir() .. 'ThemeRepo\\Themes\\Ozark\\Interaction Header\\Header' .. i .. ".bmp"
 end
 
-if not io.exists(header_path) then
-    util.toast('[ThemeRepo] Header not found!')
-    util.stop_script()
-end
-
 for i = 1, 18 do
     if not io.exists(interaction_header_path(i)) then
         util.toast('[ThemeRepo] Header ' .. i .. ' not found!')
@@ -17,8 +12,8 @@ for i = 1, 18 do
     end
 end
 
-if not io.exists(subheader_path) then
-    util.toast('[ThemeRepo] Subheader not found!')
+if not filesystem.exists(header_path) or not filesystem.exists(subheader_path) then
+	util.toast('[ThemeRepo] One or more files are missing!')
 	util.stop_script()
 end
 
@@ -27,16 +22,14 @@ local subheader = directx.create_texture(subheader_path)
 local globe = directx.create_texture(interaction_header_path(1))
 
 util.create_tick_handler(function()
-    if not menu.is_open() then
-        return false
+    if menu.is_open() then
+        for i = 1, 18 do
+            util.yield(50)
+            globe = directx.create_texture(interaction_header_path(i))
+        end
+        util.yield(8 * 1000)
     end
-
-    for i = 1, 18 do
-        util.yield(50)
-        globe = directx.create_texture(interaction_header_path(i))
-    end
-
-    util.yield(8 * 1000)
+    return true
 end)
 
 while true do
@@ -48,5 +41,3 @@ while true do
     end
     util.yield()
 end
-
-util.keep_running()

@@ -6,20 +6,15 @@ local function get_header_path(i)
 	return filesystem.resources_dir() .. 'ThemeRepo\\Themes\\Impulse\\Header' .. i .. '.bmp'
 end
 
-for i = 0, 50 do
-	if not io.exists(get_header_path(i)) then
+for i = 1, 50 do
+	if not filesystem.exists(get_header_path(i)) then
 		util.toast('[ThemeRepo] Header ' .. i .. ' not found!')
 		util.stop_script()
 	end
 end
 
-if not io.exists(footer_path) then
-	util.toast('[ThemeRepo] Footer not found!')
-	util.stop_script()
-end
-
-if not io.exists(subheader_path) then
-	util.toast('[ThemeRepo] Subheader not found!')
+if not filesystem.exists(footer_path) or not filesystem.exists(subheader_path) then
+	util.toast('[ThemeRepo] One or more files are missing!')
 	util.stop_script()
 end
 
@@ -27,19 +22,17 @@ local header = directx.create_texture(header_path)
 local footer = directx.create_texture(footer_path)
 local subheader = directx.create_texture(subheader_path)
 
--- this is probably broken
 util.create_tick_handler(function()
-	if not menu.is_open() then
-		return false
-	end
+	if menu.is_open() then
+		for i = 1, 50 do
+			util.yield(50)
+			header = directx.create_texture(get_header_path(i))
+			util.yield()
+		end
 
-	for i = 1, 50 do
-		util.yield(50)
-		header = directx.create_texture(get_header_path(i))
-		util.yield()
+		util.yield(1000)
 	end
-
-	util.yield(1000)
+	return true
 end)
 
 while true do
@@ -51,5 +44,3 @@ while true do
 	end
 	util.yield()
 end
-
-util.keep_running()

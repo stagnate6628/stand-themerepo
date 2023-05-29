@@ -1,0 +1,108 @@
+Finished Tutorial: Yes
+Understands Commands: Yes
+Understands Sliders: Yes
+Understands Profiles: Yes
+Understands Context Menu: Yes
+Understands Controller Open/Close: Yes
+Prompted For Controller Disables: Yes
+Understands Command Chaining: Yes
+Tree Compatibility Version: 46
+Players
+	Settings
+		Tags
+			Brackets: STD
+			Self: 
+			Friend: 
+			Crew Member: 
+			In Timeout: 
+			Modder: 
+			Modder or Admin: 
+			Admin: 
+			Likely Modder: 
+			Attacked You: 
+			Host: 
+			Next Host: 
+			Script Host: 
+			Invulnerable: 
+			Indestructible Vehicle: 
+			RC Vehicle: 
+			Off The Radar: 
+			In An Interior: 
+			Spectating: 
+			Typing: 
+			Dead: 
+			VPN: 
+Stand
+	Settings
+		Appearance
+			Colours
+				Primary Colour: D3D3D3FF
+				Focused Text Colour: 000000FF
+				Focused Right-Bound Text Colour: 000000FF
+				Focused Texture Colour: 000000FF
+				Background Colour: 00000091
+				Unfocused Text Colour: E5E5E5FF
+				Unfocused Right-Bound Text Colour: D6D6D6FF
+				Unfocused Texture Colour: D6D6D6FF
+				HUD Colour: D3D3D3FF
+				AR Colour: 00FFFF18
+				Minigame Colour: D3D3D3FF
+			Position: 1168, 678
+			Header
+				Header: Custom
+				Frame Interval: 30
+				Legacy Positioning: Off
+			Address Bar
+				Address Bar: Off
+			Tabs
+				Width: 47
+				Height: 7
+				Position: Top
+				Text
+					Scale: 12
+					X Offset: 0
+				Text Alignment: Centre
+				Show Name: Off
+				Icons Use Text Colour: Off
+			Scrollbar
+				Scrollbar: Disabled
+				Width: 14
+			Command Info Text
+				Position: Bottom
+				Width: 1
+				Indicate Slider Behaviour: Off
+				Indicate If Usable By Other Players: Off
+			Notifications
+				Type: Stand, Custom Position
+				Custom Position: 357, 1045
+				Width: 380
+				Border Colour: 00FFFFFF
+				Flash Colour: 008C8CFF
+				Background Colour: 00000091
+			Commands
+				Text
+					Scale: 13
+					X Offset: 0
+					Y Offset: 5
+				Colour Commands
+					Preview Colour In Texture: Off
+				Number Sliders
+					Selectable N/A Sliders: On
+				Selectable Dividers: On
+			Border
+				Width: 1
+				Colour: 00000070
+			Max Visible Commands: 9
+			List Width: 329
+			List Height: 33
+			Spacer Size: 1
+			Smooth Scrolling: 110
+			Background Blur: 1
+			Font & Text
+				Small Text
+					Scale: 14
+					X Offset: 0
+					Y Offset: 4
+		Info Text
+			Position: 1909, 7
+			Scale: 13

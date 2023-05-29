@@ -1,0 +1,108 @@
+Finished Tutorial: Yes
+Understands Commands: Yes
+Understands Sliders: Yes
+Understands Profiles: Yes
+Understands Context Menu: Yes
+Understands Controller Open/Close: Yes
+Prompted For Controller Disables: Yes
+Understands Command Chaining: Yes
+Tree Compatibility Version: 46
+Players
+	Settings
+		Tags
+			Brackets: STD
+			Self: 
+			Friend: 
+			Crew Member: 
+			In Timeout: 
+			Modder: 
+			Admin: 
+			Likely Modder: 
+			Attacked You: 
+			Host: 
+			Next Host: 
+			Script Host: 
+			Invulnerable: 
+			Indestructible Vehicle: 
+			RC Vehicle: 
+			Off The Radar: 
+			In An Interior: 
+			Spectating: 
+			Typing: 
+			Dead: 
+			Invisible: 
+			VPN: 
+Stand
+	Settings
+		Appearance
+			Colours
+				Primary Colour: 262626FF
+				Focused Text Colour: B2C3FFFF
+				Focused Right-Bound Text Colour: 68FFF2FF
+				Background Colour: 0C0C0CDF
+				Unfocused Text Colour: 9E9E9EFF
+				Unfocused Right-Bound Text Colour: 82FFF4FF
+				Unfocused Texture Colour: F9FFF9FF
+				HUD Colour: 00FFFFFF
+				AR Colour: 00FFD4FF
+				Minigame Colour: EDF2EDFF
+			Position: 1120, 285
+			Header
+				Header: Custom
+				Legacy Positioning: Off
+			Address Bar
+				Root Name: Hidden
+				Address Separator: Stand \ Online
+				Height: 27
+				Text
+					Scale: 13
+					X Offset: 0
+					Y Offset: 3
+				Show Cursor Position: On
+			Cursor
+				Scroll Gap: 0
+				Width: 2
+				Colour: 87A1FFFF
+			Tabs
+				Width: 53
+				Height: 40
+				Text
+					Scale: 20
+					Y Offset: 7
+				Text Alignment: Centre
+				Show Icon Left: On
+				Show Name: Off
+			Scrollbar
+				Scrollbar: Enabled
+				Width: 7
+			Command Info Text
+				Width: 317
+				Padding: 2
+			Notifications
+				Width: 560
+				Border Colour: 87A1FFFF
+				Flash Colour: 8795FFFF
+				Background Colour: 050505C8
+			Commands
+				Text
+					Y Offset: 3
+			Border
+				Width: 5
+				Rounded: On
+				Colour: 000000FF
+			Max Visible Commands: 22
+			List Width: 545
+			List Height: 31
+			Spacer Size: 12
+			Smooth Scrolling: 130
+			Background Blur: 6
+			Font & Text
+				Command Box Input Text
+					Scale: 14
+					Y Offset: 3
+				Small Text
+					Scale: 13
+					Y Offset: 3
+		Info Text
+			Position: 1913, 96
+			Scale: 12

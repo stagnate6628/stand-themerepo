@@ -1,0 +1,55 @@
+Finished Tutorial: Yes
+Understands Commands: Yes
+Understands Sliders: Yes
+Understands Profiles: Yes
+Understands Context Menu: Yes
+Understands Controller Open/Close: Yes
+Prompted For Controller Disables: Yes
+Understands Command Chaining: Yes
+Tree Compatibility Version: 46
+Stand
+	Settings
+		Appearance
+			Colours
+				Primary Colour: 00000000
+				Focused Text Colour: FF0000FF
+				Focused Right-Bound Text Colour: FF0000FF
+				Focused Texture Colour: FF0000FF
+				Background Colour: 00000000
+				Unfocused Text Colour: FFADB1FF
+				Unfocused Right-Bound Text Colour: FFADB1FF
+				Unfocused Texture Colour: FFADB1FF
+			Position: 1308, 255
+			Address Bar
+				Address Bar: Off
+				Height: 20
+				Show Cursor Position: On
+			Cursor
+				Scroll Gap: 0
+				Colour: FFFFFFFF
+			Tabs
+				Width: 80
+				Height: 33
+				Text
+					Scale: 14
+			Command Info Text
+				Position: Bottom
+			Notifications
+				Border Colour: FF0000FF
+				Flash Colour: FF0000FF
+				Background Colour: 00000077
+			Commands
+				Text
+					Scale: 14
+			Max Visible Commands: 9
+			List Width: 300
+			List Height: 33
+			Spacer Size: 4
+			Background Blur: 0
+			Font & Text
+				Small Text
+					Scale: 11
+					X Offset: 0
+					Y Offset: 5
+	Lua Scripts
+		[ThemeRepo] Zanium: On
