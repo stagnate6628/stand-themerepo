@@ -19,11 +19,10 @@ You will lose current headers/textures (tags, tabs)/fonts when downloading a hea
 
 Wiki https://github.com/stagnate6628/stand-themerepo/wiki
 
-Creating themes https://github.com/stagnate6628/stand-themerepo/wiki/Contributing
+Contributing guide https://github.com/stagnate6628/stand-themerepo/wiki/Contributing
 
-Theme list/previews https://github.com/stagnate6628/stand-themerepo/wiki/Theme-Previews
+Theme previews https://github.com/stagnate6628/stand-themerepo/wiki/Theme-Previews
 
 Troubleshooting https://github.com/stagnate6628/stand-themerepo/wiki/Troubleshooting
 
 Credits https://github.com/stagnate6628/stand-themerepo/wiki/Credits
-
