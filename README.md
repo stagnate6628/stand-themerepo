@@ -7,9 +7,9 @@ Includes
 
 **Installation**
 
-<https://github.com/stagnate6628/stand-themerepo/releases/tag/1.5.0>
+<https://github.com/stagnate6628/stand-themerepo/releases>
 
-Save `ThemeRepo.pluto` to `%appdata%\Stand\Lua Scripts`
+Find the latest version and download `ThemeRepo.pluto` to `%appdata%\Stand\Lua Scripts`
 
 **Warning**
 
