@@ -114,6 +114,8 @@ local function fetch(host, path, callback)
 	until finished
 end
 
+local fs_log = false
+
 local function make_request(path, callback)
 	fetch('https://api.github.com', $'/repos/stagnate6628/stand-themerepo/contents/{path}', function(body, headers, status_code)
 		pcall(callback, body, headers, status_code)
@@ -128,6 +130,15 @@ local function get_file_name(path, use_backslashes = false)
 	return path:match(regex)
 end
 
+local og_util_log = util.log
+util.log = function(msg)
+	if not fs_log then
+		return
+	end
+
+	og_util_log(msg)
+end
+
 local og_io_copyto = io.copyto
 io.copyto = function (from, to)
 	if not filesystem.is_dir(to:match('^(.+)[\\/]')) then
@@ -136,7 +147,8 @@ io.copyto = function (from, to)
 
 	local file_name = get_file_name(from, true)
 	og_io_copyto(from, to)
-	--util.log($'Copying {file_name} to {to}')
+
+	util.log($'Copying {file_name} to {to}')
 end
 
 local function write_file(path, body)
@@ -158,18 +170,18 @@ local function download_file(host, path, file_path, callback)
 		local file_name = get_file_name(path)
 		for file_path as _path do
 			write_file(_path, body)
-			--util.log($'Downloaded {file_name} to {_path}')
+			util.log($'Downloaded {file_name} to {_path}')
 		end
 	end)
 end
 
 local function empty_dir(dir)
 	if not filesystem.is_dir(dir) then
-		--util.log($'Directory {dir} not found, skipping.')
+		util.log($'Directory {dir} not found, skipping.')
 		return
 	end
 
-	--util.log($'Emptying {dir} (%d)':format(#filesystem.list_files(dir)))
+	util.log($'Emptying {dir} (%d)':format(#filesystem.list_files(dir)))
 
 	io.remove(dir, true)
 
@@ -236,12 +248,12 @@ local function get_manifest(path, type, menu_name)
 	if not filesystem.is_regular_file(path) then
 		files = get_all_files($'{type}/{menu_name}')
 		write_file(path, table.concat(files, '\n'))
-		--util.log($'Creating manifest for "{menu_name}" at {path}')
+		util.log($'Creating manifest for "{menu_name}" at {path}')
 	else
 		local file = io.open(path, 'r')
 		files = file:read('*a'):split('\n')
 		file:close()
-		--util.log($'Found manifest for "{menu_name}" at {path}')
+		util.log($'Found manifest for "{menu_name}" at {path}')
 	end
 
 	return files
@@ -281,8 +293,8 @@ local function load_theme(theme_name)
 		ref = menu.ref_by_path($'Stand>Profiles>{active_profile}')
 
 		for k, v in util.read_colons_and_tabs_file(path) do
-			if k:startswith('Stand>Settings>Appearance') or 
-			   	k:startswith('Stand>Lua Scripts') or 
+			if k:startswith('Stand>Settings>Appearance') or
+			   	k:startswith('Stand>Lua Scripts') or
 			  	k:startswith('Players>Settings>Tags') then
 
 				local r = menu.ref_by_path($'{k}>{v}')
@@ -448,6 +460,9 @@ config_root:divider('General')
 config_root:toggle('Download Status', {}, 'Displays a counter using the "Info Text" system to show what is being downloaded and the file count.', function(s)
 	display_download_status = s
 end, display_download_status)
+config_root:toggle('Filesystem Logging', {}, 'Logs any information regarding copying and writing files (Log.txt). Helpful to see where files are going.', function(s)
+	fs_log = s
+end, fs_log)
 
 config_root:divider('Themes')
 config_root:toggle('Apply To Active Profile', {}, 'Not guaranteed to apply properly. Reliability is a hit or miss.', function(s, click_type)
