@@ -460,7 +460,7 @@ config_root:divider('General')
 config_root:toggle('Download Status', {}, 'Displays a counter using the "Info Text" system to show what is being downloaded and the file count.', function(s)
 	display_download_status = s
 end, display_download_status)
-config_root:toggle('Filesystem Logging', {}, 'Logs any information regarding copying and writing files (Log.txt). Helpful to see where files are going.', function(s)
+config_root:toggle('Filesystem Logging', {}, 'Filesystem calls (copying/writing) are logged with their source and destination to Log.txt.', function(s)
 	fs_log = s
 end, fs_log)
 
