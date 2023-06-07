@@ -1,4 +1,5 @@
 Anime Girl
+Anti T2 Engine
 Arrow
 BlackWhite Gradient
 Blue
@@ -14,6 +15,57 @@ GTA
 Halloween
 Hills
 Himiko Toga
+Impulse 90s Backdrop
+Impulse Admin Tool VIP
+Impulse Animated
+Impulse Anime
+Impulse Astronaut
+Impulse Avatar
+Impulse Black Death
+Impulse Black Gradient
+Impulse Blue
+Impulse BlueRed
+Impulse City
+Impulse City (2)
+Impulse Comic
+Impulse Curved
+Impulse Cybercity
+Impulse Dark Red
+Impulse DBZ
+Impulse Deer
+Impulse Dragoneye
+Impulse Eagle
+Impulse Forest
+Impulse Galactic
+Impulse Glitch
+Impulse Graveyard
+Impulse GTA
+Impulse Gucci
+Impulse Hexagons Blue
+Impulse Hub
+Impulse Louis Vuitton
+Impulse Mario Kart
+Impulse Matrix
+Impulse McDonalds
+Impulse Mickey Weed
+Impulse Minecraft
+Impulse MS Paint
+Impulse MS Paint Animated
+Impulse Neon
+Impulse Neon City
+Impulse Nostalgia
+Impulse Plants
+Impulse Purple Electric
+Impulse Red City
+Impulse RedWhite
+Impulse Retro Wave
+Impulse RIP
+Impulse Squares
+Impulse Sunset
+Impulse Toaster
+Impulse Water
+Impulse Waves
+Impulse Yellow Weed
 Jinx
 Jinxscript Dark
 Killua
@@ -57,6 +109,7 @@ Red Sci-Fi Wave
 Retro Animated
 Rockstar Administrator Tool
 Rockstar Anti-Profit Tool
+Rockstar Slayer
 Rose Red Glitch
 Sex and drugs
 Showtime
