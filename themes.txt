@@ -2,6 +2,7 @@
 Anime
 Aya
 BlackNWhite
+BlackNWhite v2
 Blue Hour
 Capybara
 Cherax
@@ -37,6 +38,7 @@ Off-White
 Old UI
 Onyx
 Optimum
+Orange Minimalistic
 OrangeGray
 Ozark
 Paragon
