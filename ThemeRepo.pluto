@@ -508,7 +508,7 @@ config_root:list_action('Reset', {}, '', {
 	{ 'Font', {}, 'The menu font found in the Themes folder.' },
 	{ 'Tags', {}, $'The menu "tags".\n{custom_dir}' },
 	{ 'Tabs', {}, $'The menu "tabs".\n{tabs_dir}' },
-	{ 'Appearance', {}, 'Reverts any appearance changes from the Active Profile. Make sure to save the profile afterwards.' },
+	{ 'Appearance', {}, 'Reverts any visual modifications to their defaults (Settings>Appearance). Make sure to save the profile to keep the changes.' },
 }, function(index)
 	switch index do
 		case 1:
