@@ -45,11 +45,12 @@ if auto_updater == true then
 	error('Invalid auto-updater lib. Please delete your Stand/Lua Scripts/lib/auto-updater.lua and try again')
 end
 
-auto_updater.run_auto_update({
+local auto_update_cfg = {
 	source_url = 'https://raw.githubusercontent.com/stagnate6628/stand-themerepo/main/ThemeRepo.pluto',
 	script_relpath = SCRIPT_RELPATH,
 	script_run_name = SCRIPT_NAME:lower(),
-})
+}
+auto_updater.run_auto_update(auto_update_cfg)
 
 local async_http, filesystem, io, menu, util = async_http, filesystem, io, menu, util
 
@@ -505,10 +506,10 @@ end):setTemporary()
 config_root:list_action('Reset', {}, '', {
 	{ 'Theme', {}, $'The "Theme" folder.\n{theme_dir}' },
 	{ 'Header', {}, $'The "Headers" folder.\n{header_dir}' },
-	{ 'Font', {}, 'The menu font found in the Themes folder.' },
+	{ 'Font', {}, $'The "menu font" file.\n{theme_dir}Font.spritefont' },
 	{ 'Tags', {}, $'The menu "tags".\n{custom_dir}' },
 	{ 'Tabs', {}, $'The menu "tabs".\n{tabs_dir}' },
-	{ 'Appearance', {}, 'Reverts any visual modifications to their defaults (Settings>Appearance). Make sure to save the profile to keep the changes.' },
+	{ 'Appearance', {}, 'Reverts any visual modifications to their defaults (from Settings>Appearance). Make sure to save the profile to keep the changes.' },
 }, function(index)
 	switch index do
 		case 1:
@@ -552,13 +553,23 @@ config_root:list_action('Reset', {}, '', {
 		break
 	end
 end)
-config_root:list_action('Update', {}, '', { 'Headers', 'Themes' }, function(_, menu_name)
-	local name = menu_name:lower() .. '.txt'
-	download_file(
-		'https://raw.githubusercontent.com',
-		$'/stagnate6628/stand-themerepo/main/{name}',
-		$'{resources_dir}{name}'
-	)
-	util.restart_script()
+config_root:list_action('Update', {}, '', {
+	{ 'Headers', {}, 'The list of headers available the script relies on.' },
+	{ 'Themes', {}, 'The list of themes available the script relies on.' },
+	{ 'Script', {}, 'This is automatically done daily, but you can still invoke a manual check.' }
+}, function(idx, menu_name)
+	if idx == 1 or idx == 2 then
+		local name = menu_name:lower() .. '.txt'
+		download_file(
+			'https://raw.githubusercontent.com',
+			$'/stagnate6628/stand-themerepo/main/{name}',
+			$'{resources_dir}{name}'
+		)
+		util.restart_script()
+	end
+
+	if auto_updater.run_auto_update(auto_update_cfg) then
+		util.toast('No updates found.')
+	end
 end)
 config_root:readonly('Version', SCRIPT_VERSION)
