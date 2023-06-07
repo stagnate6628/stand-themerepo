@@ -158,7 +158,7 @@ local function write_file(path, body)
 		filesystem.mkdirs(path:match('^(.+)[\\/]'))
 	end
 
-	local file = io.open(path, 'wb')
+	local file = assert(io.open(path, 'wb'))
 	file:write(body)
 	file:close()
 end
@@ -185,7 +185,7 @@ local function empty_dir(dir)
 
 	util.log($'Emptying {dir} (%d)':format(#filesystem.list_files(dir)))
 
-	io.remove(dir, true)
+	assert(io.remove(dir, true))
 
 	repeat
 		util.yield()
@@ -358,7 +358,7 @@ local function download_theme(theme_name)
 
 		if filesystem.is_regular_file(paths[1]) then
 			if paths[2] then
-				io.copyto(paths[1], paths[2])
+				assert(io.copyto(paths[1], paths[2]))
 			end
 			continue
 		end
