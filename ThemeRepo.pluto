@@ -88,6 +88,7 @@ local function fetch(host, path, callback)
 				local expire_at = os.date('%d-%m %H:%M', headers['X-Ratelimit-Reset'])
 				toast_msg ..= $'\nThis will expire at {expire_at}.'
 			end
+			util.log(toast_msg)
 			for i = 1, 5 do
 				util.toast(toast_msg)
 			end
