@@ -367,7 +367,7 @@ local function download_theme(theme_name)
 
 		if filesystem.is_regular_file(paths[1]) then
 			if paths[2] then
-				assert(io.copyto(paths[1], paths[2]))
+				io.copyto(paths[1], paths[2])
 			end
 			continue
 		end
