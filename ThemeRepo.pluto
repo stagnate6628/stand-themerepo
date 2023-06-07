@@ -142,7 +142,7 @@ util.log = function(msg)
 		return
 	end
 
-	og_util_log(msg)
+	og_util_log(msg:gsub(filesystem.appdata_dir(), ''))
 end
 
 local og_io_copyto = io.copyto
@@ -189,11 +189,16 @@ local function empty_dir(dir)
 
 	util.log($'Emptying {dir} (%d)':format(#filesystem.list_files(dir)))
 
-	assert(io.remove(dir, true))
+	io.remove(dir, true)
 
 	repeat
 		util.yield()
 	until not filesystem.is_dir(dir)
+
+	assert(
+		not filesystem.is_dir(dir),
+		'Failed to empty dir ' .. dir:gsub(filesystem.appdata_dir(), '')
+	)
 
 	util.yield(100)
 end
@@ -471,12 +476,8 @@ config_root:toggle('Filesystem Logging', {}, 'Filesystem calls (copying/writing/
 end, fs_log)
 
 config_root:divider('Themes')
-config_root:toggle('Apply To Active Profile', {}, 'Not guaranteed to apply properly. Reliability is a hit or miss.', function(s, click_type)
+config_root:toggle('Apply To Active Profile', {}, 'Not guaranteed to apply properly. Reliability seems to be a hit or miss; it may help to use a fresh profile or default appearance.', function(s, click_type)
 	apply_to_active_profile = s
-
-	if apply_to_active_profile then
-		util.toast('It may help to use a fresh profile or default appearance.')
-	end
 end, apply_to_active_profile)
 
 config_root:divider('Utilities')
@@ -514,7 +515,7 @@ config_root:list_action('Reset', {}, '', {
 	{ 'Font', {}, $'The "menu font" file.\n{theme_dir}Font.spritefont' },
 	{ 'Tags', {}, $'The menu "tags".\n{custom_dir}' },
 	{ 'Tabs', {}, $'The menu "tabs".\n{tabs_dir}' },
-	{ 'Appearance', {}, 'Reverts any visual modifications to their defaults (from Settings>Appearance). Make sure to save the profile to keep the changes.' },
+	{ 'Appearance', {}, 'Reverts any visual modifications to their defaults (from Stand>Settings>Appearance). Make sure to save the profile to keep the changes.' },
 }, function(index)
 	switch index do
 		case 1:
