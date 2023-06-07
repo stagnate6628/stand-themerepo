@@ -343,15 +343,15 @@ local function download_theme(theme_name)
 	local files = get_manifest(themes_dir, 'Themes', theme_name)
 	local i = 0
 
-	if display_download_status then
-		util.create_tick_handler(function()
-			if i == #files then
-				return false
-			end
+	util.create_tick_handler(function()
+		if i == #files then
+			return false
+		end
+		if display_download_status then
 			util.draw_debug_text($'{theme_name}: {i}/' .. #files)
-			return true
-		end)
-	end
+		end
+		return true
+	end)
 
 	for files as file do
 		i += 1
@@ -390,16 +390,15 @@ local function download_header(header_name)
 	local files = get_manifest(headers_dir, 'Headers', header_name)
 	local i = 0
 
-	if display_download_status then
-		util.create_tick_handler(function()
-			if i == #files then
-				return false
-			end
-
+	util.create_tick_handler(function()
+		if i == #files then
+			return false
+		end
+		if display_download_status then
 			util.draw_debug_text($'{header_name}: {i}/' .. #files)
-			return true
-		end)
-	end
+		end
+		return true
+	end)
 
 	for files as file do
 		i += 1
