@@ -571,10 +571,11 @@ config_root:list_action('Update', {}, '', {
 			$'{resources_dir}{name}'
 		)
 		util.restart_script()
-	end
-
-	if auto_updater.run_auto_update(auto_update_cfg) then
-		util.toast('No updates found.')
+	else
+		auto_update_cfg.check_interval = 0
+		if auto_updater.run_auto_update(auto_update_cfg) then
+			util.toast('No updates found.')
+		end
 	end
 end)
 config_root:readonly('Version', SCRIPT_VERSION)
