@@ -1,0 +1,58 @@
+Finished Tutorial: Yes
+Understands Commands: Yes
+Understands Sliders: Yes
+Understands Profiles: Yes
+Understands Context Menu: Yes
+Understands Controller Open/Close: Yes
+Prompted For Controller Disables: Yes
+Understands Command Chaining: Yes
+Tree Compatibility Version: 46
+Stand
+    Settings
+        Appearance
+            Colours
+                Primary Colour: FF783AFF
+                Background Colour: 111111FF
+                HUD Colour: 003BFFFF
+                AR Colour: 00FFD0FF
+                Minigame Colour: 22FF00FF
+            Position: 1402, 60
+            Header
+                Frame Interval: 15
+                Background Blur: On
+            Address Bar
+                Root Name: Hidden
+                Height: 17
+                Show Cursor Position: On
+            Cursor
+                Colour: FF0707FF
+            Tabs
+                Width: 27
+                Height: 28
+                Text
+                    Y Offset: 6
+                Text Alignment: Centre
+                Show Name: Off
+                Show Icon Right: On
+            Scrollbar
+                Scrollbar: Disabled
+            Notifications
+                Type: Game
+                Border Colour: 000000FF
+                Flash Colour: 000000FF
+            Commands
+                Text
+                    Scale: 14
+                    Y Offset: 6
+            Border
+                Width: 3
+                Colour: 00000046
+            Max Visible Commands: 20
+            List Width: 433
+            List Height: 25
+            Spacer Size: 6
+            Background Blur: 6
+        Info Text
+            Position: 1336, 1381
+            Alignment: Centre Right
+            Scale: 20

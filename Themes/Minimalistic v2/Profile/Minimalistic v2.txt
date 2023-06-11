@@ -1,0 +1,86 @@
+Finished Tutorial: Yes
+Understands Commands: Yes
+Understands Sliders: Yes
+Understands Profiles: Yes
+Understands Context Menu: Yes
+Understands Controller Open/Close: Yes
+Prompted For Controller Disables: Yes
+Understands Command Chaining: Yes
+Tree Compatibility Version: 47
+Players
+	Settings
+		Tags
+			Brackets: STD
+			Self: 
+			Friend: 
+			Crew Member: 
+			In Timeout: 
+			Modder: 
+			Admin: 
+			Likely Modder: 
+			Attacked You: 
+			Host: 
+			Next Host: 
+			Script Host: 
+			Invulnerable: Hidden
+			Indestructible Vehicle: 
+			RC Vehicle: 
+			Off The Radar: 
+			In An Interior: 
+			Spectating: 
+			Typing: 
+			Dead: 
+			Invisible: Hidden
+			VPN: 
+Stand
+	Settings
+		Appearance
+			Colours
+				Primary Colour: 0A0A0A96
+				Background Colour: 121212FF
+				HUD Colour: FFFFFFFF
+				AR Colour: FFFFFFFF
+				Minigame Colour: 646464FF
+			Position: 1477, 561
+			Header
+				Header: Custom
+				Frame Interval: 50
+			Address Bar
+				Height: 22
+				Show Cursor Position: On
+			Cursor
+				Scroll Gap: 0
+				Colour: FFFFFFFF
+			Tabs
+				Tabs: Off
+				Width: 85
+				Text Alignment: Centre
+				Show Icon Left: On
+				Show Name: Off
+			Scrollbar
+				Scrollbar: Disabled
+				Width: 1
+			Command Info Text
+				Position: Bottom
+			Notifications
+				Custom Position: 8, 436
+				Border Colour: 323232FF
+				Flash Colour: 191919FF
+				Background Colour: 121212FF
+			Commands
+				Text
+					Y Offset: 4
+			Border
+				Rounded: On
+				Colour: 191919FF
+			List Width: 430
+			Spacer Size: 0
+			Smooth Scrolling: 30
+			Background Blur: 0
+		Info Text
+			Position: 1889, 170
+			Scale: 17
+	Lua Scripts
+		Pulsive: On
+			Primary Colour: 323232FF
+			Animation Speed: 0
