@@ -87,7 +87,7 @@ local function fetch(host, path, callback)
 			local toast_msg = 'You are currently being ratelimited by Github.'
 			if headers['X-Ratelimit-Reset'] then
 				local expire_at = os.date('%d-%m %H:%M', headers['X-Ratelimit-Reset'])
-				toast_msg ..= $'\nThis will expire at {expire_at}.'
+				toast_msg ..= $"\nThis will expire at {expire_at}."
 			end
 			util.log(toast_msg)
 			for i = 1, 5 do
@@ -103,11 +103,11 @@ local function fetch(host, path, callback)
 		::continue::
 		finished = true
 	end, function()
-		util.toast($'Request to {host}{path} failed to send.', TOAST_ALL)
+		util.toast($"Request to {host}{path} failed to send.", TOAST_ALL)
 		finished = true
 	end)
 	if token := get_github_auth() then
-		async_http.add_header('Authorization', $'Bearer {token}')
+		async_http.add_header('Authorization', $"Bearer {token}")
 	end
 	async_http.dispatch()
 
@@ -121,7 +121,7 @@ local fs_log = false
 local function make_request(path, callback)
 	fetch(
 		'https://api.github.com',
-		$'/repos/stagnate6628/stand-themerepo/contents/{path}',
+		$"/repos/stagnate6628/stand-themerepo/contents/{path}",
 		function(body, headers, status_code)
 			pcall(callback, body, headers, status_code)
 		end
@@ -154,7 +154,7 @@ io.copyto = function (from, to)
 	local file_name = get_file_name(from, true)
 	og_io_copyto(from, to)
 
-	util.log($'Copying {file_name} to {to}')
+	util.log($"Copying {file_name} to {to}")
 end
 
 local function write_file(path, body)
@@ -176,18 +176,18 @@ local function download_file(host, path, file_path, callback)
 		local file_name = get_file_name(path)
 		for file_path as _path do
 			write_file(_path, body)
-			util.log($'Downloaded {file_name} to {_path}')
+			util.log($"Downloaded {file_name} to {_path}")
 		end
 	end)
 end
 
 local function empty_dir(dir)
 	if not filesystem.is_dir(dir) then
-		util.log($'Directory {dir} not found, skipping.')
+		util.log($"Directory {dir} not found, skipping.")
 		return
 	end
 
-	util.log($'Emptying {dir} (%d)':format(#filesystem.list_files(dir)))
+	util.log($"Emptying {dir} (%{#filesystem.list_files(dir)})")
 
 	io.remove(dir, true)
 
@@ -204,14 +204,14 @@ local function empty_dir(dir)
 end
 
 local stand_dir = filesystem.stand_dir()
-local header_dir = $'{stand_dir}Headers\\Custom Header\\'
-local theme_dir = $'{stand_dir}Theme\\'
-local custom_dir = $'{theme_dir}Custom\\'
-local tabs_dir = $'{theme_dir}Tabs\\'
+local header_dir = $"{stand_dir}Headers\\Custom Header\\"
+local theme_dir = $"{stand_dir}Theme\\"
+local custom_dir = $"{theme_dir}Custom\\"
+local tabs_dir = $"{theme_dir}Tabs\\"
 
-local resources_dir = filesystem.resources_dir() .. 'ThemeRepo\\'
-local themes_dir = $'{resources_dir}Themes\\'
-local headers_dir = $'{resources_dir}Headers\\'
+local resources_dir = $"{filesystem.resources_dir()}ThemeRepo\\"
+local themes_dir = $"{resources_dir}Themes\\"
+local headers_dir = $"{resources_dir}Headers\\"
 
 local display_download_status = true
 
@@ -254,24 +254,24 @@ end
 
 local function get_manifest(path, type, menu_name)
 	local files = {}
-	path ..= $'{menu_name}\\.manifest.'
+	path ..= $"{menu_name}\\.manifest."
 
 	if not filesystem.is_regular_file(path) then
-		files = get_all_files($'{type}/{menu_name}')
+		files = get_all_files($"{type}/{menu_name}")
 		write_file(path, table.concat(files, '\n'))
-		util.log($'Creating manifest for "{menu_name}" at {path}')
+		util.log($"Creating manifest for \"{menu_name}\" at {path}")
 	else
 		local file = io.open(path, 'r')
 		files = file:read('*a'):split('\n')
 		file:close()
-		util.log($'Found manifest for "{menu_name}" at {path}')
+		util.log($"Found manifest for \"{menu_name}\" at {path}")
 	end
 
 	return files
 end
 
 local function load_theme(theme_name)
-	util.toast($'Loading "{theme_name}".', TOAST_ALL)
+	util.toast($"Loading \"{theme_name}\".", TOAST_ALL)
 
 	reload_textures()
 	reload_font()
@@ -289,26 +289,26 @@ local function load_theme(theme_name)
 	menu.ref_by_path('Stand'):refByRelPath('Lua Scripts'):trigger()
 	util.yield(100)
 
-	local ref = menu.ref_by_path($'Stand>Profiles>{theme_name}')
+	local ref = menu.ref_by_path($"Stand>Profiles>{theme_name}")
 	if not ref:isValid() then
-		util.toast($'Profile {theme_name} could not be found.', TOAST_ALL)
+		util.toast($"Profile {theme_name} could not be found.", TOAST_ALL)
 		return
 	end
 
 	if apply_to_active_profile then
-  		local meta_state = util.read_colons_and_tabs_file($'{stand_dir}Meta State.txt')
+  		local meta_state = util.read_colons_and_tabs_file($"{stand_dir}Meta State.txt")
 		local active_profile = meta_state['Active Profile'] or 'Main'
 
-		local path = $'{stand_dir}Profiles\\{theme_name}.txt'
+		local path = $"{stand_dir}Profiles\\{theme_name}.txt"
 
-		ref = menu.ref_by_path($'Stand>Profiles>{active_profile}')
+		ref = menu.ref_by_path($"Stand>Profiles>{active_profile}")
 
 		for k, v in util.read_colons_and_tabs_file(path) do
 			if k:startswith('Stand>Settings>Appearance') or
 			   	k:startswith('Stand>Lua Scripts') or
 			  	k:startswith('Players>Settings>Tags') then
 
-				local r = menu.ref_by_path($'{k}>{v}')
+				local r = menu.ref_by_path($"{k}>{v}")
 				if r:isValid() then
 					r:trigger()
 				else
@@ -348,7 +348,7 @@ local function download_theme(theme_name)
 			return false
 		end
 		if display_download_status then
-			util.draw_debug_text($'{theme_name}: {i}/' .. #files)
+			util.draw_debug_text($"{theme_name}: {i}/{#files}")
 		end
 		return true
 	end)
@@ -359,10 +359,10 @@ local function download_theme(theme_name)
 		local base_path = file:gsub('/', '\\')
 		local local_path = base_path:gsub('Themes\\(.-)\\', '')
 		local dir = local_path:match('^(.-)[\\/][^\\/]*$')
-		local paths = {$'{resources_dir}{base_path}'}
+		local paths = { $"{resources_dir}{base_path}" }
 
 		if dir and dir != 'Interaction Header' then
-			table.insert(paths, $'{stand_dir}{local_path}')
+			table.insert(paths, $"{stand_dir}{local_path}")
 		end
 
 		if filesystem.is_regular_file(paths[1]) then
@@ -374,7 +374,7 @@ local function download_theme(theme_name)
 
 		download_file(
 			'https://raw.githubusercontent.com',
-			$'/stagnate6628/stand-themerepo/main/{file}',
+			$"/stagnate6628/stand-themerepo/main/{file}",
 			paths
 		)
 	end
@@ -395,7 +395,7 @@ local function download_header(header_name)
 			return false
 		end
 		if display_download_status then
-			util.draw_debug_text($'{header_name}: {i}/' .. #files)
+			util.draw_debug_text($"{header_name}: {i}/{#files}")
 		end
 		return true
 	end)
@@ -404,10 +404,8 @@ local function download_header(header_name)
 		i += 1
 
 		local base_path = file:gsub('/', '\\')
-		local paths = {
-			$'{resources_dir}{base_path}'
-		}
-		table.insert(paths, $'{header_dir}' .. paths[1]:match('[^\\/]*$'))
+		local paths = { $"{resources_dir}{base_path}" }
+		table.insert(paths, $"{header_dir}{paths[1]:match('[^\\/]*$')}")
 
 		if filesystem.is_regular_file(paths[1]) and not filesystem.is_regular_file(paths[2]) then
 			io.copyto(paths[1], paths[2])
@@ -416,7 +414,7 @@ local function download_header(header_name)
 
 		download_file(
 			'https://raw.githubusercontent.com',
-			$'/stagnate6628/stand-themerepo/main/{file}',
+			$"/stagnate6628/stand-themerepo/main/{file}",
 			paths
 		)
 	end
@@ -431,10 +429,10 @@ do
 		local path = resources_dir .. file_name
 
 		if not filesystem.is_regular_file(path) then
-			util.toast($'Downloading missing file "{file_name}".', TOAST_ALL)
+			util.toast($"Downloading missing file \"{file_name}\".", TOAST_ALL)
 			download_file(
 				'https://raw.githubusercontent.com',
-				$'/stagnate6628/stand-themerepo/main/{file_name}', path
+				$"/stagnate6628/stand-themerepo/main/{file_name}", path
 			)
 		end
 
@@ -451,7 +449,7 @@ do
 
 			is_downloading = true
 
-			util.toast($'Downloading "{menu_name}".', TOAST_ALL)
+			util.toast($"Downloading \"{menu_name}\".", TOAST_ALL)
 			fn(menu_name)
 
 			util.yield(100)
@@ -503,17 +501,17 @@ search_root:text_input('Query', {'themereposearch'}, '', function(input, click_t
 		end
 
 		if #search_root:getChildren() == 1 then
-			util.toast($'No results found under "{input}", try expanding or even narrowing your search query.')
+			util.toast($"No results found under \"{input}\", try expanding or even narrowing your search query.")
 		end
 	end
 end):setTemporary()
 
 config_root:list_action('Reset', {}, '', {
-	{ 'Theme', {}, $'The "Theme" folder.\n{theme_dir}' },
-	{ 'Header', {}, $'The "Headers" folder.\n{header_dir}' },
-	{ 'Font', {}, $'The "menu font" file.\n{theme_dir}Font.spritefont' },
-	{ 'Tags', {}, $'The menu "tags".\n{custom_dir}' },
-	{ 'Tabs', {}, $'The menu "tabs".\n{tabs_dir}' },
+	{ 'Theme', {}, $"The \"Theme\" folder.\n{theme_dir}" },
+	{ 'Header', {}, $"The \"Headers\" folder.\n{header_dir}" },
+	{ 'Font', {}, $"The \"menu font\" file.\n{theme_dir}Font.spritefont" },
+	{ 'Tags', {}, $"The menu \"tags\".\n{custom_dir}" },
+	{ 'Tabs', {}, $"The menu \"tabs\".\n{tabs_dir}" },
 	{ 'Appearance', {}, 'Reverts any visual modifications to their defaults (from Stand>Settings>Appearance). Make sure to save the profile to keep the changes.' },
 }, function(index)
 	switch index do
@@ -529,7 +527,7 @@ config_root:list_action('Reset', {}, '', {
 			header_hide()
 		break
 		case 3:
-			io.remove($'{theme_dir}Font.spritefont')
+			io.remove($"{theme_dir}Font.spritefont")
 			reload_font()
 		break
 		case 4:
@@ -541,11 +539,11 @@ config_root:list_action('Reset', {}, '', {
 			reload_textures()
 		break
 		case 6:
-			local meta_state = util.read_colons_and_tabs_file($'{stand_dir}Meta State.txt')
+			local meta_state = util.read_colons_and_tabs_file($"{stand_dir}Meta State.txt")
 			local active_profile = meta_state['Active Profile'] or 'Main'
 
 			for k in util.read_colons_and_tabs_file(
-				$'{stand_dir}Profiles\\{active_profile}.txt'
+				$"{stand_dir}Profiles\\{active_profile}.txt"
 			) do
 				if k:startswith('Stand>Settings>Appearance') then
 					local ref = menu.ref_by_path(k)
@@ -567,8 +565,8 @@ config_root:list_action('Update', {}, '', {
 		local name = menu_name:lower() .. '.txt'
 		download_file(
 			'https://raw.githubusercontent.com',
-			$'/stagnate6628/stand-themerepo/main/{name}',
-			$'{resources_dir}{name}'
+			$"/stagnate6628/stand-themerepo/main/{name}",
+			$"{resources_dir}{name}"
 		)
 		util.restart_script()
 	else
