@@ -11,9 +11,9 @@ local function get_github_auth()
 	return nil
 end
 
-local function fetch(host, path, callback)
+local function fetch(request_url, callback)
 	local resp = false
-	async_http.init(host, path ?? '', function(body, headers, status_code)
+	async_http.init(request_url, nil, function(body, headers, status_code)
 		switch status_code do
 			case 200:
 				util.try_run(callback, body, headers, status_code)
@@ -44,8 +44,7 @@ if async_http.have_access() then
 	local resp = false
 	-- TODO: replace with main branch
 	fetch(
-		$'raw.githubusercontent.com/stagnate6628/stand-themerepo/1.5.3/version',
-		nil,
+		'raw.githubusercontent.com/stagnate6628/stand-themerepo/1.5.3/version',
 		function(body, headers, status_code)
 			if status_code == 200 and soup.version_compare(SCRIPT_VERSION, body) == -1 then
 				menu.my_root():action(
@@ -56,7 +55,6 @@ if async_http.have_access() then
 						fetch(
 							-- TODO: replace with main branch
 							'raw.githubusercontent.com/stagnate6628/stand-themerepo/1.5.3/ThemeRepo.pluto',
-							nil,
 							function(body_)
 								local f = assert(io.open(filesystem.scripts_dir() .. SCRIPT_RELPATH, 'wb'))
 								assert(f:write(body_))
@@ -100,7 +98,7 @@ local function write_file(path, body)
 end
 
 local function download_file(request_url, file_path)
-	fetch(request_url, nil, function(body, headers, status_code)
+	fetch(request_url, function(body, headers, status_code)
 		if type(file_path) == 'string' then
 			file_path = {file_path}
 		end
@@ -167,7 +165,6 @@ end
 local function get_all_files(path, files = {})
 	fetch(
 		$'api.github.com/repos/stagnate6628/stand-themerepo/contents/{path}',
-		nil,
 		function(body, headers, status_code)
 			body = soup.json.decode(body)
 
