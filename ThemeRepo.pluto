@@ -3,7 +3,7 @@ if async_http.have_access() then
 	local SCRIPT_VERSION = '1.5.3'
 	local resp = false
 	async_http.init(
-		'https://raw.githubusercontent.com/stagnate6628/stand-themerepo/1.5.3/version',
+		'raw.githubusercontent.com/stagnate6628/stand-themerepo/1.5.3/version',
 		nil,
 		function(body, headers, status_code)
 			if status_code == 200 and soup.version_compare(SCRIPT_VERSION, body) == -1 then
@@ -13,7 +13,7 @@ if async_http.have_access() then
 					$'"{body}" is available, you are currently on "{SCRIPT_VERSION}".',
 					function()
 						async_http.init(
-						'https://raw.githubusercontent.com/stagnate6628/stand-themerepo/1.5.3/ThemeRepo.pluto',
+						'raw.githubusercontent.com/stagnate6628/stand-themerepo/1.5.3/ThemeRepo.pluto',
 						nil,
 						function(body_)
 							local f = io.open(filesystem.scripts_dir() .. SCRIPT_RELPATH, 'wb')
@@ -41,6 +41,10 @@ end
 local async_http, filesystem, io, menu, util = async_http, filesystem, io, menu, util
 local root = menu.my_root()
 
+local stand_ref<const> = menu.ref_by_path('Stand')
+local profiles_ref<const> = stand_ref:refByRelPath('Profiles')
+local lua_scripts_ref<const> = stand_ref:refByRelPath('Lua Scripts')
+
 local function get_github_auth()
 	if file := io.open($'{filesystem.resources_dir()}ThemeRepo\\.github', 'r') then
 		local token = file:read('a')
@@ -52,8 +56,7 @@ end
 
 local function fetch(host, path, callback)
 	local resp = false
-	async_http.init(host, path, function(body, headers, status_code)
-		resp = true
+	async_http.init(host, path ?? '', function(body, headers, status_code)
 		switch status_code do
 			case 200:
 				util.try_run(callback, body, headers, status_code)
@@ -65,6 +68,7 @@ local function fetch(host, path, callback)
 				util.stop_script()
 			break
 		end
+		resp = true
 	end, function()
 		resp = true
 	end)
@@ -80,8 +84,8 @@ end
 
 local function make_request(path, callback)
 	fetch(
-		'https://api.github.com',
-		$"/repos/stagnate6628/stand-themerepo/contents/{path}",
+		$'api.github.com/repos/stagnate6628/stand-themerepo/contents/{path}',
+		nil,
 		function(body, headers, status_code)
 			pcall(callback, body, headers, status_code)
 		end
@@ -116,15 +120,14 @@ local function write_file(path, body)
 	file:close()
 end
 
-local function download_file(host, path, file_path, callback)
-	fetch(host, path, function(body, headers, status_code)
+local function download_file(request_url, file_path)
+	fetch(request_url, nil, function(body, headers, status_code)
 		if type(file_path) == 'string' then
 			file_path = {file_path}
 		end
 
-		local file_name = get_file_name(path)
-		for file_path as _path do
-			write_file(_path, body)
+		for file_path as path do
+			write_file(path, body)
 		end
 	end)
 end
@@ -219,30 +222,30 @@ local function load_theme(theme_name)
 	reload_textures()
 	reload_font()
 
-	menu.ref_by_path('Stand'):refByRelPath('Profiles'):trigger()
+	profiles_ref:trigger()
 	util.yield(100)
-	menu.ref_by_path('Stand'):trigger()
+	stand_ref:trigger()
 	util.yield(100)
-	menu.ref_by_path('Stand'):refByRelPath('Profiles'):trigger()
+	profiles_ref:trigger()
 
-	menu.ref_by_path('Stand'):refByRelPath('Lua Scripts'):trigger()
+	lua_scripts_ref:trigger()
 	util.yield(100)
-	menu.ref_by_path('Stand'):trigger()
+	stand_ref:trigger()
 	util.yield(100)
-	menu.ref_by_path('Stand'):refByRelPath('Lua Scripts'):trigger()
+	lua_scripts_ref:trigger()
 	util.yield(100)
 
-	local ref = menu.ref_by_path($"Stand>Profiles>{theme_name}")
+	local ref = profiles_ref:refByRelPath(theme_name)
 	if not ref:isValid() then
-		util.toast($"Profile {theme_name} could not be found.")
+		util.toast($'Reference to "Profiles>{theme_name}" could not be found.')
 		return
 	end
 
 	if apply_to_active_profile then
-  		local meta_state = util.read_colons_and_tabs_file($"{stand_dir}Meta State.txt")
+  		local meta_state = util.read_colons_and_tabs_file($'{stand_dir}Meta State.txt')
 		local active_profile = meta_state['Active Profile'] or 'Main'
 
-		local path = $"{stand_dir}Profiles\\{theme_name}.txt"
+		local path = $'{stand_dir}Profiles\\{theme_name}.txt'
 
 		ref = menu.ref_by_path($"Stand>Profiles>{active_profile}")
 
@@ -251,13 +254,13 @@ local function load_theme(theme_name)
 			   	k:startswith('Stand>Lua Scripts') or
 			  	k:startswith('Players>Settings>Tags') then
 
-				local r = menu.ref_by_path($"{k}>{v}")
+				local r = menu.ref_by_path($'{k}>{v}')
 				if r:isValid() then
 					r:trigger()
 				else
 					r = menu.ref_by_path(k)
 					if r:isValid() then
-						menu.trigger_command(r, v)
+						r:trigger(v)
 					end
 				end
 			end
@@ -270,7 +273,6 @@ local function load_theme(theme_name)
 
 	ref:refByRelPath('Load'):trigger()
 	ref:refByRelPath('Load'):trigger()
-
 	ref:refByRelPath('Active'):trigger()
 	util.yield(100)
 
@@ -316,8 +318,7 @@ local function download_theme(theme_name)
 		end
 
 		download_file(
-			'https://raw.githubusercontent.com',
-			$"/stagnate6628/stand-themerepo/main/{file}",
+			$'raw.githubusercontent.com/stagnate6628/stand-themerepo/main/{file}',
 			paths
 		)
 	end
@@ -334,12 +335,11 @@ local function download_header(header_name)
 	local i = 0
 
 	util.create_tick_handler(function()
-		if i == #files then
+		if i == #files or not display_download_status then
 			return false
 		end
-		if display_download_status then
-			util.draw_debug_text($'{header_name}: {i}/' .. #files)
-		end
+
+		util.draw_debug_text($'{header_name}: {i}/{#files}')
 		return true
 	end)
 
@@ -358,8 +358,7 @@ local function download_header(header_name)
 		end
 
 		download_file(
-			'https://raw.githubusercontent.com',
-			$'/stagnate6628/stand-themerepo/main/{file}',
+			$'raw.githubusercontent.com/stagnate6628/stand-themerepo/main/{file}',
 			paths
 		)
 	end
@@ -370,14 +369,14 @@ end
 local all_children = {}
 do
 	for { 'Headers', 'Themes' } as v do
-		local file_name = v:lower() .. '.txt'
-		local path = resources_dir .. file_name
+		local file_name = $'{v:lower()}.txt'
+		local path = $'{resources_dir}{file_name}'
 
 		if not filesystem.is_regular_file(path) then
-			util.toast($"Downloading missing file \"{file_name}\".")
+			util.toast($'Downloading "{file_name}"')
 			download_file(
-				'https://raw.githubusercontent.com',
-				$"/stagnate6628/stand-themerepo/main/{file_name}", path
+				$'raw.githubusercontent.com/stagnate6628/stand-themerepo/main/{file_name}',
+				path
 			)
 		end
 
@@ -410,12 +409,12 @@ end
 
 local config_root = root:list('Configuration', {}, '')
 config_root:divider('General')
-config_root:toggle('Download Status', {}, 'Displays a counter using the "Info Text" system to show what is being downloaded and the file count.', function(s)
+config_root:toggle('Show Download Status', {}, '', function(s)
 	display_download_status = s
 end, display_download_status)
 
 config_root:divider('Themes')
-config_root:toggle('Apply To Active Profile', {}, 'Not guaranteed to apply properly. Reliability seems to be a hit or miss; it may help to use a fresh profile or default appearance.', function(s, click_type)
+config_root:toggle('Apply To Active Profile', {}, 'Not guaranteed to apply properly. Reliability seems to be a hit or miss; it may help to use a fresh profile or default appearance.', function(s)
 	apply_to_active_profile = s
 end, apply_to_active_profile)
 
@@ -443,17 +442,17 @@ search_root:text_input('Query', {'themereposearch'}, '', function(input, click_t
 		end
 
 		if #search_root:getChildren() == 1 then
-			util.toast($"No results found under \"{input}\", try expanding or even narrowing your search query.")
+			util.toast('No results found.')
 		end
 	end
 end):setTemporary()
 
 config_root:list_action('Reset', {}, '', {
-	{ 'Theme', {}, $"The \"Theme\" folder.\n{theme_dir}" },
-	{ 'Header', {}, $"The \"Headers\" folder.\n{header_dir}" },
-	{ 'Font', {}, $"The \"menu font\" file.\n{theme_dir}Font.spritefont" },
-	{ 'Tags', {}, $"The menu \"tags\".\n{custom_dir}" },
-	{ 'Tabs', {}, $"The menu \"tabs\".\n{tabs_dir}" },
+	{ 'Theme', {}, $'The "Theme" folder.\n{theme_dir}' },
+	{ 'Header', {}, $'The "Headers" folder.\n{header_dir}' },
+	{ 'Font', {}, $'The "menu font" file.\n{theme_dir}Font.spritefont' },
+	{ 'Tags', {}, $'The menu "tags".\n{custom_dir}' },
+	{ 'Tabs', {}, $'The menu "tabs".\n{tabs_dir}' },
 	{ 'Appearance', {}, 'Reverts any visual modifications to their defaults (from Stand>Settings>Appearance). Make sure to save the profile to keep the changes.' },
 }, function(index)
 	switch index do
@@ -469,7 +468,7 @@ config_root:list_action('Reset', {}, '', {
 			header_hide()
 		break
 		case 3:
-			io.remove($"{theme_dir}Font.spritefont")
+			io.remove($'{theme_dir}Font.spritefont')
 			reload_font()
 		break
 		case 4:
@@ -481,11 +480,11 @@ config_root:list_action('Reset', {}, '', {
 			reload_textures()
 		break
 		case 6:
-			local meta_state = util.read_colons_and_tabs_file($"{stand_dir}Meta State.txt")
+			local meta_state = util.read_colons_and_tabs_file($'{stand_dir}Meta State.txt')
 			local active_profile = meta_state['Active Profile'] or 'Main'
 
 			for k in util.read_colons_and_tabs_file(
-				$"{stand_dir}Profiles\\{active_profile}.txt"
+				$'{stand_dir}Profiles\\{active_profile}.txt'
 			) do
 				if k:startswith('Stand>Settings>Appearance') then
 					local ref = menu.ref_by_path(k)
@@ -498,15 +497,17 @@ config_root:list_action('Reset', {}, '', {
 		break
 	end
 end)
-config_root:list_action('Update', {}, '', {
-	{ 'Headers', {}, 'The list of headers available the script relies on.' },
-	{ 'Themes', {}, 'The list of themes available the script relies on.' }
-}, function(idx, menu_name)
-	local name = menu_name:lower() .. '.txt'
+config_root:list_action('Update', {}, '', { 'All', 'Headers', 'Themes' }, function(idx, menu_name)
+	if idx == 1 then
+		assert(io.remove($'{resources_dir}headers.txt'))
+		assert(io.remove($'{resources_dir}themes.txt'))
+		util.restart_script()
+	end
+
+	local name = $'{menu_name:lower()}.txt'
 	download_file(
-		'https://raw.githubusercontent.com',
-		$"/stagnate6628/stand-themerepo/main/{name}",
-		$"{resources_dir}{name}"
+		$'raw.githubusercontent.com/stagnate6628/stand-themerepo/main/{name}',
+		$'{resources_dir}{name}'
 	)
 	util.restart_script()
 end)
