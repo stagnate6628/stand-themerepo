@@ -171,9 +171,8 @@ local function get_all_files(path, files = {})
 					table.insert(files, file.path)
 					continue
 				end
+				get_all_files(file.path, files)
 			end
-
-			get_all_files(file.path, files)
 		end
 	)
 
