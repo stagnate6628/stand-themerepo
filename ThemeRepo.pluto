@@ -56,7 +56,7 @@ if async_http.have_access() then
 							-- TODO: replace with main branch
 							'raw.githubusercontent.com/stagnate6628/stand-themerepo/1.5.3/ThemeRepo.pluto',
 							function(body_)
-								local f = assert(io.open(filesystem.scripts_dir() .. SCRIPT_RELPATH, 'wb'))
+								local f = assert(io.open($'{filesystem.scripts_dir()}{SCRIPT_RELPATH}', 'wb'))
 								assert(f:write(body_))
 								f:close()
 								util.restart_script()
@@ -330,7 +330,7 @@ local function download_header(header_name)
 		local paths = {
 			$'{resources_dir}{base_path}'
 		}
-		table.insert(paths, $'{header_dir}' .. paths[1]:match('[^\\/]*$'))
+		table.insert(paths, $'{header_dir}{paths[1]:match('[^\\/]*$')}')
 
 		if filesystem.is_regular_file(paths[1]) and not filesystem.is_regular_file(paths[2]) then
 			io.copyto(paths[1], paths[2])
