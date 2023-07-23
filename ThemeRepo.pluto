@@ -42,7 +42,7 @@ local async_http, filesystem, io, menu, util = async_http, filesystem, io, menu,
 local root = menu.my_root()
 
 local function get_github_auth()
-	if file := io.open(filesystem.resources_dir() .. 'ThemeRepo\\.github', 'r') then
+	if file := io.open($'{filesystem.resources_dir()}ThemeRepo\\.github', 'r') then
 		local token = file:read('a')
 		file:close()
 		return token:startswith('ghp_') and token:len() == 40 and token
@@ -51,43 +51,31 @@ local function get_github_auth()
 end
 
 local function fetch(host, path, callback)
-	if not async_http.have_access() then
-		return
-	end
-
-	local finished = false
+	local resp = false
 	async_http.init(host, path, function(body, headers, status_code)
-		if status_code == 403 then
-			local toast_msg = 'You are currently being ratelimited by Github.'
-			if headers['X-Ratelimit-Reset'] then
-				local expire_at = os.date('%d-%m %H:%M', headers['X-Ratelimit-Reset'])
-				toast_msg ..= $"\nThis will expire at {expire_at}."
-			end
-			util.log(toast_msg)
-			for i = 1, 5 do
-				util.toast(toast_msg)
-			end
-			util.stop_script()
-		elseif status_code == 404 then
-			goto continue
+		resp = true
+		switch status_code do
+			case 200:
+				util.try_run(callback, body, headers, status_code)
+			break
+			case 403:
+				for i = 1, 5 do
+					util.toast('You are currently being ratelimited by Github.')
+				end
+				util.stop_script()
+			break
 		end
-
-		pcall(callback, body, headers, status_code)
-
-		::continue::
-		finished = true
 	end, function()
-		util.toast($"Request to {host}{path} failed to send.", TOAST_ALL)
-		finished = true
+		resp = true
 	end)
 	if token := get_github_auth() then
-		async_http.add_header('Authorization', $"Bearer {token}")
+		async_http.add_header('Authorization', $'Bearer {token}')
 	end
 	async_http.dispatch()
 
 	repeat
 		util.yield()
-	until finished
+	until resp
 end
 
 local fs_log = false
