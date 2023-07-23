@@ -69,21 +69,12 @@ if async_http.have_access() then
 	)
 end
 
-local function get_file_name(path, use_backslashes = false)
-	local regex = '.+/([^/]+)$'
-	if use_backslashes then
-		regex = '.+\\([^\\]+)$'
-	end
-	return path:match(regex)
-end
-
 local og_io_copyto = io.copyto
 io.copyto = function (from, to)
 	if not filesystem.is_dir(to:match('^(.+)[\\/]')) then
 		filesystem.mkdirs(to:match('^(.+)[\\/]'))
 	end
 
-	local file_name = get_file_name(from, true)
 	og_io_copyto(from, to)
 end
 
