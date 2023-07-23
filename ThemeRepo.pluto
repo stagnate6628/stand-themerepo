@@ -1,6 +1,6 @@
 --stupid autoupdater
 local async_http, filesystem, io, menu, util = async_http, filesystem, io, menu, util
-local root = menu.my_root()
+local root<const> = menu.my_root()
 
 local function get_github_auth()
 	if file := io.open($'{filesystem.resources_dir()}ThemeRepo\\.github', 'r') then
@@ -119,12 +119,6 @@ local function empty_dir(dir)
 	repeat
 		util.yield()
 	until not filesystem.is_dir(dir)
-
-	assert(
-		not filesystem.is_dir(dir),
-		'Failed to empty dir ' .. dir:gsub(filesystem.appdata_dir(), '')
-	)
-
 	util.yield(100)
 end
 
@@ -132,15 +126,15 @@ local stand_ref<const> = menu.ref_by_path('Stand')
 local profiles_ref<const> = stand_ref:refByRelPath('Profiles')
 local lua_scripts_ref<const> = stand_ref:refByRelPath('Lua Scripts')
 
-local stand_dir = filesystem.stand_dir()
-local header_dir = $"{stand_dir}Headers\\Custom Header\\"
-local theme_dir = $"{stand_dir}Theme\\"
-local custom_dir = $"{theme_dir}Custom\\"
-local tabs_dir = $"{theme_dir}Tabs\\"
+local stand_dir<const> = filesystem.stand_dir()
+local header_dir<const> = $"{stand_dir}Headers\\Custom Header\\"
+local theme_dir<const> = $"{stand_dir}Theme\\"
+local custom_dir<const> = $"{theme_dir}Custom\\"
+local tabs_dir<const> = $"{theme_dir}Tabs\\"
 
-local resources_dir = $"{filesystem.resources_dir()}ThemeRepo\\"
-local themes_dir = $"{resources_dir}Themes\\"
-local headers_dir = $"{resources_dir}Headers\\"
+local resources_dir<const> = $"{filesystem.resources_dir()}ThemeRepo\\"
+local themes_dir<const> = $"{resources_dir}Themes\\"
+local headers_dir<const> = $"{resources_dir}Headers\\"
 
 local display_download_status = true
 local apply_to_active_profile = false
@@ -401,7 +395,6 @@ config_root:toggle('Apply To Active Profile', {}, 'Not guaranteed to apply prope
 end, apply_to_active_profile)
 
 config_root:divider('Utilities')
-
 local search_root = config_root:list('Search', {}, '')
 search_root:text_input('Query', {'themereposearch'}, '', function(input, click_type)
 	if input != '' and table.contains({ 1, 4 }, click_type) != nil then
@@ -435,7 +428,7 @@ config_root:list_action('Reset', {}, '', {
 	{ 'Font', {}, $'The "menu font" file.\n{theme_dir}Font.spritefont' },
 	{ 'Tags', {}, $'The menu "tags".\n{custom_dir}' },
 	{ 'Tabs', {}, $'The menu "tabs".\n{tabs_dir}' },
-	{ 'Appearance', {}, 'Reverts any visual modifications to their defaults (from Stand>Settings>Appearance). Make sure to save the profile to keep the changes.' },
+	{ 'Appearance', {}, 'Reverts any menu appearance setting to its original state. Make sure to save the profile to keep the changes.' },
 }, function(index)
 	switch index do
 		case 1:
@@ -479,10 +472,16 @@ config_root:list_action('Reset', {}, '', {
 		break
 	end
 end)
-config_root:list_action('Update', {}, '', { 'All', 'Headers', 'Themes' }, function(idx, menu_name)
+config_root:list_action('Update', {}, '', {
+	{ 'All', {}, 'Updates both Header and Theme lists.' },
+	'Headers',
+	'Themes'
+}, function(idx, menu_name)
 	if idx == 1 then
-		assert(io.remove($'{resources_dir}headers.txt'))
-		assert(io.remove($'{resources_dir}themes.txt'))
+		for { 'headers', 'themes' } as v do
+			io.remove($'{resources_dir}{v}.txt')
+			assert(not filesystem.is_regular_file($'{resources_dir}{v}.txt'))
+		end
 		util.restart_script()
 	end
 
