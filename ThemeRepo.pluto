@@ -131,14 +131,14 @@ local profiles_ref<const> = stand_ref:refByRelPath('Profiles')
 local lua_scripts_ref<const> = stand_ref:refByRelPath('Lua Scripts')
 
 local stand_dir<const> = filesystem.stand_dir()
-local header_dir<const> = $"{stand_dir}Headers\\Custom Header\\"
-local theme_dir<const> = $"{stand_dir}Theme\\"
-local custom_dir<const> = $"{theme_dir}Custom\\"
-local tabs_dir<const> = $"{theme_dir}Tabs\\"
+local header_dir<const> = $'{stand_dir}Headers\\Custom Header\\'
+local theme_dir<const> = $'{stand_dir}Theme\\'
+local custom_dir<const> = $'{theme_dir}Custom\\'
+local tabs_dir<const> = $'{theme_dir}Tabs\\'
 
-local resources_dir<const> = $"{filesystem.resources_dir()}ThemeRepo\\"
-local themes_dir<const> = $"{resources_dir}Themes\\"
-local headers_dir<const> = $"{resources_dir}Headers\\"
+local resources_dir<const> = $'{filesystem.resources_dir()}ThemeRepo\\'
+local themes_dir<const> = $'{resources_dir}Themes\\'
+local headers_dir<const> = $'{resources_dir}Headers\\'
 
 local display_download_status = true
 local apply_to_active_profile = false
@@ -182,10 +182,10 @@ end
 
 local function get_manifest(path, type, menu_name)
 	local files = {}
-	path ..= $"{menu_name}\\.manifest."
+	path ..= $'{menu_name}\\.manifest.'
 
 	if not filesystem.is_regular_file(path) then
-		files = get_all_files($"{type}/{menu_name}")
+		files = get_all_files($'{type}/{menu_name}')
 		write_file(path, table.concat(files, '\n'))
 	else
 		local file = io.open(path, 'r')
@@ -197,7 +197,7 @@ local function get_manifest(path, type, menu_name)
 end
 
 local function load_theme(theme_name)
-	util.toast($"Loading \"{theme_name}\".")
+	util.toast($'Loading "{theme_name}".')
 
 	reload_textures()
 	reload_font()
@@ -227,6 +227,7 @@ local function load_theme(theme_name)
 
 		local path = $'{stand_dir}Profiles\\{theme_name}.txt'
 
+		-- TODO: apply default state to these settings then run?
 		ref = menu.ref_by_path($"Stand>Profiles>{active_profile}")
 
 		for k, v in util.read_colons_and_tabs_file(path) do
@@ -273,7 +274,7 @@ local function download_theme(theme_name)
 			return false
 		end
 		if display_download_status then
-			util.draw_debug_text($"{theme_name}: {i}/{#files}")
+			util.draw_debug_text($'{theme_name}: {i}/{#files}')
 		end
 		return true
 	end)
@@ -284,10 +285,10 @@ local function download_theme(theme_name)
 		local base_path = file:gsub('/', '\\')
 		local local_path = base_path:gsub('Themes\\(.-)\\', '')
 		local dir = local_path:match('^(.-)[\\/][^\\/]*$')
-		local paths = { $"{resources_dir}{base_path}" }
+		local paths = { $'{resources_dir}{base_path}' }
 
 		if dir and dir != 'Interaction Header' then
-			table.insert(paths, $"{stand_dir}{local_path}")
+			table.insert(paths, $'{stand_dir}{local_path}')
 		end
 
 		if filesystem.is_regular_file(paths[1]) then
@@ -372,7 +373,7 @@ do
 		local fn = v == 'Headers' ? download_header : download_theme
 		local ref = root:list_action(v, {}, '', body, function(_, menu_name)
 			if is_downloading then
-				util.toast('A download has already started. Restart the script if that is not the case.')
+				util.toast('A download has already started. If you encountered an error during a download previously, restart the script.')
 				return
 			end
 
@@ -381,6 +382,7 @@ do
 			util.toast($'Downloading "{menu_name}".')
 			fn(menu_name)
 
+			--idk
 			util.yield(100)
 
 			is_downloading = false
@@ -438,48 +440,50 @@ config_root:list_action('Reset', {}, '', {
 	{ 'Tags', {}, $'The menu "tags".\n{custom_dir}' },
 	{ 'Tabs', {}, $'The menu "tabs".\n{tabs_dir}' },
 	{ 'Appearance', {}, 'Reverts any menu appearance setting to its original state. Make sure to save the profile to keep the changes.' },
-}, function(index)
-	switch index do
-		case 1:
-			empty_dir(theme_dir)
-			reload_textures()
-			reload_font()
-		break
-		case 2:
-			empty_dir(header_dir)
-			header_hide()
-			header_custom()
-			header_hide()
-		break
-		case 3:
-			io.remove($'{theme_dir}Font.spritefont')
-			reload_font()
-		break
-		case 4:
-			empty_dir(custom_dir)
-			reload_textures()
-		break
-		case 5:
-			empty_dir(tabs_dir)
-			reload_textures()
-		break
-		case 6:
-			local meta_state = util.read_colons_and_tabs_file($'{stand_dir}Meta State.txt')
-			local active_profile = meta_state['Active Profile'] or 'Main'
+}, function(index, _, click_type)
+	menu.show_warning(config_root, click_type, 'This action is irreversible, proceed?', function()
+		switch index do
+			case 1:
+				empty_dir(theme_dir)
+				reload_textures()
+				reload_font()
+			break
+			case 2:
+				empty_dir(header_dir)
+				header_hide()
+				header_custom()
+				header_hide()
+			break
+			case 3:
+				io.remove($'{theme_dir}Font.spritefont')
+				reload_font()
+			break
+			case 4:
+				empty_dir(custom_dir)
+				reload_textures()
+			break
+			case 5:
+				empty_dir(tabs_dir)
+				reload_textures()
+			break
+			case 6:
+				local meta_state = util.read_colons_and_tabs_file($'{stand_dir}Meta State.txt')
+				local active_profile = meta_state['Active Profile'] or 'Main'
 
-			for k in util.read_colons_and_tabs_file(
-				$'{stand_dir}Profiles\\{active_profile}.txt'
-			) do
-				if k:startswith('Stand>Settings>Appearance') then
-					local ref = menu.ref_by_path(k)
-					if ref:isValid() then
-						ref:applyDefaultState()
+				for k in util.read_colons_and_tabs_file(
+					$'{stand_dir}Profiles\\{active_profile}.txt'
+				) do
+					if k:startswith('Stand>Settings>Appearance') then
+						local ref = menu.ref_by_path(k)
+						if ref:isValid() then
+							ref:applyDefaultState()
+						end
 					end
+					util.yield_once()
 				end
-				util.yield_once()
-			end
-		break
-	end
+			break
+		end
+	end)
 end)
 config_root:list_action('Update', {}, '', {
 	{ 'All', {}, 'Updates both Header and Theme lists.' },
