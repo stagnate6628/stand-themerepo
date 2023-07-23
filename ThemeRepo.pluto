@@ -119,6 +119,10 @@ local function empty_dir(dir)
 	repeat
 		util.yield()
 	until not filesystem.is_dir(dir)
+
+	print($'creating {dir}')
+	filesystem.mkdirs(dir)
+
 	util.yield(100)
 end
 
@@ -275,7 +279,7 @@ local function download_theme(theme_name)
 	end)
 
 	for files as file do
-		i += 1
+		++i
 
 		local base_path = file:gsub('/', '\\')
 		local local_path = base_path:gsub('Themes\\(.-)\\', '')
@@ -320,8 +324,7 @@ local function download_header(header_name)
 	end)
 
 	for files as file do
-		i += 1
-
+		++i
 		local base_path = file:gsub('/', '\\')
 		local paths = {
 			$'{resources_dir}{base_path}'
@@ -342,7 +345,6 @@ local function download_header(header_name)
 	header_custom()
 end
 
-
 local all_children = {}
 do
 	for { 'Headers', 'Themes' } as v do
@@ -350,6 +352,9 @@ do
 		local path = $'{resources_dir}{file_name}'
 
 		if not filesystem.is_regular_file(path) then
+			if not async_http.have_access() then
+				continue
+			end
 			util.toast($'Downloading "{file_name}"')
 			download_file(
 				$'raw.githubusercontent.com/stagnate6628/stand-themerepo/main/{file_name}',
@@ -358,7 +363,7 @@ do
 		end
 
 		local f = assert(io.open(path, 'r'))
-		local body = assert(f:read('*a')):split('\n')
+		local body = f:read('*a'):split('\n')
 		f:close()
 
 		local fn = v == 'Headers' ? download_header : download_theme
