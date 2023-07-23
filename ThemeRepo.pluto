@@ -78,8 +78,6 @@ local function fetch(host, path, callback)
 	until resp
 end
 
-local fs_log = false
-
 local function make_request(path, callback)
 	fetch(
 		'https://api.github.com',
@@ -98,15 +96,6 @@ local function get_file_name(path, use_backslashes = false)
 	return path:match(regex)
 end
 
-local og_util_log = util.log
-util.log = function(msg)
-	if not fs_log then
-		return
-	end
-
-	og_util_log(msg:gsub(filesystem.appdata_dir(), ''))
-end
-
 local og_io_copyto = io.copyto
 io.copyto = function (from, to)
 	if not filesystem.is_dir(to:match('^(.+)[\\/]')) then
@@ -115,8 +104,6 @@ io.copyto = function (from, to)
 
 	local file_name = get_file_name(from, true)
 	og_io_copyto(from, to)
-
-	util.log($"Copying {file_name} to {to}")
 end
 
 local function write_file(path, body)
@@ -138,18 +125,14 @@ local function download_file(host, path, file_path, callback)
 		local file_name = get_file_name(path)
 		for file_path as _path do
 			write_file(_path, body)
-			util.log($"Downloaded {file_name} to {_path}")
 		end
 	end)
 end
 
 local function empty_dir(dir)
 	if not filesystem.is_dir(dir) then
-		util.log($"Directory {dir} not found, skipping.")
 		return
 	end
-
-	util.log($"Emptying {dir} (%{#filesystem.list_files(dir)})")
 
 	io.remove(dir, true)
 
@@ -221,19 +204,17 @@ local function get_manifest(path, type, menu_name)
 	if not filesystem.is_regular_file(path) then
 		files = get_all_files($"{type}/{menu_name}")
 		write_file(path, table.concat(files, '\n'))
-		util.log($"Creating manifest for \"{menu_name}\" at {path}")
 	else
 		local file = io.open(path, 'r')
 		files = file:read('*a'):split('\n')
 		file:close()
-		util.log($"Found manifest for \"{menu_name}\" at {path}")
 	end
 
 	return files
 end
 
 local function load_theme(theme_name)
-	util.toast($"Loading \"{theme_name}\".", TOAST_ALL)
+	util.toast($"Loading \"{theme_name}\".")
 
 	reload_textures()
 	reload_font()
@@ -253,7 +234,7 @@ local function load_theme(theme_name)
 
 	local ref = menu.ref_by_path($"Stand>Profiles>{theme_name}")
 	if not ref:isValid() then
-		util.toast($"Profile {theme_name} could not be found.", TOAST_ALL)
+		util.toast($"Profile {theme_name} could not be found.")
 		return
 	end
 
@@ -393,7 +374,7 @@ do
 		local path = resources_dir .. file_name
 
 		if not filesystem.is_regular_file(path) then
-			util.toast($"Downloading missing file \"{file_name}\".", TOAST_ALL)
+			util.toast($"Downloading missing file \"{file_name}\".")
 			download_file(
 				'https://raw.githubusercontent.com',
 				$"/stagnate6628/stand-themerepo/main/{file_name}", path
@@ -413,7 +394,7 @@ do
 
 			is_downloading = true
 
-			util.toast($'Downloading "{menu_name}".', TOAST_ALL)
+			util.toast($'Downloading "{menu_name}".')
 			fn(menu_name)
 
 			util.yield(100)
