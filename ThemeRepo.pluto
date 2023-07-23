@@ -35,7 +35,7 @@ local function fetch(request_url, callback)
 	async_http.dispatch()
 
 	repeat
-		util.yield()
+		util.yield_once()
 	until resp
 end
 
@@ -117,7 +117,7 @@ local function empty_dir(dir)
 	io.remove(dir, true)
 
 	repeat
-		util.yield()
+		util.yield_once()
 	until not filesystem.is_dir(dir)
 
 	print($'creating {dir}')
@@ -244,7 +244,7 @@ local function load_theme(theme_name)
 					end
 				end
 			end
-			util.yield()
+			util.yield_once()
 		end
 
 		util.toast('Done! Make sure you save the profile if you want to keep its appearance.')
@@ -353,7 +353,10 @@ do
 
 		if not filesystem.is_regular_file(path) then
 			if not async_http.have_access() then
-				continue
+				util.yield_once()
+				util.toast('You are missing required files and internet access is disabled.')
+
+				util.stop_script()
 			end
 			util.toast($'Downloading "{file_name}"')
 			download_file(
@@ -473,7 +476,7 @@ config_root:list_action('Reset', {}, '', {
 						ref:applyDefaultState()
 					end
 				end
-				util.yield()
+				util.yield_once()
 			end
 		break
 	end
