@@ -413,9 +413,6 @@ config_root:divider('General')
 config_root:toggle('Download Status', {}, 'Displays a counter using the "Info Text" system to show what is being downloaded and the file count.', function(s)
 	display_download_status = s
 end, display_download_status)
-config_root:toggle('Filesystem Logging', {}, 'Filesystem calls (copying/writing/removing) are logged with their source and destination to Log.txt, respective to the action taken.', function(s)
-	fs_log = s
-end, fs_log)
 
 config_root:divider('Themes')
 config_root:toggle('Apply To Active Profile', {}, 'Not guaranteed to apply properly. Reliability seems to be a hit or miss; it may help to use a fresh profile or default appearance.', function(s, click_type)
