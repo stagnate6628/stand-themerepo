@@ -238,7 +238,7 @@ local function load_theme(theme_name)
 			util.yield_once()
 		end
 
-		util.toast('Done! Make sure you save the profile if you want to keep its appearance.')
+		util.toast('Done. Make sure you save the profile if you want to keep its appearance.')
 		return
 	end
 
@@ -247,7 +247,7 @@ local function load_theme(theme_name)
 	ref:refByRelPath('Active'):trigger()
 	util.yield(100)
 
-	util.toast('Done!')
+	util.toast('Done.')
 end
 
 local function download_theme(theme_name)
@@ -346,7 +346,7 @@ do
 				util.toast('You are missing required files and internet access is disabled.')
 				util.stop_script()
 			end
-			util.toast($'Downloading "{file_name}"')
+			util.toast($'Downloading "{file_name}".')
 			download_file(
 				$'raw.githubusercontent.com/stagnate6628/stand-themerepo/main/{file_name}',
 				path
@@ -360,7 +360,7 @@ do
 		local fn = v == 'Headers' ? download_header : download_theme
 		local ref = root:list_action(v, {}, '', body, function(_, menu_name)
 			if is_downloading then
-				util.toast('A download has already started. If you encountered an error during a download previously, restart the script.')
+				util.toast('A download is already active. Restart the script if that is not the case.')
 				return
 			end
 
