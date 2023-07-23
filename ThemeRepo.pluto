@@ -1,49 +1,6 @@
 --stupid autoupdater
-if async_http.have_access() then
-	local SCRIPT_VERSION = '1.5.3'
-	local resp = false
-	async_http.init(
-		'raw.githubusercontent.com/stagnate6628/stand-themerepo/1.5.3/version',
-		nil,
-		function(body, headers, status_code)
-			if status_code == 200 and soup.version_compare(SCRIPT_VERSION, body) == -1 then
-				menu.my_root():action(
-					'Update Script',
-					{},
-					$'"{body}" is available, you are currently on "{SCRIPT_VERSION}".',
-					function()
-						async_http.init(
-						'raw.githubusercontent.com/stagnate6628/stand-themerepo/1.5.3/ThemeRepo.pluto',
-						nil,
-						function(body_)
-							local f = io.open(filesystem.scripts_dir() .. SCRIPT_RELPATH, 'wb')
-							f:write(body_)
-							f:close()
-							util.restart_script()
-						end)
-						async_http.dispatch()
-					end
-				)
-				menu.my_root():divider('')
-			end
-			resp = true
-		end,
-		function()
-			resp = true
-		end
-	)
-	async_http.dispatch()
-	repeat
-		util.yield()
-	until resp
-end
-
 local async_http, filesystem, io, menu, util = async_http, filesystem, io, menu, util
 local root = menu.my_root()
-
-local stand_ref<const> = menu.ref_by_path('Stand')
-local profiles_ref<const> = stand_ref:refByRelPath('Profiles')
-local lua_scripts_ref<const> = stand_ref:refByRelPath('Lua Scripts')
 
 local function get_github_auth()
 	if file := io.open($'{filesystem.resources_dir()}ThemeRepo\\.github', 'r') then
@@ -82,12 +39,34 @@ local function fetch(host, path, callback)
 	until resp
 end
 
-local function make_request(path, callback)
+if async_http.have_access() then
+	local SCRIPT_VERSION = '1.5.3'
+	local resp = false
+	-- TODO: replace with main branch
 	fetch(
-		$'api.github.com/repos/stagnate6628/stand-themerepo/contents/{path}',
+		$'raw.githubusercontent.com/stagnate6628/stand-themerepo/1.5.3/version',
 		nil,
 		function(body, headers, status_code)
-			pcall(callback, body, headers, status_code)
+			if status_code == 200 and soup.version_compare(SCRIPT_VERSION, body) == -1 then
+				menu.my_root():action(
+					'Update Script',
+					{},
+					$'"{body}" is available, you are currently on "{SCRIPT_VERSION}".',
+					function()
+						fetch(
+							-- TODO: replace with main branch
+							'raw.githubusercontent.com/stagnate6628/stand-themerepo/1.5.3/ThemeRepo.pluto',
+							nil,
+							function(body_)
+								local f = assert(io.open(filesystem.scripts_dir() .. SCRIPT_RELPATH, 'wb'))
+								assert(f:write(body_))
+								f:close()
+								util.restart_script()
+						end)
+					end
+				)
+				menu.my_root():divider('')
+			end
 		end
 	)
 end
@@ -151,6 +130,10 @@ local function empty_dir(dir)
 	util.yield(100)
 end
 
+local stand_ref<const> = menu.ref_by_path('Stand')
+local profiles_ref<const> = stand_ref:refByRelPath('Profiles')
+local lua_scripts_ref<const> = stand_ref:refByRelPath('Lua Scripts')
+
 local stand_dir = filesystem.stand_dir()
 local header_dir = $"{stand_dir}Headers\\Custom Header\\"
 local theme_dir = $"{stand_dir}Theme\\"
@@ -162,9 +145,7 @@ local themes_dir = $"{resources_dir}Themes\\"
 local headers_dir = $"{resources_dir}Headers\\"
 
 local display_download_status = true
-
 local apply_to_active_profile = false
-
 local is_downloading = false
 
 local function reload_textures()
@@ -184,18 +165,22 @@ local function header_custom()
 end
 
 local function get_all_files(path, files = {})
-	make_request(path, function(body, headers, status_code)
-		body = soup.json.decode(body)
+	fetch(
+		$'api.github.com/repos/stagnate6628/stand-themerepo/contents/{path}',
+		nil,
+		function(body, headers, status_code)
+			body = soup.json.decode(body)
 
-		for body as file do
-			if file.type == 'file' then
-				table.insert(files, file.path)
-				continue
+			for body as file do
+				if file.type == 'file' then
+					table.insert(files, file.path)
+					continue
+				end
 			end
 
 			get_all_files(file.path, files)
 		end
-	end)
+	)
 
 	return files
 end
