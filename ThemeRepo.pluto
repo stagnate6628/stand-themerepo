@@ -1,71 +1,45 @@
--- Auto Updater from https://github.com/hexarobi/stand-lua-auto-updater
-local status, auto_updater = pcall(require, 'auto-updater')
-if not status then
-	local auto_update_complete = nil
-	util.toast('Installing auto-updater...', TOAST_ALL)
-	async_http.init('raw.githubusercontent.com', '/hexarobi/stand-lua-auto-updater/main/auto-updater.lua',
-		function(result, headers, status_code)
-		local function parse_auto_update_result(result, headers, status_code)
-			local error_prefix = 'Error downloading auto-updater: '
-			if status_code ~= 200 then
-				util.toast(error_prefix .. status_code, TOAST_ALL)
-				return false
+--stupid autoupdater
+if async_http.have_access() then
+	local SCRIPT_VERSION = '1.5.3'
+	local resp = false
+	async_http.init(
+		'https://raw.githubusercontent.com/stagnate6628/stand-themerepo/1.5.3/version',
+		nil,
+		function(body, headers, status_code)
+			if status_code == 200 and soup.version_compare(SCRIPT_VERSION, body) == -1 then
+				menu.my_root():action(
+					'Update Script',
+					{},
+					$'"{body}" is available, you are currently on \"{SCRIPT_VERSION}".',
+					function()
+						async_http.init(
+						'https://raw.githubusercontent.com/stagnate6628/stand-themerepo/1.5.3/ThemeRepo.pluto',
+						nil,
+						function(body_)
+							local f = io.open(filesystem.scripts_dir() .. SCRIPT_RELPATH, 'wb')
+							f:write(body_)
+							f:close()
+							util.restart_script()
+						end)
+						async_http.dispatch()
+					end
+				)
+				menu.my_root():divider('')
 			end
-			if not result or result == '' then
-				util.toast(error_prefix .. 'Found empty file.', TOAST_ALL)
-				return false
-			end
-			filesystem.mkdir(filesystem.scripts_dir() .. 'lib')
-			local file = io.open(filesystem.scripts_dir() .. 'lib\\auto-updater.lua', 'wb')
-			if file == nil then
-				util.toast(error_prefix .. 'Could not open file for writing.', TOAST_ALL)
-				return false
-			end
-			file:write(result)
-			file:close()
-			util.toast('Successfully installed auto-updater lib', TOAST_ALL)
-			return true
+			resp = true
+		end,
+		function()
+			resp = true
 		end
-		auto_update_complete = parse_auto_update_result(result, headers, status_code)
-	end, function()
-		util.toast('Error downloading auto-updater lib. Update failed to download.', TOAST_ALL)
-	end)
+	)
 	async_http.dispatch()
-	local i = 1
-	while (auto_update_complete == nil and i < 40) do
-		util.yield(250)
-		i = i + 1
-	end
-	if auto_update_complete == nil then
-		error('Error downloading auto-updater lib. HTTP Request timeout')
-	end
-	auto_updater = require('auto-updater')
+	repeat
+		util.yield()
+	until resp
 end
-if auto_updater == true then
-	error('Invalid auto-updater lib. Please delete your Stand/Lua Scripts/lib/auto-updater.lua and try again')
-end
-
-local auto_update_cfg = {
-	source_url = 'https://raw.githubusercontent.com/stagnate6628/stand-themerepo/main/ThemeRepo.pluto',
-	script_relpath = SCRIPT_RELPATH,
-	script_run_name = SCRIPT_NAME:lower(),
-}
-auto_updater.run_auto_update(auto_update_cfg)
 
 local async_http, filesystem, io, menu, util = async_http, filesystem, io, menu, util
-
 local root = menu.my_root()
-local SCRIPT_VERSION = '1.5.3'
-
-if not SCRIPT_SILENT_START then
-	if math.random() > 0.85 then
-		util.toast('Backup your current theme and profile if you need to.')
-	end
-
-	if not async_http.have_access() then
-		util.toast('Internet access is disabled for this script, functionality is limited.')
-	end
-end
 
 local function get_github_auth()
 	if file := io.open(filesystem.resources_dir() .. 'ThemeRepo\\.github', 'r') then
@@ -559,21 +533,12 @@ end)
 config_root:list_action('Update', {}, '', {
 	{ 'Headers', {}, 'The list of headers available the script relies on.' },
 	{ 'Themes', {}, 'The list of themes available the script relies on.' },
-	{ 'Script', {}, 'This is automatically done daily, but you can still invoke a manual check.' }
 }, function(idx, menu_name)
-	if idx == 1 or idx == 2 then
-		local name = menu_name:lower() .. '.txt'
-		download_file(
-			'https://raw.githubusercontent.com',
-			$"/stagnate6628/stand-themerepo/main/{name}",
-			$"{resources_dir}{name}"
-		)
-		util.restart_script()
-	else
-		auto_update_cfg.check_interval = 0
-		if auto_updater.run_auto_update(auto_update_cfg) then
-			util.toast('No updates found.')
-		end
-	end
+	local name = menu_name:lower() .. '.txt'
+	download_file(
+		'https://raw.githubusercontent.com',
+		$"/stagnate6628/stand-themerepo/main/{name}",
+		$"{resources_dir}{name}"
+	)
+	util.restart_script()
 end)
-config_root:readonly('Version', SCRIPT_VERSION)
