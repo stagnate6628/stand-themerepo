@@ -342,6 +342,7 @@ local function download_header(header_name)
 	header_custom()
 end
 
+
 local all_children = {}
 do
 	for { 'Headers', 'Themes' } as v do
@@ -356,8 +357,8 @@ do
 			)
 		end
 
-		local f = io.open(path, 'r')
-		local body = f:read('*a'):split('\n')
+		local f = assert(io.open(path, 'r'))
+		local body = assert(f:read('*a')):split('\n')
 		f:close()
 
 		local fn = v == 'Headers' ? download_header : download_theme
@@ -479,8 +480,9 @@ config_root:list_action('Update', {}, '', {
 }, function(idx, menu_name)
 	if idx == 1 then
 		for { 'headers', 'themes' } as v do
-			io.remove($'{resources_dir}{v}.txt')
-			assert(not filesystem.is_regular_file($'{resources_dir}{v}.txt'))
+			local path = $'{resources_dir}{v}.txt'
+			io.remove(path)
+			assert(not filesystem.is_regular_file(path))
 		end
 		util.restart_script()
 	end
