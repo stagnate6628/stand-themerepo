@@ -20,5 +20,10 @@ local function fetch(url, callback)
 end
 
 if async_http.have_access() then
-	
+	local localVersion = '2.0.0'
+	fetch('raw.githubusercontent.com/stagnate6628/stand-themerepo/blob/2.0.0/version', function(body, headers, status_code)
+		if soup.version_compare(localVersion, body) == -1 then
+			util.toast('New version available.')
+		end
+	end)
 end
