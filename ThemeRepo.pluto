@@ -55,13 +55,9 @@ auto_updater.run_auto_update(auto_update_cfg)
 local async_http, filesystem, io, menu, util = async_http, filesystem, io, menu, util
 
 local root = menu.my_root()
-local SCRIPT_VERSION = '1.5.2'
+local SCRIPT_VERSION = '1.5.3'
 
 if not SCRIPT_SILENT_START then
-	if math.random() > 0.85 then
-		util.toast('Backup your current theme and profile if you need to.')
-	end
-
 	if not async_http.have_access() then
 		util.toast('Internet access is disabled for this script, functionality is limited.')
 	end
