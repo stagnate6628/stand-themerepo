@@ -145,8 +145,8 @@ util.log = function(msg)
 	og_util_log(msg:gsub(filesystem.appdata_dir(), ''))
 end
 
-local og_io_copyto = io.copyto
-io.copyto = function (from, to)
+local og_io_copyto = io.copy
+io.copy = function (from, to)
 	if not filesystem.is_dir(to:match('^(.+)[\\/]')) then
 		filesystem.mkdirs(to:match('^(.+)[\\/]'))
 	end
@@ -214,8 +214,6 @@ local themes_dir = $"{resources_dir}Themes\\"
 local headers_dir = $"{resources_dir}Headers\\"
 
 local display_download_status = true
-
-local apply_to_active_profile = false
 
 local is_downloading = false
 
@@ -295,36 +293,6 @@ local function load_theme(theme_name)
 		return
 	end
 
-	if apply_to_active_profile then
-  		local meta_state = util.read_colons_and_tabs_file($"{stand_dir}Meta State.txt")
-		local active_profile = meta_state['Active Profile'] or 'Main'
-
-		local path = $"{stand_dir}Profiles\\{theme_name}.txt"
-
-		ref = menu.ref_by_path($"Stand>Profiles>{active_profile}")
-
-		for k, v in util.read_colons_and_tabs_file(path) do
-			if k:startswith('Stand>Settings>Appearance') or
-			   	k:startswith('Stand>Lua Scripts') or
-			  	k:startswith('Players>Settings>Tags') then
-
-				local r = menu.ref_by_path($"{k}>{v}")
-				if r:isValid() then
-					r:trigger()
-				else
-					r = menu.ref_by_path(k)
-					if r:isValid() then
-						menu.trigger_command(r, v)
-					end
-				end
-			end
-			util.yield()
-		end
-
-		util.toast('Done! Make sure you save the profile if you want to keep its appearance.')
-		return
-	end
-
 	ref:refByRelPath('Load'):trigger()
 	ref:refByRelPath('Load'):trigger()
 
@@ -367,7 +335,7 @@ local function download_theme(theme_name)
 
 		if filesystem.is_regular_file(paths[1]) then
 			if paths[2] then
-				io.copyto(paths[1], paths[2])
+				io.copy(paths[1], paths[2])
 			end
 			continue
 		end
@@ -408,7 +376,7 @@ local function download_header(header_name)
 		table.insert(paths, header_dir .. paths[1]:match('[^\\/]*$'))
 
 		if filesystem.is_regular_file(paths[1]) and not filesystem.is_regular_file(paths[2]) then
-			io.copyto(paths[1], paths[2])
+			io.copy(paths[1], paths[2])
 			continue
 		end
 
@@ -471,11 +439,6 @@ end, display_download_status)
 config_root:toggle('Filesystem Logging', {}, 'Filesystem calls (copying/writing/removing) are logged with their source and destination to Log.txt, respective to the action taken.', function(s)
 	fs_log = s
 end, fs_log)
-
-config_root:divider('Themes')
-config_root:toggle('Apply To Active Profile', {}, 'Not guaranteed to apply properly. Reliability seems to be a hit or miss; it may help to use a fresh profile or default appearance.', function(s, click_type)
-	apply_to_active_profile = s
-end, apply_to_active_profile)
 
 config_root:divider('Utilities')
 
