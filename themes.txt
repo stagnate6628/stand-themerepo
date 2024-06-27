@@ -1,15 +1,14 @@
 2Take1
 Anime
 Aya
-BlackNWhite
 BlackNWhite v2
+BlackNWhite
 Blue Hour
 Capybara
 Cherax
 Circuit
 Delusion
 Discord
-Discord v2
 Epsilon
 Fragment
 Gradient Pulsive
@@ -21,23 +20,23 @@ Kiddions
 Kokushibo
 Legacy Menu Beta
 Lewdsex
-Luna
 Luna-Impulse
+Luna
 Marin
 Matrix
 Menyoo
 Mercyyy
 Midari Ikishima
 Midnight Violet
-Minimalistic
 Minimalistic Black & White
 Minimalistic v2
+Minimalistic
 Netflix
 Nocturnal
 Nordic Dark
 NowiryPulsive
 Off-White
-Old UI
+Old UI/Profiles
 Onyx
 Optimum
 Orange Minimalistic
@@ -56,7 +55,6 @@ Sensitive Content
 Space
 Spotify
 Standsense
-Standxo
 Stoners
 Sunset
 Superior V
